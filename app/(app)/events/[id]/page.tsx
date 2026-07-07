@@ -13,6 +13,7 @@ export default function EventDetailPage() {
   const [event, setEvent] = useState<any>(null);
   const [isSaved, setIsSaved] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -94,16 +95,20 @@ export default function EventDetailPage() {
             <button onClick={toggleSave} className={`p-2.5 rounded-xl border transition-all ${isSaved ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow-lg shadow-[var(--accent-glow)]" : "border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)]"}`}>
               <Bookmark size={18} fill={isSaved ? "currentColor" : "none"} />
             </button>
-            <div className="relative group">
-              <button className="p-2.5 rounded-xl border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)] transition-all">
+            <div className="relative">
+              <button onClick={() => setShowShare(!showShare)} onBlur={() => setTimeout(() => setShowShare(false), 200)}
+                className="p-2.5 rounded-xl border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)] transition-all">
                 <Share2 size={18} />
               </button>
-              <div className="absolute right-0 top-full mt-2 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl p-1.5 shadow-xl hidden group-hover:flex gap-1 z-10">
-                <button onClick={() => shareUrl("facebook")} className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 share-btn-fb transition-colors"><MessageSquare size={16} /></button>
-                <button onClick={() => shareUrl("twitter")} className="p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 share-btn-tw transition-colors"><MessageCircle size={16} /></button>
-                <button onClick={() => shareUrl("whatsapp")} className="p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 share-btn-wa transition-colors"><Link size={16} /></button>
-                <button onClick={() => shareUrl("copy")} className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] text-xs font-medium px-3 transition-colors">Copia</button>
-              </div>
+              {showShare && (
+                <div className="absolute right-0 top-full mt-2 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl p-1.5 shadow-xl flex gap-1 z-10">
+                  <button onClick={() => shareUrl("facebook")} className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 share-btn-fb transition-colors"><MessageSquare size={16} /></button>
+                  <button onClick={() => shareUrl("twitter")} className="p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 share-btn-tw transition-colors"><MessageCircle size={16} /></button>
+                  <button onClick={() => shareUrl("whatsapp")} className="p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 share-btn-wa transition-colors"><Link size={16} /></button>
+                  <div className="w-px bg-[var(--card-border)] mx-0.5" />
+                  <button onClick={() => shareUrl("copy")} className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] text-xs font-medium px-2 transition-colors">Copia</button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -146,16 +151,29 @@ export default function EventDetailPage() {
         )}
 
         {(event.source_url || event.source_name) && (
-          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
-            <Globe size={12} />
-            {event.source_url ? (
-              <a href={event.source_url} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--accent)] underline underline-offset-2 transition-colors">
-                Fonte: {event.source_name || event.source_url}
-              </a>
-            ) : (
-              <span>Fonte: {event.source_name}</span>
-            )}
-          </div>
+          <>
+            <div className="divider" />
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--accent-subtle)]">
+              <div className="w-9 h-9 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center flex-shrink-0">
+                <Globe size={16} className="text-[var(--accent)]" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-[var(--text-secondary)]">Fonte</p>
+                {event.source_url ? (
+                  <a href={event.source_url} target="_blank" rel="noopener noreferrer" className="text-sm text-[var(--accent)] hover:underline underline-offset-2 break-all block leading-tight">
+                    {event.source_name || event.source_url}
+                  </a>
+                ) : (
+                  <p className="text-sm text-[var(--text-secondary)]">{event.source_name}</p>
+                )}
+              </div>
+              {event.source_url && (
+                <a href={event.source_url} target="_blank" rel="noopener noreferrer" className="btn-ghost p-2 rounded-lg flex-shrink-0">
+                  <Link size={16} />
+                </a>
+              )}
+            </div>
+          </>
         )}
 
         {isAdmin && !editing && (
