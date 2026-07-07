@@ -4,10 +4,13 @@ import { OAuth2Client } from "google-auth-library";
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export async function POST(req: NextRequest) {
+  let jsonResponse: any, errorResponse: any;
   try {
     const { prisma } = await import("@/lib/prisma");
     const { generateToken } = await import("@/lib/auth");
-    const { jsonResponse, errorResponse } = await import("@/lib/api-helpers");
+    const helpers = await import("@/lib/api-helpers");
+    jsonResponse = helpers.jsonResponse;
+    errorResponse = helpers.errorResponse;
     const { credential } = await req.json();
     if (!credential) return errorResponse("Token Google richiesto");
     const ticket = await googleClient.verifyIdToken({ idToken: credential, audience: process.env.GOOGLE_CLIENT_ID });
@@ -23,5 +26,5 @@ export async function POST(req: NextRequest) {
     }
     const token = generateToken({ id: user.id, email: user.email, role: user.role });
     return jsonResponse({ user: { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar, theme: user.theme, accent_color: user.accentColor }, token });
-  } catch { return errorResponse("Errore login Google", 500); }
+  } catch { return errorResponse ? errorResponse("Errore login Google", 500) : Response.json({ error: "Errore login Google" }, { status: 500 }); }
 }

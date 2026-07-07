@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { id } = await params;
     const existing = await prisma.scrapedSource.findUnique({ where: { id: parseInt(id) } });
@@ -20,18 +20,24 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (body.category_id !== undefined) data.categoryId = body.category_id ? parseInt(body.category_id) : null;
     const updated = await prisma.scrapedSource.update({ where: { id: parseInt(id) }, data });
     return jsonResponse(updated);
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { id } = await params;
     const existing = await prisma.scrapedSource.findUnique({ where: { id: parseInt(id) } });
     if (!existing) return errorResponse("Sorgente non trovata", 404);
     await prisma.scrapedSource.delete({ where: { id: parseInt(id) } });
     return jsonResponse({ message: "Sorgente eliminata" });
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }

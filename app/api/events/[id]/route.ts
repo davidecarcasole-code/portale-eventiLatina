@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, authenticateRequest } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, authenticateRequest } = await import("@/lib/api-helpers");
     const { id } = await params;
     const event = await prisma.event.findUnique({
       where: { id: parseInt(id) },
@@ -27,13 +27,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       category_color: event.category?.color,
       is_saved,
     });
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { id } = await params;
     const existing = await prisma.event.findUnique({ where: { id: parseInt(id) } });
@@ -57,18 +60,24 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const event = await prisma.event.update({ where: { id: parseInt(id) }, data, include: { category: true } });
     return jsonResponse(event);
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { id } = await params;
     const existing = await prisma.event.findUnique({ where: { id: parseInt(id) } });
     if (!existing) return errorResponse("Evento non trovato", 404);
     await prisma.event.delete({ where: { id: parseInt(id) } });
     return jsonResponse({ message: "Evento eliminato" });
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }

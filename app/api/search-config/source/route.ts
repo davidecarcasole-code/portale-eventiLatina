@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const body = await req.json();
     if (!body.name || !body.url) return errorResponse("Nome e URL richiesti");
@@ -22,5 +22,8 @@ export async function POST(req: NextRequest) {
       },
     });
     return jsonResponse(source, 201);
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }

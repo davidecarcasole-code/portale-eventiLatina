@@ -3,19 +3,22 @@ import { NextRequest } from "next/server";
 export async function GET() {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, handleApiError } = await import("@/lib/api-helpers");
+    const { jsonResponse } = await import("@/lib/api-helpers");
     const podcasts = await prisma.radioPodcast.findMany({
       where: { isPublished: true },
       orderBy: { createdAt: "desc" },
     });
     return jsonResponse(podcasts);
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     if (user.role !== "super_admin") return errorResponse("Accesso negato", 403);
     const body = await req.json();
@@ -33,13 +36,16 @@ export async function POST(req: NextRequest) {
       },
     });
     return jsonResponse(podcast, 201);
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     if (user.role !== "super_admin") return errorResponse("Accesso negato", 403);
     const { searchParams } = new URL(req.url);
@@ -47,5 +53,8 @@ export async function DELETE(req: NextRequest) {
     if (!id) return errorResponse("ID richiesto");
     await prisma.radioPodcast.delete({ where: { id: parseInt(id) } });
     return jsonResponse({ message: "Podcast eliminato" });
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }

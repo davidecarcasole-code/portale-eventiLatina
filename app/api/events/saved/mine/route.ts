@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
+    const { jsonResponse, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     const saved = await prisma.savedEvent.findMany({
       where: { userId: user.id },
@@ -19,5 +19,8 @@ export async function GET(req: NextRequest) {
       category_color: s.event.category?.color,
     }));
     return jsonResponse(events);
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }

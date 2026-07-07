@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireSuperAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireSuperAdmin } = await import("@/lib/api-helpers");
     const { user: admin } = await requireSuperAdmin(req);
     const { id } = await params;
     const { role } = await req.json();
@@ -13,5 +13,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (target.role === "super_admin" && id !== admin.id) return errorResponse("Non puoi modificare un super admin", 403);
     await prisma.user.update({ where: { id }, data: { role } });
     return jsonResponse({ message: "Ruolo aggiornato" });
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }

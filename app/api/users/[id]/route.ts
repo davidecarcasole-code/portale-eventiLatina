@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireSuperAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireSuperAdmin } = await import("@/lib/api-helpers");
     const { user: admin } = await requireSuperAdmin(req);
     const { id } = await params;
     const target = await prisma.user.findUnique({ where: { id } });
@@ -18,13 +18,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (body.accent_color !== undefined) data.accentColor = body.accent_color;
     await prisma.user.update({ where: { id }, data });
     return jsonResponse({ message: "Utente aggiornato" });
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireSuperAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireSuperAdmin } = await import("@/lib/api-helpers");
     const { user: admin } = await requireSuperAdmin(req);
     const { id } = await params;
     if (id === admin.id) return errorResponse("Non puoi eliminare te stesso", 400);
@@ -33,5 +36,8 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (target.role === "super_admin") return errorResponse("Non puoi eliminare un super admin", 403);
     await prisma.user.delete({ where: { id } });
     return jsonResponse({ message: "Utente eliminato" });
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }

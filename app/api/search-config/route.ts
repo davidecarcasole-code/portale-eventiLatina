@@ -3,20 +3,23 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const config = await prisma.searchConfig.findFirst({
       where: { name: "default" },
       include: { scrapedSources: true },
     });
     return jsonResponse(config || {});
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }
 
 export async function PUT(req: NextRequest) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
+    const { jsonResponse, requireAdmin } = await import("@/lib/api-helpers");
     const { user } = await requireAdmin(req);
     const body = await req.json();
     const config = await prisma.searchConfig.upsert({
@@ -42,5 +45,8 @@ export async function PUT(req: NextRequest) {
       },
     });
     return jsonResponse(config);
-  } catch (err) { return handleApiError(err); }
+  } catch (err) {
+    console.error("API Error:", err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
+  }
 }

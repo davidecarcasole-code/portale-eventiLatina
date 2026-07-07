@@ -5,7 +5,7 @@ import path from "path";
 export async function POST(req: NextRequest) {
   try {
     const { prisma } = await import("@/lib/prisma");
-    const { jsonResponse, errorResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
+    const { jsonResponse, errorResponse, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     const { dataUrl } = await req.json();
     if (!dataUrl || typeof dataUrl !== "string") return errorResponse("dataUrl mancante o non valido");
@@ -23,6 +23,6 @@ export async function POST(req: NextRequest) {
     return jsonResponse({ avatar: avatarUrl });
   } catch (err) {
     console.error("Avatar upload error:", err);
-    return handleApiError(err);
+    return Response.json({ error: "Errore interno del server" }, { status: 500 });
   }
 }
