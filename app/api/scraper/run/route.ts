@@ -4,6 +4,9 @@ import { jsonResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 export async function POST(req: NextRequest) {
   try {
     await requireAdmin(req);
-    return jsonResponse({ message: "Scraper avviato", results: { total: 0, created: 0, errors: [] } });
+    const { runScraper } = await import("@/lib/scraper/engine");
+    const results = await runScraper();
+    const totalInserted = results.reduce((s, r) => s + r.inserted, 0);
+    return jsonResponse({ message: "Scraper completato", results, totalInserted });
   } catch (err) { return handleApiError(err); }
 }
