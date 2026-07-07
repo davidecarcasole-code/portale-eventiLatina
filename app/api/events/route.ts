@@ -1,110 +1,21 @@
 import { NextRequest } from "next/server";
 
-let prisma: any;
-
-async function getPrisma() {
-  if (!prisma) {
-    const mod = await import("@/lib/prisma");
-    prisma = mod.prisma;
-  }
-  return prisma;
-}
-
 export async function GET(req: NextRequest) {
   try {
-    const p = await getPrisma();
-    const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category");
-    const province = searchParams.get("province");
-    const city = searchParams.get("city");
-    const time_period = searchParams.get("time_period");
-    const dateFrom = searchParams.get("dateFrom");
-    const dateTo = searchParams.get("dateTo");
-    const search = searchParams.get("search");
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
-
-    const where: any = { isPublished: true };
-    where.date = { gte: dateFrom ? new Date(dateFrom) : new Date(new Date().toDateString()) };
-    if (dateTo) where.date.lte = new Date(dateTo);
-    if (category) where.category = { slug: category };
-    if (province) where.province = province;
-    if (city) where.city = { contains: city, mode: "insensitive" };
-    if (time_period) where.timePeriod = time_period;
-    if (search) {
-      where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
-        { location: { contains: search, mode: "insensitive" } },
-      ];
-    }
-
-    const [events, total] = await Promise.all([
-      p.event.findMany({
-        where,
-        include: { category: true },
-        orderBy: [{ date: "asc" }, { time: "asc" }],
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      p.event.count({ where }),
-    ]);
-
-    const mapped = events.map((e: any) => ({
-      ...e,
-      is_new: Math.abs(Date.now() - e.createdAt.getTime()) / 86400000 <= 7,
-      category_name: e.category?.name,
-      category_slug: e.category?.slug,
-      category_icon: e.category?.icon,
-      category_color: e.category?.color,
-    }));
-
-    return Response.json({
-      events: mapped,
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
-    });
+    const mod = await import("@/lib/prisma");
+    const p = mod.prisma;
+    const count = await p.event.count();
+    return Response.json({ ok: true, count });
   } catch (err: any) {
     return Response.json({
-      error: err.message,
+      ok: false,
+      name: err.name,
+      message: err.message,
       code: err.code,
-      stack: err.stack?.split("\n").slice(0, 6).join("\n"),
     }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
-  try {
-    const { requireAdmin, errorResponse } = await import("@/lib/api-helpers");
-    const p = await getPrisma();
-    const { user } = await requireAdmin(req);
-    const body = await req.json();
-    if (!body.title || !body.category_id || !body.date) {
-      return errorResponse("Titolo, categoria e data sono obbligatori");
-    }
-    const event = await p.event.create({
-      data: {
-        title: body.title,
-        description: body.description,
-        categoryId: parseInt(body.category_id),
-        date: new Date(body.date),
-        endDate: body.end_date ? new Date(body.end_date) : null,
-        time: body.time,
-        location: body.location,
-        address: body.address,
-        city: body.city || "Latina",
-        province: body.province || "LT",
-        imageUrl: body.image_url,
-        sourceUrl: body.source_url,
-        sourceName: body.source_name,
-        createdBy: user.id,
-      },
-    });
-    return Response.json(event, { status: 201 });
-  } catch (err: any) {
-    return Response.json({
-      error: err.message,
-      code: err.code,
-      stack: err.stack?.split("\n").slice(0, 6).join("\n"),
-    }, { status: 500 });
-  }
+  return Response.json({ error: "Not implemented yet" }, { status: 501 });
 }
