@@ -1,21 +1,15 @@
 import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const dbUrl = process.env.DATABASE_URL || "NOT SET";
-  const masked = dbUrl === "NOT SET" ? dbUrl : dbUrl.replace(/\/\/([^:]+):([^@]+)@/, "//***:***@");
-
-  let pgResult: any = "not tested";
+export async function GET() {
+  let ok = false;
+  let count = -1;
+  let error = "";
   try {
-    const { Pool } = await import("pg");
-    const pool = new Pool({ connectionString: dbUrl, connectionTimeoutMillis: 8000 });
-    const client = await pool.connect();
-    const res = await client.query("SELECT NOW() as time");
-    client.release();
-    await pool.end();
-    pgResult = "ok: " + res.rows[0].time;
+    const { prisma } = await import("@/lib/prisma");
+    count = await prisma.event.count();
+    ok = true;
   } catch (err: any) {
-    pgResult = "err: " + err.message + " | code: " + err.code;
+    error = err.message + " | code: " + err.code;
   }
-
-  return Response.json({ url: masked, pg: pgResult });
+  return Response.json({ ok, count, error });
 }
