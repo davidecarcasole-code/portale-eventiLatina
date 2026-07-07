@@ -1,9 +1,18 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
+
+let prisma: any;
+
+async function getPrisma() {
+  if (!prisma) {
+    const mod = await import("@/lib/prisma");
+    prisma = mod.prisma;
+  }
+  return prisma;
+}
 
 export async function GET(req: NextRequest) {
   try {
+    const p = await getPrisma();
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
     const province = searchParams.get("province");
@@ -31,17 +40,17 @@ export async function GET(req: NextRequest) {
     }
 
     const [events, total] = await Promise.all([
-      prisma.event.findMany({
+      p.event.findMany({
         where,
         include: { category: true },
         orderBy: [{ date: "asc" }, { time: "asc" }],
         skip: (page - 1) * limit,
         take: limit,
       }),
-      prisma.event.count({ where }),
+      p.event.count({ where }),
     ]);
 
-    const mapped = events.map((e) => ({
+    const mapped = events.map((e: any) => ({
       ...e,
       is_new: Math.abs(Date.now() - e.createdAt.getTime()) / 86400000 <= 7,
       category_name: e.category?.name,
@@ -50,16 +59,14 @@ export async function GET(req: NextRequest) {
       category_color: e.category?.color,
     }));
 
-    return jsonResponse({
+    return Response.json({
       events: mapped,
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (err: any) {
     return Response.json({
-      name: err.name,
-      message: err.message,
+      error: err.message,
       code: err.code,
-      meta: JSON.stringify(err.meta),
       stack: err.stack?.split("\n").slice(0, 6).join("\n"),
     }, { status: 500 });
   }
@@ -67,10 +74,14 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const { requireAdmin, errorResponse } = await import("@/lib/api-helpers");
+    const p = await getPrisma();
     const { user } = await requireAdmin(req);
     const body = await req.json();
-    if (!body.title || !body.category_id || !body.date) return errorResponse("Titolo, categoria e data sono obbligatori");
-    const event = await prisma.event.create({
+    if (!body.title || !body.category_id || !body.date) {
+      return errorResponse("Titolo, categoria e data sono obbligatori");
+    }
+    const event = await p.event.create({
       data: {
         title: body.title,
         description: body.description,
@@ -88,6 +99,12 @@ export async function POST(req: NextRequest) {
         createdBy: user.id,
       },
     });
-    return jsonResponse(event, 201);
-  } catch (err) { return handleApiError(err); }
+    return Response.json(event, { status: 201 });
+  } catch (err: any) {
+    return Response.json({
+      error: err.message,
+      code: err.code,
+      stack: err.stack?.split("\n").slice(0, 6).join("\n"),
+    }, { status: 500 });
+  }
 }
