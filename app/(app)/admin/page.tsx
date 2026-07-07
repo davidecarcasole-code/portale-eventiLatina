@@ -18,16 +18,25 @@ export default function AdminPage() {
   const isSuperAdmin = user?.role === "super_admin";
 
   if (!user || (user.role !== "admin" && user.role !== "super_admin")) {
-    return <div className="text-center py-12 text-[var(--text-secondary)]">Accesso negato</div>;
+    return <div className="text-center py-24 text-[var(--text-secondary)]">Accesso negato</div>;
   }
 
   return (
-    <div className="space-y-4 animate-fade-in">
-      <h1 className="text-xl font-bold flex items-center gap-2"><Shield size={20} className="text-[var(--accent)]" /> Pannello Admin</h1>
-      <div className="flex gap-1 bg-[var(--bg-secondary)] rounded-lg p-1 overflow-x-auto">
+    <div className="page-container space-y-6 animate-fade-in">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg">
+          <Shield size={20} className="text-white" />
+        </div>
+        <div>
+          <h1 className="text-xl font-bold">Pannello Admin</h1>
+          <p className="text-sm text-[var(--text-muted)]">Gestisci eventi, scraper e utenti</p>
+        </div>
+      </div>
+
+      <div className="flex gap-1 bg-[var(--bg-secondary)] rounded-xl p-1 overflow-x-auto">
         {TABS.filter((t) => !t.adminOnly || isSuperAdmin).map((t) => (
           <button key={t.key} onClick={() => setTab(t.key)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-all ${tab === t.key ? "bg-white dark:bg-gray-800 shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${tab === t.key ? "bg-[var(--card-bg)] shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
             <t.icon size={14} /> {t.label}
           </button>
         ))}
@@ -51,16 +60,22 @@ function EventsTab({ token }: { token: string }) {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-[var(--text-secondary)]">{events.length} eventi totali</p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-[var(--text-muted)]">{events.length} eventi totali</p>
+      </div>
       <div className="space-y-2 max-h-[60vh] overflow-y-auto">
         {events.map((e: any) => (
-          <div key={e.id} className="gradient-card rounded-lg p-3 flex items-center justify-between gap-3">
-            <div className="min-w-0">
+          <div key={e.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
               <p className="text-sm font-medium truncate">{e.title}</p>
-              <p className="text-xs text-[var(--text-secondary)]">{e.category_name} • {new Date(e.date).toLocaleDateString("it-IT")}</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                <span className="badge text-[10px]">{e.category_name}</span>{" "}
+                <span className="ml-1">{new Date(e.date).toLocaleDateString("it-IT")}</span>
+                {e.city && <span className="ml-1">· {e.city}</span>}
+              </p>
             </div>
             <div className="flex gap-1 flex-shrink-0">
-              <a href={`/events/${e.id}`} className="p-1.5 rounded hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]"><Edit3 size={14} /></a>
+              <a href={`/events/${e.id}`} className="btn-ghost p-2 rounded-lg"><Edit3 size={14} /></a>
             </div>
           </div>
         ))}
@@ -85,21 +100,44 @@ function ScraperTab({ token }: { token: string }) {
   }
 
   return (
-    <div className="space-y-3">
-      <button onClick={runScraper} disabled={loading} className="px-4 py-2 btn-festive text-white rounded-lg text-sm flex items-center gap-2">
-        <RefreshCw size={16} className={loading ? "animate-spin" : ""} /> {loading ? "Eseguendo..." : "Esegui Scraper"}
+    <div className="glass-card rounded-xl p-5 space-y-4">
+      <div>
+        <h3 className="font-semibold">Motore di Ricerca Eventi</h3>
+        <p className="text-sm text-[var(--text-muted)] mt-1">Esegue lo scraping da CentroItaliaEvents, LazioNascosto e LatinaToday</p>
+      </div>
+      <button onClick={runScraper} disabled={loading}
+        className="btn-primary px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 disabled:opacity-50">
+        <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+        {loading ? "Eseguendo..." : "Esegui Scraper"}
       </button>
-      {result && <pre className="text-xs bg-gray-900 text-green-400 p-3 rounded-lg overflow-x-auto">{result}</pre>}
+      {result && (
+        <div className="relative">
+          <div className="absolute top-0 right-0">
+            <button onClick={() => setResult("")} className="text-[var(--text-muted)] text-xs hover:text-[var(--text-primary)]">Chiudi</button>
+          </div>
+          <pre className="text-xs bg-gray-900 dark:bg-black text-green-400 p-4 rounded-xl overflow-x-auto mt-2">{result}</pre>
+        </div>
+      )}
     </div>
   );
 }
 
 function SearchConfigTab({ token }: { token: string }) {
-  return <p className="text-sm text-[var(--text-secondary)]">Configurazione motore di ricerca (in sviluppo)</p>;
+  return (
+    <div className="glass-card rounded-xl p-5">
+      <h3 className="font-semibold">Criteri di Ricerca</h3>
+      <p className="text-sm text-[var(--text-muted)] mt-1">Configurazione motore di ricerca (in sviluppo)</p>
+    </div>
+  );
 }
 
 function AgentTab({ token }: { token: string }) {
-  return <p className="text-sm text-[var(--text-secondary)]">Agent AI (in sviluppo)</p>;
+  return (
+    <div className="glass-card rounded-xl p-5">
+      <h3 className="font-semibold">Agent AI</h3>
+      <p className="text-sm text-[var(--text-muted)] mt-1">Agent AI (in sviluppo)</p>
+    </div>
+  );
 }
 
 function UsersTab({ token }: { token: string }) {
@@ -112,12 +150,21 @@ function UsersTab({ token }: { token: string }) {
   return (
     <div className="space-y-2">
       {users.map((u: any) => (
-        <div key={u.id} className="gradient-card rounded-lg p-3 flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">{u.name || "—"}</p>
-            <p className="text-xs text-[var(--text-secondary)]">{u.email} • {u.role}</p>
+        <div key={u.id} className="glass-card rounded-xl p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--accent)] to-amber-400 flex items-center justify-center text-white text-xs font-bold">
+              {u.name?.charAt(0).toUpperCase() || "U"}
+            </div>
+            <div>
+              <p className="text-sm font-medium">{u.name || "—"}</p>
+              <p className="text-xs text-[var(--text-muted)]">{u.email}</p>
+            </div>
           </div>
-          <span className={`tag-festive text-[10px] ${u.role === "super_admin" ? "bg-purple-500" : u.role === "admin" ? "bg-blue-500" : ""}`}>{u.role}</span>
+          <span className={`text-[10px] font-medium px-2.5 py-1 rounded-full ${
+            u.role === "super_admin" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
+            u.role === "admin" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
+            "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+          }`}>{u.role}</span>
         </div>
       ))}
     </div>

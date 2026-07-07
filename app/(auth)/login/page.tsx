@@ -39,48 +39,82 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gradient">EventiNLatina</h1>
-          <p className="text-[var(--text-secondary)] mt-2">Eventi, spettacoli e cultura in provincia di Latina</p>
+    <div className="min-h-screen flex relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative">
+        <img src="/banner.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-12">
+          <div className="flex items-center gap-4 mb-4">
+            <img src="/logo.png" alt="Logo" className="w-14 h-14 rounded-2xl ring-4 ring-white/20 shadow-xl" />
+            <div>
+              <h1 className="text-3xl font-bold text-white">EventiNLatina</h1>
+              <p className="text-white/70 text-sm">Eventi, spettacoli e cultura</p>
+            </div>
+          </div>
+          <p className="text-white/60 text-sm max-w-md leading-relaxed">
+            Scopri tutti gli eventi, sagre, concerti, mostre e manifestazioni in provincia di Latina e nel Lazio. Il calendario completo degli eventi del territorio.
+          </p>
+          <div className="flex gap-6 mt-6">
+            {["Musica", "Teatro", "Sagre", "Natura"].map((tag) => (
+              <span key={tag} className="px-3 py-1 rounded-full bg-white/10 text-white/80 text-xs font-medium backdrop-blur-sm border border-white/10">
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
-        <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl p-6 shadow-lg">
-          <div className="flex mb-6 bg-[var(--bg-secondary)] rounded-lg p-1">
-            <button onClick={() => setIsLogin(true)} className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${isLogin ? "bg-white dark:bg-gray-800 shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>
-              <LogIn size={16} className="inline mr-1" /> Accedi
-            </button>
-            <button onClick={() => setIsLogin(false)} className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${!isLogin ? "bg-white dark:bg-gray-800 shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}`}>
-              <UserPlus size={16} className="inline mr-1" /> Registrati
-            </button>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+        <div className="w-full max-w-sm animate-fade-in">
+          <div className="text-center mb-8 lg:hidden">
+            <img src="/logo.png" alt="Logo" className="w-16 h-16 mx-auto mb-3 rounded-2xl ring-4 ring-[var(--accent)]/20 shadow-lg" />
+            <h1 className="text-2xl font-bold text-gradient">EventiNLatina</h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">Eventi, spettacoli e cultura in provincia di Latina</p>
           </div>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+
+          <div className="glass-card rounded-2xl p-6 sm:p-8">
+            <div className="flex mb-6 bg-[var(--bg-secondary)] rounded-xl p-1">
+              <button onClick={() => setIsLogin(true)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${isLogin ? "bg-white dark:bg-gray-800 shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+                <LogIn size={16} className="inline mr-1.5" /> Accedi
+              </button>
+              <button onClick={() => setIsLogin(false)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${!isLogin ? "bg-white dark:bg-gray-800 shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+                <UserPlus size={16} className="inline mr-1.5" /> Registrati
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <div>
+                  <label className="text-xs font-medium text-[var(--text-secondary)] mb-1.5 block"><User size={13} className="inline mr-1" /> Nome</label>
+                  <input value={name} onChange={(e) => setName(e.target.value)} className="input" placeholder="Il tuo nome" required />
+                </div>
+              )}
               <div>
-                <label className="text-sm text-[var(--text-secondary)] mb-1 block"><User size={14} className="inline mr-1" />Nome</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} className="w-full px-3 py-2.5 rounded-lg border border-[var(--card-border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm" placeholder="Il tuo nome" required />
+                <label className="text-xs font-medium text-[var(--text-secondary)] mb-1.5 block"><Mail size={13} className="inline mr-1" /> Email</label>
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" placeholder="tua@email.com" required />
               </div>
-            )}
-            <div>
-              <label className="text-sm text-[var(--text-secondary)] mb-1 block"><Mail size={14} className="inline mr-1" />Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-3 py-2.5 rounded-lg border border-[var(--card-border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm" placeholder="tua@email.com" required />
+              <div>
+                <label className="text-xs font-medium text-[var(--text-secondary)] mb-1.5 block"><Lock size={13} className="inline mr-1" /> Password</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input" placeholder="••••••••" required minLength={6} />
+              </div>
+              {error && <p className="text-red-500 text-sm bg-red-50 dark:bg-red-900/20 rounded-lg p-2.5">{error}</p>}
+              <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 rounded-xl text-sm disabled:opacity-50">
+                {loading ? "Attendere..." : isLogin ? "Accedi" : "Crea Account"}
+              </button>
+            </form>
+
+            <div className="mt-5 relative">
+              <div className="absolute inset-0 flex items-center"><div className="divider" /></div>
+              <div className="relative flex justify-center text-xs"><span className="bg-[var(--card-bg)] px-3 text-[var(--text-muted)]">oppure</span></div>
             </div>
-            <div>
-              <label className="text-sm text-[var(--text-secondary)] mb-1 block"><Lock size={14} className="inline mr-1" />Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-3 py-2.5 rounded-lg border border-[var(--card-border)] bg-[var(--bg-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm" placeholder="••••••••" required minLength={6} />
-            </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            <button type="submit" disabled={loading} className="w-full py-2.5 btn-festive text-white rounded-lg font-medium text-sm disabled:opacity-50">
-              {loading ? "Attendere..." : isLogin ? "Accedi" : "Registrati"}
+            <button onClick={handleGoogle} className="w-full mt-4 py-2.5 rounded-xl border border-[var(--card-border)] text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-all flex items-center justify-center gap-2.5 btn-ghost">
+              <Globe size={18} /> Continua con Google
             </button>
-          </form>
-          <div className="mt-4 relative">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-[var(--card-border)]" /></div>
-            <div className="relative flex justify-center text-xs"><span className="bg-[var(--card-bg)] px-2 text-[var(--text-secondary)]">oppure</span></div>
           </div>
-          <button onClick={handleGoogle} className="w-full mt-4 py-2.5 rounded-lg border border-[var(--card-border)] text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors flex items-center justify-center gap-2">
-            <Globe size={18} /> Continua con Google
-          </button>
+
+          <p className="text-center text-xs text-[var(--text-muted)] mt-6">
+            &copy; {new Date().getFullYear()} EventiNLatina — Tutti gli eventi della provincia di Latina
+          </p>
         </div>
       </div>
     </div>
