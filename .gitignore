@@ -1,0 +1,22 @@
+node_modules/
+dist/
+build/
+data/
+.env
+*.db
+.DS_Store
+*.log
+.next/
+next-env.d.ts
+src/generated/
+
+# Old project files (kept for reference, not deployed)
+client/
+server/
+deploy/
+fly.toml
+Dockerfile
+.dockerignore
+start.bat
+server_err.txt
+server_out.txt
