@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3 } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const TABS = [
@@ -142,31 +142,140 @@ function AgentTab({ token }: { token: string }) {
 
 function UsersTab({ token }: { token: string }) {
   const [users, setUsers] = useState<any[]>([]);
-  useEffect(() => {
-    fetch("/api/users", { headers: { Authorization: `Bearer ${token}` } })
-      .then((r) => r.json()).then(setUsers).catch(() => {});
-  }, [token]);
+  const [showCreate, setShowCreate] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "user" });
+  const [error, setError] = useState("");
+
+  async function loadUsers() {
+    try {
+      const r = await fetch("/api/users", { headers: { Authorization: `Bearer ${token}` } });
+      setUsers(await r.json());
+    } catch {}
+  }
+
+  useEffect(() => { loadUsers(); }, [token]);
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const r = await fetch("/api/users", {
+      method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(form),
+    });
+    const data = await r.json();
+    if (!r.ok) { setError(data.error || "Errore"); return; }
+    setShowCreate(false);
+    setForm({ name: "", email: "", password: "", role: "user" });
+    loadUsers();
+  }
+
+  async function handleUpdate(id: string) {
+    setError("");
+    const r = await fetch(`/api/users/${id}`, {
+      method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ name: form.name, email: form.email, role: form.role }),
+    });
+    if (!r.ok) { const d = await r.json(); setError(d.error || "Errore"); return; }
+    setEditingId(null);
+    loadUsers();
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Eliminare questo utente?")) return;
+    const r = await fetch(`/api/users/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    if (r.ok) loadUsers();
+  }
+
+  function startEdit(u: any) {
+    setEditingId(u.id);
+    setForm({ name: u.name || "", email: u.email || "", password: "", role: u.role });
+    setError("");
+  }
 
   return (
-    <div className="space-y-2">
-      {users.map((u: any) => (
-        <div key={u.id} className="glass-card rounded-xl p-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--accent)] to-amber-400 flex items-center justify-center text-white text-xs font-bold">
-              {u.name?.charAt(0).toUpperCase() || "U"}
-            </div>
-            <div>
-              <p className="text-sm font-medium">{u.name || "—"}</p>
-              <p className="text-xs text-[var(--text-muted)]">{u.email}</p>
-            </div>
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-[var(--text-muted)]">{users.length} utenti</p>
+        <button onClick={() => { setShowCreate(true); setError(""); setForm({ name: "", email: "", password: "", role: "user" }); }}
+          className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+          <Plus size={14} /> Nuovo Utente
+        </button>
+      </div>
+
+      {showCreate && (
+        <form onSubmit={handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
+          <div className="flex items-center justify-between">
+            <h4 className="font-semibold text-sm">Crea Utente</h4>
+            <button type="button" onClick={() => setShowCreate(false)} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
           </div>
-          <span className={`text-[10px] font-medium px-2.5 py-1 rounded-full ${
-            u.role === "super_admin" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
-            u.role === "admin" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
-            "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
-          }`}>{u.role}</span>
-        </div>
-      ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Nome" className="input" required />
+            <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="Email" className="input" required />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="Password" className="input" required minLength={6} />
+            <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="select">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              <option value="super_admin">Super Admin</option>
+            </select>
+          </div>
+          {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
+          <div className="flex gap-2">
+            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">Crea Utente</button>
+            <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
+          </div>
+        </form>
+      )}
+
+      <div className="space-y-2">
+        {users.map((u: any) => (
+          editingId === u.id ? (
+            <div key={u.id} className="glass-card rounded-xl p-5 space-y-3 animate-fade-in">
+              <div className="flex items-center justify-between">
+                <h4 className="font-semibold text-sm">Modifica {u.name}</h4>
+                <button type="button" onClick={() => setEditingId(null)} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Nome" className="input" />
+                <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="Email" className="input" />
+              </div>
+              <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="select">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="super_admin">Super Admin</option>
+              </select>
+              {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
+              <div className="flex gap-2">
+                <button onClick={() => handleUpdate(u.id)} className="btn-primary flex-1 py-2 rounded-xl text-sm">Salva</button>
+                <button onClick={() => setEditingId(null)} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
+              </div>
+            </div>
+          ) : (
+            <div key={u.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--accent)] to-amber-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                  {u.name?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate">{u.name || "—"}</p>
+                  <p className="text-xs text-[var(--text-muted)] truncate">{u.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className={`text-[10px] font-medium px-2.5 py-1 rounded-full ${
+                  u.role === "super_admin" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
+                  u.role === "admin" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
+                  "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                }`}>{u.role}</span>
+                <button onClick={() => startEdit(u)} className="btn-ghost p-1.5 rounded-lg"><Edit3 size={14} /></button>
+                <button onClick={() => handleDelete(u.id)} className="btn-ghost p-1.5 rounded-lg hover:text-red-500"><Trash2 size={14} /></button>
+              </div>
+            </div>
+          )
+        ))}
+      </div>
     </div>
   );
 }
