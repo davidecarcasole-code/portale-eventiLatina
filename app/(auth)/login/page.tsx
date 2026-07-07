@@ -40,10 +40,14 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex relative overflow-hidden">
-      <div className="hidden lg:flex lg:w-1/2 relative">
-        <img src="/banner.png" alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-12">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-orange-600 via-amber-700 to-yellow-800">
+        <div className="absolute inset-0" style={{ background: "repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 80px)" }} />
+        <div className="absolute inset-0 flex items-center justify-center p-12">
+          <div className="text-center max-w-sm">
+            <img src="/banner.png" alt="" className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl ring-1 ring-white/10" />
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 p-12 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
           <div className="flex items-center gap-4 mb-4">
             <img src="/logo.png" alt="Logo" className="w-14 h-14 rounded-2xl ring-4 ring-white/20 shadow-xl" />
             <div>
