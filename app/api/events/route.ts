@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
+import { jsonResponse, errorResponse, requireAdmin } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   try {
@@ -54,7 +54,15 @@ export async function GET(req: NextRequest) {
       events: mapped,
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
-  } catch (err) { return handleApiError(err); }
+  } catch (err: any) {
+    return Response.json({
+      name: err.name,
+      message: err.message,
+      code: err.code,
+      meta: JSON.stringify(err.meta),
+      stack: err.stack?.split("\n").slice(0, 6).join("\n"),
+    }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
