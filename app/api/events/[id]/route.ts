@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAdmin, authenticateRequest } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, authenticateRequest } = await import("@/lib/api-helpers");
     const { id } = await params;
     const event = await prisma.event.findUnique({
       where: { id: parseInt(id) },
@@ -32,6 +32,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { id } = await params;
     const existing = await prisma.event.findUnique({ where: { id: parseInt(id) } });
@@ -60,6 +62,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { id } = await params;
     const existing = await prisma.event.findUnique({ where: { id: parseInt(id) } });

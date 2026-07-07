@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAuth } from "@/lib/api-helpers";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     const { id } = await params;
     await prisma.savedEvent.upsert({
@@ -17,6 +17,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     const { id } = await params;
     await prisma.savedEvent.deleteMany({

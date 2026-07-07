@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { comparePassword, generateToken } from "@/lib/auth";
-import { jsonResponse, errorResponse } from "@/lib/api-helpers";
 
 export async function POST(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { comparePassword, generateToken } = await import("@/lib/auth");
+    const { jsonResponse, errorResponse } = await import("@/lib/api-helpers");
     const { email, password } = await req.json();
     if (!email || !password) return errorResponse("Email e password richieste");
     const user = await prisma.user.findUnique({ where: { email } });

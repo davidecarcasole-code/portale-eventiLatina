@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 
 export async function POST(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const body = await req.json();
     if (!body.name || !body.url) return errorResponse("Nome e URL richiesti");

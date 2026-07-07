@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { id } = await params;
     const existing = await prisma.scrapedSource.findUnique({ where: { id: parseInt(id) } });
@@ -25,6 +25,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { id } = await params;
     const existing = await prisma.scrapedSource.findUnique({ where: { id: parseInt(id) } });

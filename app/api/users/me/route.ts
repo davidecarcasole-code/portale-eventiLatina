@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAuth } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     const u = await prisma.user.findUnique({ where: { id: user.id } });
     if (!u) return errorResponse("Utente non trovato", 404);
@@ -13,6 +13,8 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     const { name, avatar, theme, accent_color } = await req.json();
     const data: any = {};

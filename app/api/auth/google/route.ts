@@ -1,13 +1,13 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { generateToken } from "@/lib/auth";
-import { jsonResponse, errorResponse } from "@/lib/api-helpers";
 import { OAuth2Client } from "google-auth-library";
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export async function POST(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { generateToken } = await import("@/lib/auth");
+    const { jsonResponse, errorResponse } = await import("@/lib/api-helpers");
     const { credential } = await req.json();
     if (!credential) return errorResponse("Token Google richiesto");
     const ticket = await googleClient.verifyIdToken({ idToken: credential, audience: process.env.GOOGLE_CLIENT_ID });

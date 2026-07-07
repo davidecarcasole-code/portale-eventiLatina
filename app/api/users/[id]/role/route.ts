@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireSuperAdmin } from "@/lib/api-helpers";
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireSuperAdmin } = await import("@/lib/api-helpers");
     const { user: admin } = await requireSuperAdmin(req);
     const { id } = await params;
     const { role } = await req.json();

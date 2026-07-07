@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const config = await prisma.searchConfig.findFirst({
       where: { name: "default" },
@@ -15,6 +15,8 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     const { user } = await requireAdmin(req);
     const body = await req.json();
     const config = await prisma.searchConfig.upsert({

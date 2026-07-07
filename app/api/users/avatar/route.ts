@@ -1,11 +1,11 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAuth } from "@/lib/api-helpers";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
 export async function POST(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     const { dataUrl } = await req.json();
     if (!dataUrl || typeof dataUrl !== "string") return errorResponse("dataUrl mancante o non valido");

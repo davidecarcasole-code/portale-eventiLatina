@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireAuth } from "@/lib/api-helpers";
 
 export async function GET() {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, handleApiError } = await import("@/lib/api-helpers");
     const podcasts = await prisma.radioPodcast.findMany({
       where: { isPublished: true },
       orderBy: { createdAt: "desc" },
@@ -14,6 +14,8 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     if (user.role !== "super_admin") return errorResponse("Accesso negato", 403);
     const body = await req.json();
@@ -36,6 +38,8 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, errorResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     if (user.role !== "super_admin") return errorResponse("Accesso negato", 403);
     const { searchParams } = new URL(req.url);

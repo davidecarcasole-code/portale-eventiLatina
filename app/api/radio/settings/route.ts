@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, errorResponse, handleApiError, requireSuperAdmin } from "@/lib/api-helpers";
 
 export async function GET() {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, handleApiError } = await import("@/lib/api-helpers");
     const settings = await prisma.radioSetting.findFirst();
     return jsonResponse(settings || {});
   } catch (err) { return handleApiError(err); }
@@ -11,6 +11,8 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, handleApiError, requireSuperAdmin } = await import("@/lib/api-helpers");
     await requireSuperAdmin(req);
     const body = await req.json();
     const data: any = {};

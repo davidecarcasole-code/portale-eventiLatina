@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { jsonResponse, handleApiError, requireAuth } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   try {
+    const { prisma } = await import("@/lib/prisma");
+    const { jsonResponse, handleApiError, requireAuth } = await import("@/lib/api-helpers");
     const { user } = await requireAuth(req);
     const saved = await prisma.savedEvent.findMany({
       where: { userId: user.id },
