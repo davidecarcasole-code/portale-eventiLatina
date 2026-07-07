@@ -1,29 +1,28 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-
-export async function GET(req: NextRequest) {
+export async function GET() {
+  let result: any = {};
   try {
-    const where: any = { isPublished: true };
-    where.date = { gte: new Date(new Date().toDateString()) };
-
-    const [events, total] = await Promise.all([
-      prisma.event.findMany({
-        where,
-        include: { category: true },
-        orderBy: [{ date: "asc" }, { time: "asc" }],
-        take: 20,
-      }),
-      prisma.event.count({ where }),
-    ]);
-
-    return Response.json({ ok: true, total, count: events.length, first: events[0] || null });
+    const mod = await import("@/lib/prisma");
+    result.prismaImported = true;
   } catch (err: any) {
-    return Response.json({
-      name: err.name,
-      message: err.message,
-      code: err.code,
-      meta: JSON.stringify(err.meta),
-      stack: err.stack?.split("\n").slice(0, 5).join("\n"),
-    }, { status: 500 });
+    result.prismaImportError = err.message;
   }
+  try {
+    const { PrismaClient } = await import("@/src/generated/prisma/client");
+    result.clientImported = true;
+  } catch (err: any) {
+    result.clientImportError = err.message;
+  }
+  try {
+    const { PrismaPg } = await import("@prisma/adapter-pg");
+    result.adapterImported = true;
+  } catch (err: any) {
+    result.adapterImportError = err.message;
+  }
+  try {
+    const { Pool } = await import("pg");
+    result.pgImported = true;
+  } catch (err: any) {
+    result.pgImportError = err.message;
+  }
+  return Response.json(result);
 }
