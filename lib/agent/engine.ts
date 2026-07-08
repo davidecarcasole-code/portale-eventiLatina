@@ -1,4 +1,4 @@
-import { getGenModel, CATEGORY_LIST } from './config';
+import { CATEGORY_LIST } from './config';
 
 async function getPrisma() {
   const mod = await import("@/lib/prisma");
@@ -13,127 +13,141 @@ export interface AgentResult {
 
 const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
 
-/* ───── Helper Gemini con retry ───── */
+/* ───── Fetch diretto Gemini con timeout ───── */
 
-async function askGemini(system: string, prompt: string, maxTokens = 200, temp = 0.2): Promise<string> {
-  if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY non trovata nelle env');
-  const model = getGenModel();
-  for (let attempt = 0; attempt < 5; attempt++) {
+async function geminiFetch(system: string, prompt: string, maxTokens = 200, temp = 0.2): Promise<string> {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) throw new Error('GEMINI_API_KEY mancante');
+
+  const model = process.env.AI_MODEL || 'gemini-2.0-flash';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+  const body = {
+    systemInstruction: { parts: [{ text: system }] },
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: { maxOutputTokens: maxTokens, temperature: temp },
+  };
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 20000);
+
     try {
-      const res = await model.generateContent({
-        systemInstruction: system,
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: maxTokens, temperature: temp },
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify(body),
+        signal: ctrl.signal,
       });
-      const text = res.response.text();
-      if (!text) throw new Error('Gemini ha risposto vuoto');
+      clearTimeout(timer);
+
+      if (!res.ok) {
+        const errText = await res.text().catch(() => '');
+        if (res.status === 429 && attempt < 2) {
+          await delay(3000 * (attempt + 1));
+          continue;
+        }
+        throw new Error(`${res.status} ${errText.slice(0, 150)}`);
+      }
+
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) throw new Error('Risposta vuota');
       return text.trim();
     } catch (err: any) {
-      if (err.message?.includes('429') && attempt < 4) {
-        const wait = 3000 * (attempt + 1);
-        await delay(wait);
+      clearTimeout(timer);
+      if (err.name === 'AbortError') throw new Error('Timeout 20s');
+      if (err.message?.includes('429') && attempt < 2) {
+        await delay(3000 * (attempt + 1));
         continue;
       }
       throw err;
     }
   }
-  throw new Error('Max retries exceeded');
+  throw new Error('Max retries');
 }
 
-/* ───── Classificazione intelligente ───── */
-
-const CLASSIFY_SYSTEM = `Sei un classificatore di eventi. Assegna una categoria a ogni evento dalla lista: ${CATEGORY_LIST.map(c => c.slug).join(', ')}.
-Rispondi SOLO con un JSON array di oggetti {"id": numero, "categoria": "slug"}. Se non sei sicuro usa "spettacolo".`;
+/* ───── Classificazione (1 chiamata batch) ───── */
 
 export async function classifyAllEvents(): Promise<AgentResult> {
   const prisma = await getPrisma();
   const events = await prisma.event.findMany({
     where: { categoryId: null, isPublished: true },
     take: 30,
-    select: { id: true, title: true, description: true, categoryId: true },
+    select: { id: true, title: true, description: true },
   });
 
-  if (events.length === 0) return { task: 'classify', processed: 0, details: 'Nessun evento senza categoria' };
+  if (!events.length) return { task: 'classify', processed: 0, details: 'Nessun evento senza categoria' };
 
-  const eventList = events.map(e => `ID:${e.id} | Titolo:${e.title} | Descrizione:${(e.description || 'nessuna').slice(0, 100)}`).join('\n');
+  const cats = CATEGORY_LIST.map(c => c.slug).join(', ');
+  const list = events.map(e => `${e.id}: ${e.title}${e.description ? ` — ${e.description.slice(0, 80)}` : ''}`).join('\n');
 
   try {
-    const text = await askGemini(CLASSIFY_SYSTEM, `Classifica questi eventi:\n${eventList}`, 500, 0.1);
-    const json = text.replace(/```json?/g, '').replace(/```/g, '').trim();
+    const text = await geminiFetch(
+      `Sei un classificatore. Categorie: ${cats}. Rispondi SOLO con un JSON array: [{"id":numero,"cat":"slug"}]. Default: "spettacolo".`,
+      `Classifica:\n${list}`, 500, 0.1
+    );
+
+    const json = text.slice(text.indexOf('['), text.lastIndexOf(']') + 1);
     const parsed = JSON.parse(json);
     let updated = 0;
+
     for (const item of parsed) {
-      if (!item.id || !item.categoria) continue;
-      const cat = await prisma.category.findUnique({ where: { slug: item.categoria } });
-      if (cat) {
-        await prisma.event.update({ where: { id: item.id }, data: { categoryId: cat.id } });
-        updated++;
-      }
+      const cat = await prisma.category.findUnique({ where: { slug: item.cat } });
+      if (cat) { await prisma.event.update({ where: { id: item.id }, data: { categoryId: cat.id } }); updated++; }
     }
-    return { task: 'classify', processed: updated, details: `Classificati ${updated}/${events.length} eventi` };
+
+    return { task: 'classify', processed: updated, details: `Classificati ${updated}/${events.length}` };
   } catch (err: any) {
     return { task: 'classify', processed: 0, details: `Errore: ${err.message?.slice(0, 200)}` };
   }
 }
 
-/* ───── Arricchimento descrizioni (batch) ───── */
-
-const ENRICH_SYSTEM = 'Sei un copywriter per eventi culturali. Genera descrizioni brevi e accattivanti (max 100 parole ciascuna, in italiano). Se c\'è già una descrizione, migliorala mantenendo i fatti.';
+/* ───── Arricchimento descrizioni (batch 5 per chiamata) ───── */
 
 export async function enrichAllDescriptions(): Promise<AgentResult> {
   const prisma = await getPrisma();
   const events = await prisma.event.findMany({
-    where: {
-      isPublished: true,
-      OR: [{ description: null }, { description: '' }],
-    },
+    where: { isPublished: true, OR: [{ description: null }, { description: '' }] },
     take: 10,
     select: { id: true, title: true, date: true, city: true, categoryId: true, description: true },
   });
 
-  if (events.length === 0) return { task: 'enrich', processed: 0, details: 'Nessun evento senza descrizione' };
+  if (!events.length) return { task: 'enrich', processed: 0, details: 'Nessun evento senza descrizione' };
 
   let errors: string[] = [];
   const batchSize = 5;
 
   for (let i = 0; i < events.length; i += batchSize) {
     const batch = events.slice(i, i + batchSize);
+    const catIds: number[] = batch.map(e => e.categoryId).filter((id): id is number => id !== null);
+    const cats = await prisma.category.findMany({ where: { id: { in: catIds } }, select: { id: true, slug: true } });
+    const catMap = new Map(cats.map(c => [c.id, c.slug]));
 
-    for (const e of batch) {
-      if (!e.categoryId) continue;
-      const cat = await prisma.category.findUnique({ where: { id: e.categoryId }, select: { slug: true } });
-      (e as any)._cat = cat?.slug || 'evento';
-    }
-
-    const prompt = batch.map(e =>
-      `ID:${e.id} | Titolo:${e.title} | Data:${e.date?.toISOString().split('T')[0] || ''} | Città:${e.city || 'Latina'} | Categoria:${(e as any)._cat || 'evento'} | Descrizione attuale:${e.description || 'nessuna'}`
+    const list = batch.map(e =>
+      `#${e.id} | ${e.title} | ${e.date?.toISOString().split('T')[0] || ''} | ${e.city || 'Latina'} | ${catMap.get(e.categoryId!) || 'evento'}`
     ).join('\n');
 
     try {
-      const text = await askGemini(ENRICH_SYSTEM,
-        `Per ogni evento, genera una descrizione accattivante (max 100 parole).\nRispondi SOLO con un JSON in questo formato esatto:\n{ "1": "descrizione evento 1", "2": "descrizione evento 2" }\n\nEventi:\n${prompt}`,
-        1000, 0.7);
-
-      const braceStart = text.indexOf('{');
-      const braceEnd = text.lastIndexOf('}');
-      const json = braceStart >= 0 && braceEnd > braceStart
-        ? text.slice(braceStart, braceEnd + 1)
-        : text.replace(/```json?/g, '').replace(/```/g, '').trim();
-      const enriched = JSON.parse(json);
+      const text = await geminiFetch(
+        'Sei un copywriter eventi. Genera max 3 frasi accattivanti in italiano per ogni evento.',
+        `Per ogni evento, rispondi con "#ID:" seguito dalla descrizione su una nuova riga.\n\nEventi:\n${list}`,
+        800, 0.7
+      );
 
       for (const e of batch) {
-        const desc = enriched[String(e.id)];
-        if (desc && typeof desc === 'string' && desc.length > 10) {
+        const match = text.match(new RegExp(`#${e.id}:\\s*(.+?)(?=\\n#\\d|$)`, 's'));
+        const desc = match?.[1]?.trim();
+        if (desc && desc.length > 15) {
           await prisma.event.update({ where: { id: e.id }, data: { description: desc } });
         }
       }
     } catch (err: any) {
-      errors.push(`batch ${i + 1}-${i + batch.length}: ${err.message?.slice(0, 200)}`);
+      errors.push(`batch ${i + 1}: ${err.message?.slice(0, 100)}`);
     }
   }
 
-  const updated = events.length - errors.length * batchSize;
-  return { task: 'enrich', processed: Math.max(0, updated), details: `Arricchite ${Math.max(0, updated)}/${events.length}${errors.length ? `\nErrori: ${errors.join('; ')}` : ''}` };
+  return { task: 'enrich', processed: batchSize * Math.ceil(events.length / batchSize) - errors.length * batchSize, details: `Arricchite ${events.length}${errors.length ? ` (errori: ${errors.join('; ')})` : ''}` };
 }
 
 /* ───── Dedup avanzato ───── */
@@ -145,11 +159,11 @@ function normalize(str: string): string {
 function tokenJaccard(a: string, b: string): number {
   const ta = new Set(normalize(a).split(' ').filter(Boolean));
   const tb = new Set(normalize(b).split(' ').filter(Boolean));
-  if (ta.size === 0 && tb.size === 0) return 0;
+  if (!ta.size && !tb.size) return 0;
   let inter = 0;
   for (const t of ta) if (tb.has(t)) inter++;
   const union = ta.size + tb.size - inter;
-  return union === 0 ? 0 : inter / union;
+  return union ? inter / union : 0;
 }
 
 export async function dedupEvents(): Promise<AgentResult> {
@@ -175,8 +189,7 @@ export async function dedupEvents(): Promise<AgentResult> {
       const sameDate = a.date && b.date && a.date.toISOString().split('T')[0] === b.date.toISOString().split('T')[0];
       const sameCity = a.city && b.city && normalize(a.city) === normalize(b.city);
       if (!sameDate && !sameCity) continue;
-      const score = tokenJaccard(a.title, b.title);
-      if (score >= 0.65) {
+      if (tokenJaccard(a.title, b.title) >= 0.65) {
         group.push(j);
         checked.add(j);
       }
@@ -186,7 +199,6 @@ export async function dedupEvents(): Promise<AgentResult> {
 
   for (const group of groups) {
     const ids = group.map(i => events[i].id);
-    const keep = ids[0];
     const remove = ids.slice(1);
     if (remove.length > 0) {
       await prisma.event.deleteMany({ where: { id: { in: remove } } });
@@ -194,48 +206,40 @@ export async function dedupEvents(): Promise<AgentResult> {
     }
   }
 
-  return { task: 'dedup', processed: removed, details: `Rimossi ${removed} duplicati su ${events.length} eventi (${groups.length} gruppi di similarità)` };
+  return { task: 'dedup', processed: removed, details: `Rimossi ${removed} duplicati su ${events.length} eventi (${groups.length} gruppi)` };
 }
 
-/* ───── Riassunto eventi ───── */
-
-const SUMMARIZE_SYSTEM = 'Sei un organizzatore di eventi. Crea un riassunto accattivante in italiano. Raggruppa per categoria. Scrivi in modo coinvolgente, max 200 parole. Inizia con "🎉 Ecco gli eventi in programma:".';
+/* ───── Riassunto eventi (1 chiamata) ───── */
 
 export async function summarizeEvents(): Promise<AgentResult> {
   const prisma = await getPrisma();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const weekEnd = new Date(today);
-  weekEnd.setDate(weekEnd.getDate() + 14);
+  const end = new Date(today);
+  end.setDate(end.getDate() + 14);
 
   const events = await prisma.event.findMany({
-    where: {
-      isPublished: true,
-      date: { gte: today, lte: weekEnd },
-    },
+    where: { isPublished: true, date: { gte: today, lte: end } },
     orderBy: { date: 'asc' },
     take: 30,
     select: { title: true, date: true, city: true, categoryId: true },
   });
 
-  if (events.length === 0) {
-    return { task: 'summarize', processed: 0, details: 'Nessun evento nei prossimi 14 giorni' };
-  }
+  if (!events.length) return { task: 'summarize', processed: 0, details: 'Nessun evento nei prossimi 14 giorni' };
 
   const catNames = await prisma.category.findMany({ select: { id: true, name: true } });
   const catMap = new Map(catNames.map(c => [c.id, c.name]));
-
-  const eventList = events.map(e => {
-    const d = e.date ? e.date.toISOString().split('T')[0] : '';
-    return `- ${d} | ${e.title} | ${e.city || '?'} | ${catMap.get(e.categoryId || 0) || '?'}`;
-  }).join('\n');
+  const list = events.map(e =>
+    `${e.date?.toISOString().split('T')[0] || ''} | ${e.title} | ${e.city || '?'} | ${catMap.get(e.categoryId!) || '?'}`
+  ).join('\n');
 
   try {
-    const text = await askGemini(SUMMARIZE_SYSTEM,
-      `Elenco eventi (data | titolo | città | categoria):\n${eventList}`,
-      400, 0.7);
-    return { task: 'summarize', processed: events.length, details: text || 'Nessun riassunto generato' };
+    const text = await geminiFetch(
+      'Sei un organizzatore eventi. Crea un riassunto accattivante in italiano, max 200 parole, raggruppa per categoria.',
+      `Riassunto eventi prossimi giorni:\n${list}`, 400, 0.7
+    );
+    return { task: 'summarize', processed: events.length, details: text || 'Nessun riassunto' };
   } catch (err: any) {
-    return { task: 'summarize', processed: 0, details: `Errore: ${err.message?.slice(0, 100)}` };
+    return { task: 'summarize', processed: 0, details: `Errore: ${err.message?.slice(0, 150)}` };
   }
 }
