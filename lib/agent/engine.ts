@@ -18,7 +18,7 @@ const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
 async function askGemini(system: string, prompt: string, maxTokens = 200, temp = 0.2): Promise<string> {
   if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY non trovata nelle env');
   const model = getGenModel();
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
     try {
       const res = await model.generateContent({
         systemInstruction: system,
@@ -29,8 +29,9 @@ async function askGemini(system: string, prompt: string, maxTokens = 200, temp =
       if (!text) throw new Error('Gemini ha risposto vuoto');
       return text.trim();
     } catch (err: any) {
-      if (err.message?.includes('429') && attempt < 2) {
-        await delay(2000 * (attempt + 1));
+      if (err.message?.includes('429') && attempt < 4) {
+        const wait = 3000 * (attempt + 1);
+        await delay(wait);
         continue;
       }
       throw err;
@@ -48,7 +49,7 @@ export async function classifyAllEvents(): Promise<AgentResult> {
   const prisma = await getPrisma();
   const events = await prisma.event.findMany({
     where: { categoryId: null, isPublished: true },
-    take: 50,
+    take: 30,
     select: { id: true, title: true, description: true, categoryId: true },
   });
 
@@ -96,14 +97,14 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
         { description: '' },
       ],
     },
-    take: 30,
+    take: 10,
     select: { id: true, title: true, date: true, city: true, categoryId: true, description: true },
   });
 
   let updated = 0;
   let errors: string[] = [];
   for (const e of events) {
-    await delay(1200);
+    await delay(3000);
     try {
       const catSlug = e.categoryId ? (await prisma.category.findUnique({ where: { id: e.categoryId }, select: { slug: true } }))?.slug : 'evento';
       const dateStr = e.date ? e.date.toISOString().split('T')[0] : '';
