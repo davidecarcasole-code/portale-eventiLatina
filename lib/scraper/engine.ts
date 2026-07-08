@@ -70,9 +70,9 @@ export async function ensureScrapedSourcesTable() {
         selectors TEXT,
         city TEXT,
         province TEXT,
-        category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
+        category_id INTEGER,
         last_scraped_at TIMESTAMP WITH TIME ZONE,
-        config_id INTEGER REFERENCES search_config(id) ON DELETE CASCADE
+        config_id INTEGER
       )
     `);
     console.log('[Scraper] Ensured scraped_sources table exists');
