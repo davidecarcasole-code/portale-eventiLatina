@@ -59,7 +59,9 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="page-container space-y-6 animate-fade-in">
+    <div className="page-container space-y-6 animate-fade-in relative">
+      <div className="blur-sphere blur-sphere-1" />
+      <div className="blur-sphere blur-sphere-2" />
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 p-6 sm:p-8 text-white animate-fire-pulse">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
