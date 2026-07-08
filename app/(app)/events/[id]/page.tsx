@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, MessageCircle, MessageSquare, Link, Sparkles } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, MessageCircle, MessageSquare, Send, Camera, Link, Sparkles } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 export default function EventDetailPage() {
@@ -42,11 +42,13 @@ export default function EventDetailPage() {
     const text = `${event?.title} - EventiNLatina`;
     const shareUrls: Record<string, string> = {
       facebook: `https://www.facebook.com/sharer.php?u=${encodeURIComponent(url)}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      messenger: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&redirect_uri=${encodeURIComponent(url)}&app_id=`,
       whatsapp: `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`,
+      instagram: `https://www.instagram.com/`,
     };
     if (platform === "copy") { navigator.clipboard.writeText(url); return; }
-    window.open(shareUrls[platform], "_blank");
+    if (platform === "instagram") { navigator.clipboard.writeText(url); alert("Link copiato! Incollalo su Instagram."); return; }
+    window.open(shareUrls[platform], "_blank", "noopener,noreferrer,width=600,height=600");
   }
 
   if (loading) return (
@@ -117,8 +119,9 @@ export default function EventDetailPage() {
               {showShare && (
                 <div className="absolute right-0 top-full mt-2 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl p-1.5 shadow-xl flex gap-1 z-10 animate-scale-in">
                   <button onClick={() => shareUrl("facebook")} className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"><MessageSquare size={16} className="text-blue-600" /></button>
-                  <button onClick={() => shareUrl("twitter")} className="p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><MessageCircle size={16} className="text-sky-500" /></button>
-                  <button onClick={() => shareUrl("whatsapp")} className="p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"><Link size={16} className="text-green-600" /></button>
+                  <button onClick={() => shareUrl("messenger")} className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"><Send size={16} className="text-blue-500" /></button>
+                  <button onClick={() => shareUrl("whatsapp")} className="p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"><MessageCircle size={16} className="text-green-600" /></button>
+                  <button onClick={() => shareUrl("instagram")} className="p-2 rounded-lg hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-colors"><Camera size={16} className="text-pink-600" /></button>
                   <div className="w-px bg-[var(--card-border)] mx-0.5" />
                   <button onClick={() => shareUrl("copy")} className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] text-xs font-medium px-2 transition-colors">Copia</button>
                 </div>
