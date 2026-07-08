@@ -56,6 +56,7 @@ export default function AdminPage() {
 function EventsTab({ token }: { token: string }) {
   const [events, setEvents] = useState<any[]>([]);
   const [showCreate, setShowCreate] = useState(false);
+  const [cleaning, setCleaning] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" });
   const [categories, setCategories] = useState<any[]>([]);
   const [error, setError] = useState("");
@@ -94,10 +95,16 @@ function EventsTab({ token }: { token: string }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-sm text-[var(--text-muted)]">{events.length} eventi totali</p>
-        <button onClick={() => { setShowCreate(true); setError(""); setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" }); }}
-          className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
-          <Plus size={14} /> Nuovo Evento
-        </button>
+        <div className="flex gap-2">
+          <button onClick={async () => { if (!confirm("Eliminare tutti gli eventi con data 2026-01-01 (import errati)?")) return; setCleaning(true); try { const r = await fetch("/api/scraper/cleanup", { method: "POST", headers: { Authorization: `Bearer ${token}` } }); const d = await r.json(); alert(`Eliminati ${d.deleted} eventi`); window.location.reload() } catch {} finally { setCleaning(false) } }}
+            className="btn-ghost px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 text-red-500 hover:bg-red-50" disabled={cleaning}>
+            <Trash2 size={14} /> {cleaning ? "Pulendo..." : "Pulisci date errate"}
+          </button>
+          <button onClick={() => { setShowCreate(true); setError(""); setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" }); }}
+            className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+            <Plus size={14} /> Nuovo Evento
+          </button>
+        </div>
       </div>
 
       {showCreate && (
