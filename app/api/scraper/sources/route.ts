@@ -6,6 +6,9 @@ export async function GET(req: NextRequest) {
     await requireAdmin(req);
     const { prisma } = await import("@/lib/prisma");
 
+    const { ensureDefaultSources } = await import("@/lib/scraper/engine");
+    await ensureDefaultSources();
+
     const [scrapedSources, totalEvents, autoEvents, bySource] = await Promise.all([
       prisma.scrapedSource.findMany({
         orderBy: { id: 'asc' },
@@ -42,6 +45,13 @@ export async function PUT(req: NextRequest) {
     const { prisma } = await import("@/lib/prisma");
     const body = await req.json();
     const { id, ...data } = body;
+
+    if (id === -1) {
+      const created = await prisma.scrapedSource.create({
+        data: { name: data.name, url: data.url, type: data.type || "" },
+      });
+      return jsonResponse(created);
+    }
 
     if (!id) return jsonResponse({ error: "id required" }, 400);
 

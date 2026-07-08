@@ -129,6 +129,9 @@ function SourcesTab({ token }: { token: string }) {
   const [loading, setLoading] = useState(false);
   const [running, setRunning] = useState<string | null>(null);
   const [runResults, setRunResults] = useState<string>("");
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState({ name: "", url: "", type: "" });
+  const [error, setError] = useState("");
 
   const loadSources = useCallback(async () => {
     try {
@@ -169,13 +172,68 @@ function SourcesTab({ token }: { token: string }) {
     setRunning(null);
   }
 
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const r = await fetch("/api/scraper/sources", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ id: -1, ...form }),
+    });
+    const data = await r.json();
+    if (!r.ok) { setError(data.error || "Errore"); return; }
+    setShowCreate(false);
+    setForm({ name: "", url: "", type: "" });
+    loadSources();
+  }
+
+  async function handleDelete(src: any) {
+    if (!confirm(`Eliminare la fonte "${src.name}"?`)) return;
+    const r = await fetch("/api/scraper/sources", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ id: src.id }),
+    });
+    if (r.ok) loadSources();
+  }
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-sm text-[var(--text-muted)]">{sources.length} fonti configurate</p>
+        <button onClick={() => { setShowCreate(true); setError(""); setForm({ name: "", url: "", type: "" }); }}
+          className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+          <Plus size={14} /> Nuova Fonte
+        </button>
       </div>
 
+      {showCreate && (
+        <form onSubmit={handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
+          <div className="flex items-center justify-between">
+            <h4 className="font-semibold text-sm">Aggiungi Fonte</h4>
+            <button type="button" onClick={() => setShowCreate(false)} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Nome (es. CentroItaliaEvents)" className="input" required />
+            <input value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} placeholder="Tipo scraper (es. centroitalia)" className="input" required />
+          </div>
+          <input value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} placeholder="URL sorgente (es. https://...)" className="input" required />
+          {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
+          <p className="text-xs text-[var(--text-muted)]">Il tipo deve corrispondere a uno scraper registrato (centroitalia, lazionascosto, latinatoday) oppure lascialo vuoto per fonti future.</p>
+          <div className="flex gap-2">
+            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">Aggiungi</button>
+            <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
+          </div>
+        </form>
+      )}
+
       <div className="space-y-2">
+        {sources.length === 0 && !showCreate && (
+          <div className="glass-card rounded-xl p-8 text-center">
+            <Radio size={32} className="mx-auto text-[var(--text-muted)] mb-2" />
+            <p className="text-sm text-[var(--text-muted)]">Nessuna fonte configurata. Aggiungine una o esegui lo scraper per crearle automaticamente.</p>
+          </div>
+        )}
         {sources.map((src: any) => (
           <div key={src.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -186,7 +244,7 @@ function SourcesTab({ token }: { token: string }) {
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium">{src.name}</p>
                   <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${src.isActive ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800"}`}>
-                    {src.type}
+                    {src.type || "—"}
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-[var(--text-muted)] mt-0.5">
@@ -197,13 +255,16 @@ function SourcesTab({ token }: { token: string }) {
               </div>
             </div>
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <button onClick={() => runSingleSource(src.type, src.name)} disabled={running !== null}
-                className="btn-ghost p-2 rounded-lg text-xs disabled:opacity-30" title="Esegui questa fonte">
+              <button onClick={() => runSingleSource(src.type, src.name)} disabled={running !== null || !src.type}
+                className="btn-ghost p-2 rounded-lg text-xs disabled:opacity-30" title={src.type ? "Esegui questa fonte" : "Nessuno scraper associato"}>
                 <Play size={14} className={running === src.name ? "animate-pulse text-[var(--accent)]" : ""} />
               </button>
               <button onClick={() => toggleSource(src)} disabled={loading}
                 className={`btn-ghost p-2 rounded-lg ${src.isActive ? "text-green-600" : "text-gray-400"}`} title={src.isActive ? "Disattiva" : "Attiva"}>
                 {src.isActive ? <Power size={14} /> : <PowerOff size={14} />}
+              </button>
+              <button onClick={() => handleDelete(src)} className="btn-ghost p-1.5 rounded-lg hover:text-red-500" title="Elimina">
+                <Trash2 size={14} />
               </button>
             </div>
           </div>

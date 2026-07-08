@@ -57,7 +57,7 @@ export interface ScraperResult {
   inserted: number;
 }
 
-async function ensureDefaultSources() {
+export async function ensureDefaultSources() {
   const prisma = await getPrisma();
   for (const [type, info] of Object.entries(SCRAPER_REGISTRY)) {
     const existing = await prisma.scrapedSource.findFirst({ where: { type } });
