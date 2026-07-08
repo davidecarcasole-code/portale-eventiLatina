@@ -42,6 +42,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex relative overflow-hidden">
       <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-orange-600 via-amber-700 to-yellow-800">
         <div className="absolute inset-0" style={{ background: "repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 80px)" }} />
+        <div className="blur-sphere" style={{ width: 500, height: 500, background: "radial-gradient(circle, rgba(255,255,255,0.1), transparent)", filter: "blur(100px)", top: "-150px", right: "-150px" }} />
+        <div className="blur-sphere" style={{ width: 350, height: 350, background: "radial-gradient(circle, rgba(251,191,36,0.08), transparent)", filter: "blur(80px)", bottom: "-80px", left: "-80px" }} />
         <div className="absolute top-8 right-12 w-3 h-3 bg-yellow-300 rounded-full animate-float-up opacity-60" />
         <div className="absolute top-20 left-16 w-2 h-2 bg-white/40 rounded animate-float-up" style={{ animationDelay: "0.7s" }} />
         <div className="absolute bottom-32 right-24 w-2.5 h-2.5 bg-orange-200 rounded animate-float-up" style={{ animationDelay: "1.2s" }} />
@@ -72,8 +74,10 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-        <div className="w-full max-w-sm animate-fade-in">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-50 dark:via-amber-50 dark:to-yellow-50 relative">
+        <div className="blur-sphere" style={{ width: 300, height: 300, background: "radial-gradient(circle, rgba(249,115,22,0.08), transparent)", filter: "blur(70px)", top: "10%", right: "-50px" }} />
+        <div className="blur-sphere" style={{ width: 250, height: 250, background: "radial-gradient(circle, rgba(251,191,36,0.06), transparent)", filter: "blur(60px)", bottom: "5%", left: "-30px" }} />
+        <div className="w-full max-w-sm animate-fade-in relative z-10">
           <div className="text-center mb-8 lg:hidden">
             <img src="/logo.png" alt="Logo" className="w-16 h-16 mx-auto mb-3 rounded-2xl ring-4 ring-[var(--accent)]/20 shadow-lg" />
             <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-400 bg-clip-text text-transparent">EventiNLatina</h1>
