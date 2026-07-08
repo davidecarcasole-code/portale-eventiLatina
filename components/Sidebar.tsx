@@ -31,7 +31,7 @@ export function Sidebar() {
           <SidebarContent links={links} pathname={pathname} user={user} logout={logout} onClose={() => setOpen(false)} showClose />
         </aside>
       )}
-      <aside className="max-lg:hidden lg:sticky lg:flex top-0 h-screen w-[var(--sidebar-width)] bg-[var(--card-bg)]/95 backdrop-blur-xl border-r border-[var(--card-border)]">
+      <aside className="!max-lg:hidden lg:sticky lg:flex top-0 h-screen w-[var(--sidebar-width)] bg-[var(--card-bg)]/95 backdrop-blur-xl border-r border-[var(--card-border)]">
         <div className="flex flex-col h-full w-full">
           <SidebarContent links={links} pathname={pathname} user={user} logout={logout} onClose={() => setOpen(false)} />
         </div>
