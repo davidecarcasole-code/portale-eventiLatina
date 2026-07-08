@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useAuthStore } from "@/lib/store";
-import { Bell } from "lucide-react";
+import { Bell, Sparkles } from "lucide-react";
 
 export function Header() {
   const user = useAuthStore((s) => s.user);
@@ -11,13 +11,17 @@ export function Header() {
     <header className="sticky top-0 z-30 glass border-b border-[var(--card-border)]">
       <div className="flex items-center justify-between px-4 md:px-6 py-2.5" style={{ minHeight: "var(--header-height)" }}>
         <Link href="/dashboard" className="md:hidden flex items-center gap-2">
-          <img src="/logo.png" alt="Logo" className="w-7 h-7 rounded-lg ring-2 ring-[var(--accent)]/20" />
-          <span className="text-sm font-bold text-gradient">EventiNLatina</span>
+          <div className="relative">
+            <img src="/logo.png" alt="Logo" className="w-7 h-7 rounded-lg ring-2 ring-[var(--accent)]/20" />
+            <Sparkles size={8} className="absolute -top-0.5 -right-0.5 text-yellow-400 animate-pulse" />
+          </div>
+          <span className="text-sm font-bold bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-400 bg-clip-text text-transparent">EventiNLatina</span>
         </Link>
         <div className="md:hidden" />
         <div className="flex items-center gap-2 ml-auto">
-          <button className="btn-ghost p-2 rounded-xl">
+          <button className="btn-ghost p-2 rounded-xl relative">
             <Bell size={18} />
+            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-pulse" />
           </button>
           {user && (
             <Link href="/profile" className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-[var(--accent-subtle)] transition-all">

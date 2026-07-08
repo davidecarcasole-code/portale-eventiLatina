@@ -15,7 +15,6 @@ export default function EventDetailPage() {
   const [editing, setEditing] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetch(`/api/events/${id}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
@@ -69,21 +68,36 @@ export default function EventDetailPage() {
 
   return (
     <div className="page-container max-w-4xl mx-auto animate-fade-in">
-      <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors mb-4">
-        <ArrowLeft size={16} /> Indietro
+      <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors mb-4 group">
+        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Indietro
       </button>
 
       {event.image_url && (
         <div className="relative rounded-2xl overflow-hidden mb-6 h-56 sm:h-72 lg:h-80">
           <img src={event.image_url} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute top-4 left-4">
+            {event.category_color && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-white/90 backdrop-blur-sm text-gray-800 shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: event.category_color }} />
+                {event.category_name}
+              </span>
+            )}
+          </div>
+          {event.is_new && (
+            <div className="absolute top-4 right-4">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-500 text-white shadow-sm">
+                <Sparkles size={12} /> Nuovo
+              </span>
+            </div>
+          )}
         </div>
       )}
 
       <div className="glass-card rounded-2xl p-6 sm:p-8 space-y-5">
         <div className="flex items-start justify-between gap-4">
-          <div className="space-y-3">
-            {event.category_color && (
+          <div className="space-y-3 flex-1">
+            {!event.image_url && event.category_color && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: event.category_color + "15", color: event.category_color }}>
                 <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: event.category_color }} />
                 {event.category_name}
@@ -101,10 +115,10 @@ export default function EventDetailPage() {
                 <Share2 size={18} />
               </button>
               {showShare && (
-                <div className="absolute right-0 top-full mt-2 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl p-1.5 shadow-xl flex gap-1 z-10">
-                  <button onClick={() => shareUrl("facebook")} className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 share-btn-fb transition-colors"><MessageSquare size={16} /></button>
-                  <button onClick={() => shareUrl("twitter")} className="p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 share-btn-tw transition-colors"><MessageCircle size={16} /></button>
-                  <button onClick={() => shareUrl("whatsapp")} className="p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 share-btn-wa transition-colors"><Link size={16} /></button>
+                <div className="absolute right-0 top-full mt-2 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl p-1.5 shadow-xl flex gap-1 z-10 animate-scale-in">
+                  <button onClick={() => shareUrl("facebook")} className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"><MessageSquare size={16} className="text-blue-600" /></button>
+                  <button onClick={() => shareUrl("twitter")} className="p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"><MessageCircle size={16} className="text-sky-500" /></button>
+                  <button onClick={() => shareUrl("whatsapp")} className="p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"><Link size={16} className="text-green-600" /></button>
                   <div className="w-px bg-[var(--card-border)] mx-0.5" />
                   <button onClick={() => shareUrl("copy")} className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] text-xs font-medium px-2 transition-colors">Copia</button>
                 </div>
@@ -113,28 +127,26 @@ export default function EventDetailPage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 sm:gap-6 text-sm">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--accent-subtle)]">
+        <div className="flex flex-wrap gap-3 text-sm">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-[var(--accent-subtle)] to-transparent">
             <Calendar size={15} className="text-[var(--accent)]" />
             <span className="text-[var(--text-secondary)]">{new Date(event.date).toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}{event.endDate ? ` - ${new Date(event.endDate).toLocaleDateString("it-IT")}` : ""}</span>
           </div>
           {event.time && (
-            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--accent-subtle)]">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-[var(--accent-subtle)] to-transparent">
               <Clock size={15} className="text-[var(--accent)]" />
               <span className="text-[var(--text-secondary)]">{event.time}</span>
             </div>
           )}
           {event.city && (
-            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--accent-subtle)]">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-[var(--accent-subtle)] to-transparent">
               <MapPin size={15} className="text-[var(--accent)]" />
               <span className="text-[var(--text-secondary)]">{event.city} {event.province && `(${event.province})`}</span>
             </div>
           )}
         </div>
 
-        {event.location && (
-          <div className="divider" />
-        )}
+        {event.location && <div className="divider" />}
         {event.location && (
           <p className="text-sm"><span className="font-semibold">📍 Luogo:</span> <span className="text-[var(--text-secondary)]">{event.location}{event.address ? ` — ${event.address}` : ""}</span></p>
         )}
@@ -153,14 +165,14 @@ export default function EventDetailPage() {
         {(event.source_url || event.source_name) && (
           <>
             <div className="divider" />
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--accent-subtle)]">
-              <div className="w-9 h-9 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center flex-shrink-0">
-                <Globe size={16} className="text-[var(--accent)]" />
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-900/10 dark:to-transparent border border-amber-200/50 dark:border-amber-800/30">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <Globe size={16} className="text-white" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-medium text-[var(--text-secondary)]">Fonte</p>
                 {event.source_url ? (
-                  <a href={event.source_url} target="_blank" rel="noopener noreferrer" className="text-sm text-[var(--accent)] hover:underline underline-offset-2 break-all block leading-tight">
+                  <a href={event.source_url} target="_blank" rel="noopener noreferrer" className="text-sm text-[var(--accent)] hover:underline underline-offset-2 break-all block leading-tight font-medium">
                     {event.source_name || event.source_url}
                   </a>
                 ) : (
@@ -201,15 +213,17 @@ export default function EventDetailPage() {
 function EditForm({ event, onClose, onSaved, token }: { event: any; onClose: () => void; onSaved: (e: any) => void; token: string }) {
   const [form, setForm] = useState({ title: event.title, description: event.description || "", category_id: event.category_id || "", date: event.date?.split("T")[0] || "", time: event.time || "", location: event.location || "", city: event.city || "", province: event.province || "", image_url: event.image_url || "" });
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
+    setError(""); setSaving(true);
     const res = await fetch(`/api/events/${event.id}`, {
       method: "PUT", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify(form),
     });
     const data = await res.json();
+    setSaving(false);
     if (!res.ok) { setError(data.error || "Errore"); return; }
     onSaved(data);
   }
@@ -217,7 +231,7 @@ function EditForm({ event, onClose, onSaved, token }: { event: any; onClose: () 
   return (
     <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-6 sm:p-8 space-y-4 mt-4 animate-slide-up">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-lg">Modifica Evento</h3>
+        <h3 className="font-semibold text-lg flex items-center gap-2"><Edit3 size={18} /> Modifica Evento</h3>
         <button type="button" onClick={onClose} className="p-2 rounded-xl hover:bg-[var(--bg-secondary)] transition-colors"><X size={18} /></button>
       </div>
       <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Titolo" className="input" required />
@@ -234,7 +248,7 @@ function EditForm({ event, onClose, onSaved, token }: { event: any; onClose: () 
       <input value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="URL immagine" className="input" />
       {error && <p className="text-red-500 text-sm bg-red-50 dark:bg-red-900/20 rounded-lg p-2.5">{error}</p>}
       <div className="flex gap-2 pt-2">
-        <button type="submit" className="btn-primary flex-1 py-2.5 rounded-xl text-sm flex items-center justify-center gap-1.5"><Check size={16} /> Salva</button>
+        <button type="submit" disabled={saving} className="btn-primary flex-1 py-2.5 rounded-xl text-sm flex items-center justify-center gap-1.5"><Check size={16} /> {saving ? "Salvataggio..." : "Salva"}</button>
         <button type="button" onClick={onClose} className="px-5 py-2.5 rounded-xl border border-[var(--card-border)] text-sm font-medium hover:bg-[var(--bg-secondary)] transition-all">Annulla</button>
       </div>
     </form>

@@ -297,8 +297,35 @@ body {
   margin: 0 auto;
 }
 
-@media (max-width: 768px) {
-  :root {
-    --sidebar-width: 0px;
-  }
+@keyframes confettiFall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
+
+@keyframes pulseNeon {
+  0%, 100% { box-shadow: 0 0 5px var(--accent), 0 0 10px var(--accent-glow); }
+  50% { box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent-glow), 0 0 30px var(--accent); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-3deg); }
+  75% { transform: rotate(3deg); }
+}
+
+@keyframes firePulse {
+  0%, 100% { background-position: 0% 50%; filter: brightness(1); }
+  50% { background-position: 100% 50%; filter: brightness(1.1); }
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  50% { transform: translateY(-20px) scale(1.05); opacity: 0.8; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.animate-confetti { animation: confettiFall 3s ease-in forwards; }
+.animate-pulse-neon { animation: pulseNeon 2s ease-in-out infinite; }
+.animate-wiggle { animation: wiggle 1s ease-in-out infinite; }
+.animate-fire-pulse { background-size: 200% 200%; animation: firePulse 2s ease infinite; }
+.animate-float-up { animation: floatUp 3s ease-in-out infinite; }

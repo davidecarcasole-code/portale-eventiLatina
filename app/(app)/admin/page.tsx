@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const TABS = [
@@ -24,7 +24,7 @@ export default function AdminPage() {
   return (
     <div className="page-container space-y-6 animate-fade-in">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg animate-pulse-neon">
           <Shield size={20} className="text-white" />
         </div>
         <div>
@@ -36,7 +36,7 @@ export default function AdminPage() {
       <div className="flex gap-1 bg-[var(--bg-secondary)] rounded-xl p-1 overflow-x-auto">
         {TABS.filter((t) => !t.adminOnly || isSuperAdmin).map((t) => (
           <button key={t.key} onClick={() => setTab(t.key)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${tab === t.key ? "bg-[var(--card-bg)] shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${tab === t.key ? "bg-white dark:bg-gray-800 shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
             <t.icon size={14} /> {t.label}
           </button>
         ))}
@@ -44,8 +44,8 @@ export default function AdminPage() {
 
       {tab === "events" && <EventsTab token={token!} />}
       {tab === "scraper" && <ScraperTab token={token!} />}
-      {tab === "searchconfig" && <SearchConfigTab token={token!} />}
-      {tab === "agent" && <AgentTab token={token!} />}
+      {tab === "searchconfig" && <SearchConfigTab />}
+      {tab === "agent" && <AgentTab />}
       {tab === "users" && isSuperAdmin && <UsersTab token={token!} />}
     </div>
   );
@@ -68,10 +68,12 @@ function EventsTab({ token }: { token: string }) {
           <div key={e.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium truncate">{e.title}</p>
-              <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                <span className="badge text-[10px]">{e.category_name}</span>{" "}
-                <span className="ml-1">{new Date(e.date).toLocaleDateString("it-IT")}</span>
-                {e.city && <span className="ml-1">· {e.city}</span>}
+              <p className="text-xs text-[var(--text-muted)] mt-0.5 flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium" style={{ backgroundColor: (e.category_color || "#f97316") + "15", color: e.category_color || "var(--accent)" }}>
+                  {e.category_name}
+                </span>
+                <span>{new Date(e.date).toLocaleDateString("it-IT")}</span>
+                {e.city && <span>· {e.city}</span>}
               </p>
             </div>
             <div className="flex gap-1 flex-shrink-0">
@@ -102,7 +104,7 @@ function ScraperTab({ token }: { token: string }) {
   return (
     <div className="glass-card rounded-xl p-5 space-y-4">
       <div>
-        <h3 className="font-semibold">Motore di Ricerca Eventi</h3>
+        <h3 className="font-semibold flex items-center gap-2"><Sparkles size={16} className="text-[var(--accent)]" /> Motore di Ricerca Eventi</h3>
         <p className="text-sm text-[var(--text-muted)] mt-1">Esegue lo scraping da CentroItaliaEvents, LazioNascosto e LatinaToday</p>
       </div>
       <button onClick={runScraper} disabled={loading}
@@ -112,17 +114,15 @@ function ScraperTab({ token }: { token: string }) {
       </button>
       {result && (
         <div className="relative">
-          <div className="absolute top-0 right-0">
-            <button onClick={() => setResult("")} className="text-[var(--text-muted)] text-xs hover:text-[var(--text-primary)]">Chiudi</button>
-          </div>
-          <pre className="text-xs bg-gray-900 dark:bg-black text-green-400 p-4 rounded-xl overflow-x-auto mt-2">{result}</pre>
+          <button onClick={() => setResult("")} className="absolute top-2 right-2 text-[var(--text-muted)] text-xs hover:text-[var(--text-primary)] bg-gray-900/50 px-2 py-1 rounded-lg z-10">Chiudi</button>
+          <pre className="text-xs bg-gray-900 dark:bg-black text-green-400 p-4 rounded-xl overflow-x-auto mt-2 max-h-96 overflow-y-auto">{result}</pre>
         </div>
       )}
     </div>
   );
 }
 
-function SearchConfigTab({ token }: { token: string }) {
+function SearchConfigTab() {
   return (
     <div className="glass-card rounded-xl p-5">
       <h3 className="font-semibold">Criteri di Ricerca</h3>
@@ -131,7 +131,7 @@ function SearchConfigTab({ token }: { token: string }) {
   );
 }
 
-function AgentTab({ token }: { token: string }) {
+function AgentTab() {
   return (
     <div className="glass-card rounded-xl p-5">
       <h3 className="font-semibold">Agent AI</h3>
@@ -147,14 +147,14 @@ function UsersTab({ token }: { token: string }) {
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "user" });
   const [error, setError] = useState("");
 
-  async function loadUsers() {
+  const loadUsers = useCallback(async () => {
     try {
       const r = await fetch("/api/users", { headers: { Authorization: `Bearer ${token}` } });
       setUsers(await r.json());
     } catch {}
-  }
+  }, [token]);
 
-  useEffect(() => { loadUsers(); }, [token]);
+  useEffect(() => { loadUsers(); }, [loadUsers]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/store";
-import { LogIn, UserPlus, Mail, Lock, User, Globe } from "lucide-react";
+import { LogIn, UserPlus, Mail, Lock, User, Globe, Sparkles } from "lucide-react";
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -42,6 +42,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex relative overflow-hidden">
       <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-orange-600 via-amber-700 to-yellow-800">
         <div className="absolute inset-0" style={{ background: "repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 80px)" }} />
+        <div className="absolute top-8 right-12 w-3 h-3 bg-yellow-300 rounded-full animate-float-up opacity-60" />
+        <div className="absolute top-20 left-16 w-2 h-2 bg-white/40 rounded animate-float-up" style={{ animationDelay: "0.7s" }} />
+        <div className="absolute bottom-32 right-24 w-2.5 h-2.5 bg-orange-200 rounded animate-float-up" style={{ animationDelay: "1.2s" }} />
+        <div className="absolute bottom-40 left-20 w-2 h-2 bg-amber-200 rotate-45 animate-float-up" style={{ animationDelay: "0.4s" }} />
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="text-center max-w-sm">
             <img src="/banner.png" alt="" className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl ring-1 ring-white/10" />
@@ -72,7 +76,7 @@ export default function LoginPage() {
         <div className="w-full max-w-sm animate-fade-in">
           <div className="text-center mb-8 lg:hidden">
             <img src="/logo.png" alt="Logo" className="w-16 h-16 mx-auto mb-3 rounded-2xl ring-4 ring-[var(--accent)]/20 shadow-lg" />
-            <h1 className="text-2xl font-bold text-gradient">EventiNLatina</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-400 bg-clip-text text-transparent">EventiNLatina</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-1">Eventi, spettacoli e cultura in provincia di Latina</p>
           </div>
 
