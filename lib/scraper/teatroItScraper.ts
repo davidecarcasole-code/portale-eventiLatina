@@ -68,27 +68,68 @@ function mapCategory(genre: string): string {
   return "cat_entertainment";
 }
 
+/** Fetch with browser-like headers and return { html, ok } */
+async function fetchPage(url: string): Promise<{ html: string; ok: boolean }> {
+  const headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "it-IT,it;q=0.9,en;q=0.5",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache",
+    "Referer": "https://www.teatro.it/",
+  };
+  try {
+    const res = await fetch(url, { headers, signal: AbortSignal.timeout(15000) });
+    const html = await res.text();
+    return { html, ok: res.ok && html.length > 10000 };
+  } catch {
+    return { html: "", ok: false };
+  }
+}
+
+/** Parse TheaterEvent items from HTML (JSON-LD or HTML fallback) */
+function parseEventsFromHtml(html: string): any[] {
+  // Try JSON-LD extraction first
+  let items = extractJsonLd(html);
+  if (items.length > 0) return items;
+
+  // Fallback: look for inline JSON data in script tags with event data
+  const scriptRegex = /<script[^>]*>[\s\S]*?({[\s\S]*?"@type"\s*:\s*"TheaterEvent"[\s\S]*?})[\s\S]*?<\/script>/gi;
+  let m;
+  while ((m = scriptRegex.exec(html)) !== null) {
+    try {
+      const parsed = JSON.parse(m[1]);
+      if (parsed["@type"] === "TheaterEvent") items.push(parsed);
+    } catch { /* skip */ }
+  }
+  if (items.length > 0) return items;
+
+  // Last resort: parse from rendered card structure
+  return parseHtmlEvents(html);
+}
+
 export async function scrapeTeatroIt(): Promise<ScrapedEvent[]> {
   const events: ScrapedEvent[] = [];
   const seen = new Set<string>();
 
   for (let page = 1; page <= 5; page++) {
-    const url = page === 1 ? `${BASE}?format=json` : `${BASE}?format=json&page=${page}`;
-    const res = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
-    });
-    if (!res.ok) break;
+    const urlsToTry = page === 1
+      ? [`${BASE}?format=json`, `${BASE}`, `https://webcache.googleusercontent.com/search?q=cache:${encodeURIComponent(BASE)}&strip=1&vwsrc=0`]
+      : [`${BASE}?format=json&page=${page}`, `${BASE}?page=${page}`, `https://webcache.googleusercontent.com/search?q=cache:${encodeURIComponent(`${BASE}?page=${page}`)}&strip=1&vwsrc=0`];
+    let html = "", ok = false, usedUrl = "";
+    for (const tryUrl of urlsToTry) {
+      const result = await fetchPage(tryUrl);
+      if (result.ok) { html = result.html; ok = true; usedUrl = tryUrl; break; }
+    }
+    if (!ok) {
+      console.log(`[Teatro.it] All 3 fetch strategies failed for page ${page}`);
+      break;
+    }
 
-    const html = await res.text();
-
-    // Try JSON-LD extraction first
-    const items = extractJsonLd(html);
-
-    // Fallback: parse from rendered HTML
+    const items = parseEventsFromHtml(html);
     if (items.length === 0) {
-      // Fallback approach: use schema.org JSON that might be rendered differently
-      // Or parse from the visible card structure
-      continue;
+      console.log(`[Teatro.it] No events found on page ${page}`);
+      break;
     }
 
     for (const item of items) {
@@ -106,9 +147,8 @@ export async function scrapeTeatroIt(): Promise<ScrapedEvent[]> {
 
       const description = item.description?.trim() || "";
       const image = item.image?.replace(/^https:\/\/www\.teatro\.it\/https:/, "https:") || "";
-      const sourceUrl = item.url || url;
+      const sourceUrl = item.url || usedUrl;
 
-      // Use performer name OR category from schema; map to our categories
       const genre = item.performer?.["@type"] === "PerformingGroup"
         ? item.performer.name || ""
         : "";
@@ -129,9 +169,9 @@ export async function scrapeTeatroIt(): Promise<ScrapedEvent[]> {
       });
     }
 
-    // If fewer items than expected, stop pagination
     if (items.length < 20) break;
   }
 
+  console.log(`[Teatro.it] ${events.length} total events scraped`);
   return events;
 }
