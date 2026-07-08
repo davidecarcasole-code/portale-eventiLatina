@@ -22,16 +22,16 @@ export function Sidebar() {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="fixed top-3 left-3 z-50 p-2.5 rounded-xl glass md:hidden">
+      <button onClick={() => setOpen(true)} className="fixed top-3 left-3 z-50 p-2.5 rounded-xl glass lg:hidden">
         <Menu size={20} />
       </button>
-      {open && <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden" onClick={() => setOpen(false)} />}
+      {open && <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden" onClick={() => setOpen(false)} />}
       {open && (
-        <aside className="fixed md:hidden inset-y-0 left-0 z-50 w-[var(--sidebar-width)] bg-[var(--card-bg)]/95 backdrop-blur-xl border-r border-[var(--card-border)] flex flex-col animate-fade-in">
+        <aside className="fixed lg:hidden inset-y-0 left-0 z-50 w-[var(--sidebar-width)] bg-[var(--card-bg)]/95 backdrop-blur-xl border-r border-[var(--card-border)] flex flex-col animate-fade-in">
           <SidebarContent links={links} pathname={pathname} user={user} logout={logout} onClose={() => setOpen(false)} showClose />
         </aside>
       )}
-      <aside className="max-md:hidden md:sticky md:flex top-0 h-screen w-[var(--sidebar-width)] bg-[var(--card-bg)]/95 backdrop-blur-xl border-r border-[var(--card-border)]">
+      <aside className="max-lg:hidden lg:sticky lg:flex top-0 h-screen w-[var(--sidebar-width)] bg-[var(--card-bg)]/95 backdrop-blur-xl border-r border-[var(--card-border)]">
         <div className="flex flex-col h-full w-full">
           <SidebarContent links={links} pathname={pathname} user={user} logout={logout} onClose={() => setOpen(false)} />
         </div>
