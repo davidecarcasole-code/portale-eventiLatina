@@ -45,6 +45,7 @@ export function handleApiError(err: unknown) {
   if (err instanceof AuthError) {
     return errorResponse(err.message, err.status);
   }
-  console.error("API Error:", err);
-  return errorResponse("Errore interno del server", 500);
+  const msg = err instanceof Error ? err.message : "Errore sconosciuto";
+  console.error("API Error:", msg, err);
+  return errorResponse(msg, 500);
 }

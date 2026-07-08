@@ -47,8 +47,11 @@ export async function PUT(req: NextRequest) {
     const { id, ...data } = body;
 
     if (id === -1) {
+      if (!data.name?.trim() || !data.url?.trim()) {
+        return jsonResponse({ error: "Nome e URL sono obbligatori" }, 400);
+      }
       const created = await prisma.scrapedSource.create({
-        data: { name: data.name, url: data.url, type: data.type || "" },
+        data: { name: data.name.trim(), url: data.url.trim(), type: data.type?.trim() || "" },
       });
       return jsonResponse(created);
     }
