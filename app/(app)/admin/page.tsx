@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const TABS = [
   { key: "events", label: "Eventi", icon: Globe },
+  { key: "sources", label: "Fonti", icon: Radio },
   { key: "scraper", label: "Motore Ricerca", icon: Search },
   { key: "searchconfig", label: "Criteri Ricerca", icon: RefreshCw },
   { key: "agent", label: "Agent AI", icon: Brain },
@@ -43,6 +44,7 @@ export default function AdminPage() {
       </div>
 
       {tab === "events" && <EventsTab token={token!} />}
+      {tab === "sources" && <SourcesTab token={token!} />}
       {tab === "scraper" && <ScraperTab token={token!} />}
       {tab === "searchconfig" && <SearchConfigTab />}
       {tab === "agent" && <AgentTab />}
@@ -105,7 +107,7 @@ function ScraperTab({ token }: { token: string }) {
     <div className="glass-card rounded-xl p-5 space-y-4">
       <div>
         <h3 className="font-semibold flex items-center gap-2"><Sparkles size={16} className="text-[var(--accent)]" /> Motore di Ricerca Eventi</h3>
-        <p className="text-sm text-[var(--text-muted)] mt-1">Esegue lo scraping da CentroItaliaEvents, LazioNascosto e LatinaToday</p>
+        <p className="text-sm text-[var(--text-muted)] mt-1">Esegue lo scraping da tutte le fonti attive. Gestisci le fonti nella tab "Fonti".</p>
       </div>
       <button onClick={runScraper} disabled={loading}
         className="btn-primary px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 disabled:opacity-50">
@@ -117,6 +119,99 @@ function ScraperTab({ token }: { token: string }) {
           <button onClick={() => setResult("")} className="absolute top-2 right-2 text-[var(--text-muted)] text-xs hover:text-[var(--text-primary)] bg-gray-900/50 px-2 py-1 rounded-lg z-10">Chiudi</button>
           <pre className="text-xs bg-gray-900 dark:bg-black text-green-400 p-4 rounded-xl overflow-x-auto mt-2 max-h-96 overflow-y-auto">{result}</pre>
         </div>
+      )}
+    </div>
+  );
+}
+
+function SourcesTab({ token }: { token: string }) {
+  const [sources, setSources] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [running, setRunning] = useState<string | null>(null);
+  const [runResults, setRunResults] = useState<string>("");
+
+  const loadSources = useCallback(async () => {
+    try {
+      const r = await fetch("/api/scraper/sources", { headers: { Authorization: `Bearer ${token}` } });
+      if (r.ok) setSources((await r.json()).sources || []);
+    } catch {}
+  }, [token]);
+
+  useEffect(() => { loadSources(); }, [loadSources]);
+
+  async function toggleSource(src: any) {
+    setLoading(true);
+    try {
+      await fetch("/api/scraper/sources", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ id: src.id, isActive: !src.isActive }),
+      });
+      loadSources();
+    } catch {}
+    setLoading(false);
+  }
+
+  async function runSingleSource(type: string, name: string) {
+    setRunning(name);
+    setRunResults("");
+    try {
+      const r = await fetch("/api/scraper/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ source: type }),
+      });
+      const data = await r.json();
+      setRunResults(`${name}: ${JSON.stringify(data.results?.[0] || data)}`);
+    } catch (err: any) {
+      setRunResults(`${name}: ${err.message}`);
+    }
+    setRunning(null);
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-[var(--text-muted)]">{sources.length} fonti configurate</p>
+      </div>
+
+      <div className="space-y-2">
+        {sources.map((src: any) => (
+          <div key={src.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${src.isActive ? "bg-green-100 dark:bg-green-900/30 text-green-600" : "bg-gray-100 dark:bg-gray-800 text-gray-400"}`}>
+                <Radio size={16} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium">{src.name}</p>
+                  <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${src.isActive ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800"}`}>
+                    {src.type}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-[var(--text-muted)] mt-0.5">
+                  <span>{src.url?.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+                  <span>· {src.eventCount ?? 0} eventi</span>
+                  {src.lastScrapedAt && <span>· Ultimo scrape: {new Date(src.lastScrapedAt).toLocaleDateString("it-IT", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <button onClick={() => runSingleSource(src.type, src.name)} disabled={running !== null}
+                className="btn-ghost p-2 rounded-lg text-xs disabled:opacity-30" title="Esegui questa fonte">
+                <Play size={14} className={running === src.name ? "animate-pulse text-[var(--accent)]" : ""} />
+              </button>
+              <button onClick={() => toggleSource(src)} disabled={loading}
+                className={`btn-ghost p-2 rounded-lg ${src.isActive ? "text-green-600" : "text-gray-400"}`} title={src.isActive ? "Disattiva" : "Attiva"}>
+                {src.isActive ? <Power size={14} /> : <PowerOff size={14} />}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {runResults && (
+        <pre className="text-xs bg-gray-900 dark:bg-black text-green-400 p-4 rounded-xl overflow-x-auto max-h-40 overflow-y-auto">{runResults}</pre>
       )}
     </div>
   );
