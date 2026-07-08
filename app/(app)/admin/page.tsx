@@ -47,7 +47,7 @@ export default function AdminPage() {
       {tab === "sources" && <SourcesTab token={token!} />}
       {tab === "scraper" && <ScraperTab token={token!} />}
       {tab === "searchconfig" && <SearchConfigTab />}
-      {tab === "agent" && <AgentTab />}
+      {tab === "agent" && <AgentTab token={token!} />}
       {tab === "users" && isSuperAdmin && <UsersTab token={token!} />}
     </div>
   );
@@ -373,11 +373,68 @@ function SearchConfigTab() {
   );
 }
 
-function AgentTab() {
+function AgentTab({ token }: { token: string }) {
+  const [running, setRunning] = useState<string | null>(null);
+  const [results, setResults] = useState<any[]>([]);
+  const [error, setError] = useState("");
+
+  async function runTask(task: string, label: string) {
+    setRunning(label);
+    setError("");
+    setResults([]);
+    try {
+      const r = await fetch("/api/agent/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ task }),
+      });
+      const data = await r.json();
+      if (!r.ok) { setError(data.error || "Errore"); return; }
+      setResults(data.results || []);
+    } catch (err: any) { setError(err.message); }
+    finally { setRunning(null); }
+  }
+
   return (
-    <div className="glass-card rounded-xl p-5">
-      <h3 className="font-semibold">Agent AI</h3>
-      <p className="text-sm text-[var(--text-muted)] mt-1">Agent AI (in sviluppo)</p>
+    <div className="space-y-3">
+      <div className="glass-card rounded-xl p-5 space-y-4">
+        <div>
+          <h3 className="font-semibold flex items-center gap-2"><Brain size={16} className="text-[var(--accent)]" /> Agent AI</h3>
+          <p className="text-sm text-[var(--text-muted)] mt-1">Classificazione, arricchimento, dedup e riassunto eventi tramite AI</p>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {[
+            { task: 'classify', label: 'Classifica Eventi', desc: 'Assegna categoria a eventi senza' },
+            { task: 'enrich', label: 'Arricchisci Descrizioni', desc: 'Genera descrizioni per eventi senza' },
+            { task: 'dedup', label: 'Dedup Avanzato', desc: 'Trova e rimuovi duplicati tra fonti' },
+            { task: 'summarize', label: 'Riassunto Eventi', desc: 'Genera riassunto dei prossimi eventi' },
+            { task: 'all', label: 'Esegui Tutto', desc: 'Classifica + Arricchisci + Dedup + Riassunto', primary: true },
+          ].map((b) => (
+            <button key={b.task} onClick={() => runTask(b.task, b.label)} disabled={running !== null}
+              className={`px-4 py-3 rounded-xl text-xs flex flex-col items-start gap-0.5 ${b.primary ? 'btn-primary' : 'glass-card hover:shadow-[0_0_15px_var(--accent-glow)]'} ${running !== null ? 'opacity-50' : ''} transition-all`}>
+              <span className="font-semibold">{running === b.label ? "Eseguendo..." : b.label}</span>
+              <span className="opacity-70">{b.desc}</span>
+            </button>
+          ))}
+        </div>
+
+        {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
+
+        {results.length > 0 && (
+          <div className="space-y-2">
+            {results.map((r, i) => (
+              <div key={i} className="bg-[var(--bg-secondary)] rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-semibold uppercase text-[var(--accent)]">{r.task}</span>
+                  <span className="text-xs text-[var(--text-muted)]">· {r.processed} elaborati</span>
+                </div>
+                <p className="text-sm whitespace-pre-wrap">{r.details}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
