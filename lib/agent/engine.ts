@@ -44,6 +44,7 @@ export async function classifyAllEvents(): Promise<AgentResult> {
   });
 
   let updated = 0;
+  let errors: string[] = [];
   for (const e of events) {
     try {
       const slug = await classifyEvent(e.title, e.description || '');
@@ -53,11 +54,11 @@ export async function classifyAllEvents(): Promise<AgentResult> {
         updated++;
       }
     } catch (err: any) {
-      console.error(`[Agent] Classify error for #${e.id}: ${err.message?.slice(0, 80)}`);
+      errors.push(`${e.id}: ${err.message?.slice(0, 60)}`);
     }
   }
 
-  return { task: 'classify', processed: updated, details: `Classificati ${updated} eventi su ${events.length} senza categoria` };
+  return { task: 'classify', processed: updated, details: `Classificati ${updated} eventi su ${events.length} senza categoria${errors.length ? `\nErrori: ${errors.join('; ')}` : ''}` };
 }
 
 /* ───── Arricchimento descrizioni ───── */
@@ -86,6 +87,7 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
   });
 
   let updated = 0;
+  let errors: string[] = [];
   for (const e of events) {
     try {
       const catSlug = e.categoryId ? (await prisma.category.findUnique({ where: { id: e.categoryId }, select: { slug: true } }))?.slug : 'evento';
@@ -94,11 +96,11 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
       await prisma.event.update({ where: { id: e.id }, data: { description: desc } });
       updated++;
     } catch (err: any) {
-      console.error(`[Agent] Enrich error for #${e.id}: ${err.message?.slice(0, 80)}`);
+      errors.push(`${e.id}: ${err.message?.slice(0, 60)}`);
     }
   }
 
-  return { task: 'enrich', processed: updated, details: `Arricchite ${updated} descrizioni su ${events.length} eventi senza descrizione` };
+  return { task: 'enrich', processed: updated, details: `Arricchite ${updated} descrizioni su ${events.length} eventi senza descrizione${errors.length ? `\nErrori: ${errors.join('; ')}` : ''}` };
 }
 
 /* ───── Dedup avanzato ───── */
