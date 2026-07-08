@@ -6,7 +6,8 @@ export async function GET(req: NextRequest) {
     await requireAdmin(req);
     const { prisma } = await import("@/lib/prisma");
 
-    const { ensureDefaultSources } = await import("@/lib/scraper/engine");
+    const { ensureDefaultSources, ensureScrapedSourcesTable } = await import("@/lib/scraper/engine");
+    await ensureScrapedSourcesTable();
     await ensureDefaultSources();
 
     const [scrapedSources, totalEvents, autoEvents, bySource] = await Promise.all([
@@ -43,6 +44,8 @@ export async function PUT(req: NextRequest) {
   try {
     await requireAdmin(req);
     const { prisma } = await import("@/lib/prisma");
+    const { ensureScrapedSourcesTable } = await import("@/lib/scraper/engine");
+    await ensureScrapedSourcesTable();
     const body = await req.json();
     const { id, ...data } = body;
 
@@ -83,6 +86,8 @@ export async function DELETE(req: NextRequest) {
     if (!id) return jsonResponse({ error: "id required" }, 400);
 
     const { prisma } = await import("@/lib/prisma");
+    const { ensureScrapedSourcesTable } = await import("@/lib/scraper/engine");
+    await ensureScrapedSourcesTable();
     await prisma.scrapedSource.delete({ where: { id } });
     return jsonResponse({ success: true });
   } catch (err) { return handleApiError(err); }

@@ -57,7 +57,32 @@ export interface ScraperResult {
   inserted: number;
 }
 
+export async function ensureScrapedSourcesTable() {
+  const prisma = await getPrisma();
+  try {
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE IF NOT EXISTS scraped_sources (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        url TEXT NOT NULL,
+        type TEXT NOT NULL DEFAULT 'html',
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        selectors TEXT,
+        city TEXT,
+        province TEXT,
+        category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
+        last_scraped_at TIMESTAMP WITH TIME ZONE,
+        config_id INTEGER REFERENCES search_config(id) ON DELETE CASCADE
+      )
+    `);
+    console.log('[Scraper] Ensured scraped_sources table exists');
+  } catch (err) {
+    console.error('[Scraper] Failed to ensure scraped_sources table:', err);
+  }
+}
+
 export async function ensureDefaultSources() {
+  await ensureScrapedSourcesTable();
   const prisma = await getPrisma();
   for (const [type, info] of Object.entries(SCRAPER_REGISTRY)) {
     const existing = await prisma.scrapedSource.findFirst({ where: { type } });
