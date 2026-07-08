@@ -76,47 +76,64 @@ export async function classifyAllEvents(): Promise<AgentResult> {
   }
 }
 
-/* ───── Arricchimento descrizioni ───── */
+/* ───── Arricchimento descrizioni (batch) ───── */
 
-const ENRICH_SYSTEM = 'Sei un copywriter per eventi culturali. Genera una descrizione breve e accattivante (max 100 parole, in italiano). Se c\'è già una descrizione, migliorala mantenendo i fatti.';
-
-async function enrichDescription(title: string, date: string, city: string, category: string, existingDesc: string): Promise<string> {
-  const text = await askGemini(ENRICH_SYSTEM,
-    `Titolo: ${title}\nData: ${date}\nCittà: ${city}\nCategoria: ${category}\nDescrizione attuale: ${existingDesc || 'nessuna'}`,
-    250, 0.7);
-  return text || existingDesc;
-}
+const ENRICH_SYSTEM = 'Sei un copywriter per eventi culturali. Genera descrizioni brevi e accattivanti (max 100 parole ciascuna, in italiano). Se c\'è già una descrizione, migliorala mantenendo i fatti.';
 
 export async function enrichAllDescriptions(): Promise<AgentResult> {
   const prisma = await getPrisma();
   const events = await prisma.event.findMany({
     where: {
       isPublished: true,
-      OR: [
-        { description: null },
-        { description: '' },
-      ],
+      OR: [{ description: null }, { description: '' }],
     },
     take: 10,
     select: { id: true, title: true, date: true, city: true, categoryId: true, description: true },
   });
 
-  let updated = 0;
+  if (events.length === 0) return { task: 'enrich', processed: 0, details: 'Nessun evento senza descrizione' };
+
   let errors: string[] = [];
-  for (const e of events) {
-    await delay(3000);
+  const batchSize = 5;
+
+  for (let i = 0; i < events.length; i += batchSize) {
+    const batch = events.slice(i, i + batchSize);
+
+    for (const e of batch) {
+      if (!e.categoryId) continue;
+      const cat = await prisma.category.findUnique({ where: { id: e.categoryId }, select: { slug: true } });
+      (e as any)._cat = cat?.slug || 'evento';
+    }
+
+    const prompt = batch.map(e =>
+      `ID:${e.id} | Titolo:${e.title} | Data:${e.date?.toISOString().split('T')[0] || ''} | Città:${e.city || 'Latina'} | Categoria:${(e as any)._cat || 'evento'} | Descrizione attuale:${e.description || 'nessuna'}`
+    ).join('\n');
+
     try {
-      const catSlug = e.categoryId ? (await prisma.category.findUnique({ where: { id: e.categoryId }, select: { slug: true } }))?.slug : 'evento';
-      const dateStr = e.date ? e.date.toISOString().split('T')[0] : '';
-      const desc = await enrichDescription(e.title, dateStr, e.city || 'Latina', catSlug || 'evento', e.description || '');
-      await prisma.event.update({ where: { id: e.id }, data: { description: desc } });
-      updated++;
+      const text = await askGemini(ENRICH_SYSTEM,
+        `Per ogni evento, genera una descrizione accattivante (max 100 parole).\nRispondi SOLO con un JSON in questo formato esatto:\n{ "1": "descrizione evento 1", "2": "descrizione evento 2" }\n\nEventi:\n${prompt}`,
+        1000, 0.7);
+
+      const braceStart = text.indexOf('{');
+      const braceEnd = text.lastIndexOf('}');
+      const json = braceStart >= 0 && braceEnd > braceStart
+        ? text.slice(braceStart, braceEnd + 1)
+        : text.replace(/```json?/g, '').replace(/```/g, '').trim();
+      const enriched = JSON.parse(json);
+
+      for (const e of batch) {
+        const desc = enriched[String(e.id)];
+        if (desc && typeof desc === 'string' && desc.length > 10) {
+          await prisma.event.update({ where: { id: e.id }, data: { description: desc } });
+        }
+      }
     } catch (err: any) {
-      errors.push(`#${e.id}: ${err.message?.slice(0, 150)}`);
+      errors.push(`batch ${i + 1}-${i + batch.length}: ${err.message?.slice(0, 200)}`);
     }
   }
 
-  return { task: 'enrich', processed: updated, details: `Arricchite ${updated}/${events.length}${errors.length ? `\nPrimo errore: ${errors[0]}` : ''}` };
+  const updated = events.length - errors.length * batchSize;
+  return { task: 'enrich', processed: Math.max(0, updated), details: `Arricchite ${Math.max(0, updated)}/${events.length}${errors.length ? `\nErrori: ${errors.join('; ')}` : ''}` };
 }
 
 /* ───── Dedup avanzato ───── */
