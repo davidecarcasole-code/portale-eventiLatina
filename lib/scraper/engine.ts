@@ -5,6 +5,7 @@ import { runLatinaTodayScraper } from './latinatodayScraper';
 import { runComuneLatinaScraper } from './comuneLatinaScraper';
 import { runItinerariScraper } from './itinerariScraper';
 import { runFattivivoScraper } from './fattivivoScraper';
+import { scrapeTeatroIt } from './teatroItScraper';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -27,6 +28,7 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   comunelatina: { name: 'Comune di Latina', url: 'https://www.comune.latina.it/', fn: runComuneLatinaScraper },
   itinerari: { name: 'Itinerari nell\'Arte', url: 'https://www.itinerarinellarte.it/', fn: runItinerariScraper },
   fattivivo: { name: 'FattiVivo', url: 'https://www.fattivivo.com/', fn: runFattivivoScraper },
+  teatroIt: { name: 'Teatro.it', url: 'https://www.teatro.it/spettacoli/latina', fn: scrapeTeatroIt },
 };
 
 async function getPrisma() {
