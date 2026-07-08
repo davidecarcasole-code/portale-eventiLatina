@@ -92,10 +92,10 @@ export default function DashboardPage() {
           { label: "Prossimi Eventi", value: events.length, icon: TrendingUp, color: "from-green-500 to-green-600" },
           { label: "Categorie", value: categories.length, icon: Sparkles, color: "from-purple-500 to-purple-600" },
         ].map((s, i) => (
-          <div key={s.label} className={`glass-card rounded-xl p-5 stagger-${i + 1} group`}>
+          <div key={s.label} className={`glass-card rounded-xl p-5 stagger-${i + 1} group hover:shadow-[0_0_25px_var(--accent-glow)] transition-all duration-300`}>
             <div className="flex items-center gap-4">
-              <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                <s.icon size={20} className="text-white" />
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+                <s.icon size={22} className="text-white" />
               </div>
               <div>
                 <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-medium">{s.label}</p>
@@ -112,17 +112,17 @@ export default function DashboardPage() {
             <h3 className="text-lg font-semibold">Categorie</h3>
             <Link href="/events" className="text-xs text-[var(--accent)] hover:underline font-medium">Vedi tutti</Link>
           </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
+          <div className="flex gap-3 overflow-x-auto py-3 scrollbar-thin">
             {categories.map((cat, i) => {
               const Icon = categoryIcons[cat.slug] || Calendar;
               return (
                 <Link key={cat.slug} href={`/events?category=${cat.slug}`}
-                  className={`flex-shrink-0 glass-card rounded-xl p-4 flex flex-col items-center gap-2.5 min-w-[100px] transition-all duration-300 hover:scale-105 hover:-translate-y-1 stagger-${i + 1}`}>
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-300 hover:rotate-12" style={{ backgroundColor: cat.color + "20", color: cat.color }}>
-                    <Icon size={20} />
+                  className={`flex-shrink-0 glass-card rounded-xl p-5 flex flex-col items-center gap-3 min-w-[110px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_var(--accent-glow)] stagger-${i + 1}`}>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:rotate-12 hover:scale-110" style={{ backgroundColor: cat.color + "20", color: cat.color }}>
+                    <Icon size={22} />
                   </div>
                   <span className="text-xs font-semibold text-center">{cat.name}</span>
-                  <span className="text-[10px] text-[var(--text-muted)] -mt-1">{cat.count} eventi</span>
+                  <span className="text-[10px] text-[var(--text-muted)]">{cat.count} eventi</span>
                 </Link>
               );
             })}
@@ -141,7 +141,7 @@ export default function DashboardPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {todayEvents.slice(0, 6).map((e: any) => (
-              <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 card-hover group">
+              <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
                     {React.createElement(categoryIcons[e.category_slug] || Calendar, { size: 18 })}
@@ -173,7 +173,7 @@ export default function DashboardPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {events.slice(0, 9).map((e: any) => (
-              <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 card-hover group">
+              <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
                     {React.createElement(categoryIcons[e.category_slug] || Calendar, { size: 18 })}
