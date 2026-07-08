@@ -14,13 +14,16 @@ export interface AgentResult {
 /* ───── Helper Gemini ───── */
 
 async function askGemini(system: string, prompt: string, maxTokens = 200, temp = 0.2): Promise<string> {
+  if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY non trovata nelle env');
   const model = getGenModel();
   const res = await model.generateContent({
     systemInstruction: system,
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
     generationConfig: { maxOutputTokens: maxTokens, temperature: temp },
   });
-  return res.response.text().trim();
+  const text = res.response.text();
+  if (!text) throw new Error('Gemini ha risposto vuoto');
+  return text.trim();
 }
 
 /* ───── Classificazione intelligente ───── */
@@ -54,11 +57,11 @@ export async function classifyAllEvents(): Promise<AgentResult> {
         updated++;
       }
     } catch (err: any) {
-      errors.push(`${e.id}: ${err.message?.slice(0, 60)}`);
+      errors.push(`#${e.id}: ${err.message?.slice(0, 150)}`);
     }
   }
 
-  return { task: 'classify', processed: updated, details: `Classificati ${updated} eventi su ${events.length} senza categoria${errors.length ? `\nErrori: ${errors.join('; ')}` : ''}` };
+  return { task: 'classify', processed: updated, details: `Classificati ${updated}/${events.length}${errors.length ? `\nPrimo errore: ${errors[0]}` : ''}` };
 }
 
 /* ───── Arricchimento descrizioni ───── */
@@ -96,11 +99,11 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
       await prisma.event.update({ where: { id: e.id }, data: { description: desc } });
       updated++;
     } catch (err: any) {
-      errors.push(`${e.id}: ${err.message?.slice(0, 60)}`);
+      errors.push(`#${e.id}: ${err.message?.slice(0, 150)}`);
     }
   }
 
-  return { task: 'enrich', processed: updated, details: `Arricchite ${updated} descrizioni su ${events.length} eventi senza descrizione${errors.length ? `\nErrori: ${errors.join('; ')}` : ''}` };
+  return { task: 'enrich', processed: updated, details: `Arricchite ${updated}/${events.length}${errors.length ? `\nPrimo errore: ${errors[0]}` : ''}` };
 }
 
 /* ───── Dedup avanzato ───── */
