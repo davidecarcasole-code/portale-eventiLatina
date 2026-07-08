@@ -10,22 +10,14 @@ const MONTHS: Record<string, string> = {
 };
 
 const CATEGORY_MAP: Record<string, string> = {
-  'concerti': 'musica',
-  'musica': 'musica',
-  'teatro': 'teatro',
-  'sagre': 'enogastronomia',
-  'arte': 'cultura',
-  'sport': 'sport',
-  'bambini': 'bambini',
-  'festival': 'spettacolo',
-  'libri': 'cultura',
-  'turismo': 'gite',
-  'equitazione': 'natura',
-  'basket': 'sport',
-  'mostra': 'cultura',
-  'gratuiti': 'spettacolo',
-  'danza': 'spettacolo',
-  'cinema': 'spettacolo',
+  'concerti': 'musica', 'musica': 'musica', 'teatro': 'teatro',
+  'sagre': 'enogastronomia', 'sagra': 'enogastronomia',
+  'arte': 'cultura', 'sport': 'sport',
+  'bambini': 'bambini', 'bambino': 'bambini',
+  'festival': 'spettacolo', 'libri': 'cultura', 'turismo': 'gite',
+  'equitazione': 'natura', 'basket': 'sport', 'mostra': 'cultura',
+  'gratuiti': 'spettacolo', 'danza': 'spettacolo', 'cinema': 'spettacolo',
+  'musica jazz': 'musica', 'musica tribute band': 'musica',
 };
 
 function detectCategory(label: string): string {
@@ -36,9 +28,8 @@ function detectCategory(label: string): string {
   return 'spettacolo';
 }
 
-function extractCity(locationText: string): string {
-  const parts = locationText.split(',').map(s => s.trim());
-  return parts.length > 1 ? parts[parts.length - 1] : (parts[0] || 'Latina');
+function decodeHtmlEntities(str: string): string {
+  return str.replace(/&#039;/g, "'").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
 
 export async function runFattivivoScraper(): Promise<ScrapedEvent[]> {
@@ -60,54 +51,48 @@ export async function runFattivivoScraper(): Promise<ScrapedEvent[]> {
       let newCount = 0;
       cards.each((_, el) => {
         const $el = $(el);
-        const title = $el.attr('data-title') || $el.find('h3').first().text().trim();
+        const title = $el.attr('data-title') || $el.find('h3').text().trim();
         if (!title) return;
+        const decoded = decodeHtmlEntities(title);
 
         const href = $el.attr('href') || '';
         const sourceUrl = href.startsWith('http') ? href : `${BASE}${href}`;
         const imgSrc = $el.find('img').first().attr('src') || '';
         const imageUrl = imgSrc.startsWith('http') ? imgSrc : `${BASE}${imgSrc}`;
 
-        const divs = $el.find('> div');
-        let category = 'spettacolo';
-        let locationText = '';
-        let priceText = '';
-        let hasFree = false;
+        const badge = $el.find('> div').first().find('> div').last();
+        const catText = badge.text().trim();
+        const category = detectCategory(catText);
 
-        divs.each((_, d) => {
-          const txt = $(d).text().trim();
-          if (!txt) return;
-          if (txt === 'GRATUITO') { hasFree = true; return; }
-          if (txt.startsWith('€') || txt.startsWith('€')) { priceText = txt; return; }
-          if (txt.startsWith('📍')) { locationText = txt.replace('📍', '').trim(); return; }
-          if (txt.startsWith('📅')) return;
-          if (/^\d+$/.test(txt)) return;
-          category = detectCategory(txt);
+        const spans = $el.find('span');
+        let dateText = '';
+        let locationText = '';
+        spans.each((_, s) => {
+          const txt = $(s).text().trim();
+          if (/\d{1,2}\s+[A-Za-z]{3}/.test(txt) && !dateText) dateText = txt;
+          if (txt.includes(',') && !locationText) locationText = txt;
         });
 
-        const city = extractCity(locationText);
-
-        const dateDiv = $el.find('> div').filter((_, d) => $(d).text().trim().startsWith('📅')).first();
-        const dateText = dateDiv.text().trim();
-
         let date = '';
-        const dateMatch = dateText.match(/(\d{1,2})\s*([A-Za-z]+)/);
+        const dateMatch = dateText.match(/(\d{1,2})\s*([A-Za-z]{3,})/);
         if (dateMatch) {
           const day = dateMatch[1].padStart(2, '0');
           const monthAbbr = dateMatch[2].toLowerCase().slice(0, 3);
           const month = MONTHS[monthAbbr] || '01';
-          const year = new Date().getFullYear().toString();
-          date = `${year}-${month}-${day}`;
+          date = `${new Date().getFullYear()}-${month}-${day}`;
         }
 
-        const key = title.toLowerCase().slice(0, 60) + date + city;
+        const parts = locationText.split(',').map(s => s.trim());
+        const city = parts.length > 1 ? parts[parts.length - 1] : (parts[0] || 'Latina');
+
+        const key = decoded.toLowerCase().slice(0, 60) + date + city;
         if (seen.has(key)) return;
         seen.add(key);
         newCount++;
 
         all.push({
-          title,
-          date: date || '2026-01-01',
+          title: decoded,
+          date: date || '2026-07-08',
           city,
           province: 'LT',
           category_id: category,
