@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, MessageCircle, MessageSquare, Link } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, MessageCircle, MessageSquare, Link, Sparkles } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 export default function EventDetailPage() {
