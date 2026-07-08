@@ -236,6 +236,7 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('Comune di Latina', runComuneLatinaScraper);
   await collect('Itinerari nell\'Arte', runItinerariScraper);
   await collect('FattiVivo', runFattivivoScraper);
+  await collect('Teatro.it', scrapeTeatroIt);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;
