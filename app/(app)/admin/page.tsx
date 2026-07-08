@@ -55,16 +55,95 @@ export default function AdminPage() {
 
 function EventsTab({ token }: { token: string }) {
   const [events, setEvents] = useState<any[]>([]);
-  useEffect(() => {
-    fetch("/api/events?limit=100&dateFrom=2020-01-01", { headers: { Authorization: `Bearer ${token}` } })
-      .then((r) => r.json()).then((d) => setEvents(d.events || [])).catch(() => {});
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" });
+  const [categories, setCategories] = useState<any[]>([]);
+  const [error, setError] = useState("");
+
+  const loadEvents = useCallback(async () => {
+    try {
+      const r = await fetch("/api/events?limit=100&dateFrom=2020-01-01", { headers: { Authorization: `Bearer ${token}` } });
+      const d = await r.json();
+      setEvents(d.events || []);
+      if (d.events?.length > 0) {
+        const cats = d.events.map((e: any) => ({ id: e.category_id, name: e.category_name, slug: e.category_slug })).filter(Boolean);
+        const unique = Array.from(new Map(cats.map((c: any) => [c.id, c])).values());
+        setCategories(unique);
+      }
+    } catch {}
   }, [token]);
+
+  useEffect(() => { loadEvents(); }, [loadEvents]);
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const r = await fetch("/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(form),
+    });
+    const data = await r.json();
+    if (!r.ok) { setError(data.error || "Errore"); return; }
+    setShowCreate(false);
+    setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" });
+    loadEvents();
+  }
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-sm text-[var(--text-muted)]">{events.length} eventi totali</p>
+        <button onClick={() => { setShowCreate(true); setError(""); setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" }); }}
+          className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+          <Plus size={14} /> Nuovo Evento
+        </button>
       </div>
+
+      {showCreate && (
+        <form onSubmit={handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
+          <div className="flex items-center justify-between">
+            <h4 className="font-semibold text-sm">Crea Nuovo Evento</h4>
+            <button type="button" onClick={() => setShowCreate(false)} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Titolo *" className="input" required />
+            <input value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} type="date" placeholder="Data *" className="input" required />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={form.end_date} onChange={e => setForm({ ...form, end_date: e.target.value })} type="date" placeholder="Data fine" className="input" />
+            <input value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} type="time" placeholder="Orario" className="input" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} placeholder="Luogo" className="input" />
+            <input value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="Indirizzo" className="input" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={form.city} onChange={e => setForm({ ...form, city: e.target.value })} placeholder="Città" className="input" />
+            <select value={form.province} onChange={e => setForm({ ...form, province: e.target.value })} className="select">
+              {["LT","RM","FR","VT","RI","CB","CE","NA"].map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <select value={form.category_id} onChange={e => setForm({ ...form, category_id: e.target.value })} className="select" required>
+              <option value="">Seleziona categoria *</option>
+              {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+            <input value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="URL immagine copertina" className="input" />
+          </div>
+          <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Descrizione" className="input min-h-[80px]" rows={3} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={form.source_url} onChange={e => setForm({ ...form, source_url: e.target.value })} placeholder="URL fonte (es. https://...)" className="input" />
+            <input value={form.source_name} onChange={e => setForm({ ...form, source_name: e.target.value })} placeholder="Nome fonte" className="input" />
+          </div>
+          {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
+          <div className="flex gap-2">
+            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">Crea Evento</button>
+            <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
+          </div>
+        </form>
+      )}
+
       <div className="space-y-2 max-h-[60vh] overflow-y-auto">
         {events.map((e: any) => (
           <div key={e.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
