@@ -4,6 +4,7 @@ import { runLazioNascostoScraper } from './lazionascostoScraper';
 import { runLatinaTodayScraper } from './latinatodayScraper';
 import { runComuneLatinaScraper } from './comuneLatinaScraper';
 import { runItinerariScraper } from './itinerariScraper';
+import { runFattivivoScraper } from './fattivivoScraper';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -25,6 +26,7 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   latinatoday: { name: 'LatinaToday', url: 'https://www.latinatoday.it/', fn: runLatinaTodayScraper },
   comunelatina: { name: 'Comune di Latina', url: 'https://www.comune.latina.it/', fn: runComuneLatinaScraper },
   itinerari: { name: 'Itinerari nell\'Arte', url: 'https://www.itinerarinellarte.it/', fn: runItinerariScraper },
+  fattivivo: { name: 'FattiVivo', url: 'https://www.fattivivo.com/', fn: runFattivivoScraper },
 };
 
 async function getPrisma() {
@@ -231,6 +233,7 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('LatinaToday', runLatinaTodayScraper);
   await collect('Comune di Latina', runComuneLatinaScraper);
   await collect('Itinerari nell\'Arte', runItinerariScraper);
+  await collect('FattiVivo', runFattivivoScraper);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;
