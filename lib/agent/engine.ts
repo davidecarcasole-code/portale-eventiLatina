@@ -1,4 +1,4 @@
-import { getClient, getModel, CATEGORY_LIST } from './config';
+import { getGenModel, CATEGORY_LIST } from './config';
 
 async function getPrisma() {
   const mod = await import("@/lib/prisma");
@@ -11,6 +11,18 @@ export interface AgentResult {
   details: string;
 }
 
+/* ───── Helper Gemini ───── */
+
+async function askGemini(system: string, prompt: string, maxTokens = 200, temp = 0.2): Promise<string> {
+  const model = getGenModel();
+  const res = await model.generateContent({
+    systemInstruction: system,
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    generationConfig: { maxOutputTokens: maxTokens, temperature: temp },
+  });
+  return res.response.text().trim();
+}
+
 /* ───── Classificazione intelligente ───── */
 
 const CLASSIFY_PROMPT = `Assegna una categoria a ogni evento dalla lista: ${CATEGORY_LIST.map(c => c.slug).join(', ')}.
@@ -18,17 +30,7 @@ Rispondi SOLO con il nome della categoria in inglese (slug), nient'altro.
 Se non sei sicuro, rispondi con "spettacolo".`;
 
 async function classifyEvent(title: string, description: string): Promise<string> {
-  const openai = getClient();
-  const res = await openai.chat.completions.create({
-    model: getModel(),
-    messages: [
-      { role: 'system', content: CLASSIFY_PROMPT },
-      { role: 'user', content: `Titolo: ${title}\nDescrizione: ${description || 'nessuna'}` },
-    ],
-    max_tokens: 20,
-    temperature: 0.1,
-  });
-  const slug = res.choices[0]?.message?.content?.trim().toLowerCase() || 'spettacolo';
+  const slug = await askGemini(CLASSIFY_PROMPT, `Titolo: ${title}\nDescrizione: ${description || 'nessuna'}`, 20, 0.1);
   const valid = CATEGORY_LIST.find(c => c.slug === slug);
   return valid ? slug : 'spettacolo';
 }
@@ -60,22 +62,13 @@ export async function classifyAllEvents(): Promise<AgentResult> {
 
 /* ───── Arricchimento descrizioni ───── */
 
-const ENRICH_PROMPT = `Sei un copywriter per eventi culturali. Genera una descrizione breve e accattivante (max 100 parole, in italiano) per un evento.
-Usa queste info: titolo, data, luogo, città, categoria.
-Se c'è già una descrizione, migliorala mantenendo i fatti.`;
+const ENRICH_SYSTEM = 'Sei un copywriter per eventi culturali. Genera una descrizione breve e accattivante (max 100 parole, in italiano). Se c\'è già una descrizione, migliorala mantenendo i fatti.';
 
 async function enrichDescription(title: string, date: string, city: string, category: string, existingDesc: string): Promise<string> {
-  const openai = getClient();
-  const res = await openai.chat.completions.create({
-    model: getModel(),
-    messages: [
-      { role: 'system', content: ENRICH_PROMPT },
-      { role: 'user', content: `Titolo: ${title}\nData: ${date}\nCittà: ${city}\nCategoria: ${category}\nDescrizione attuale: ${existingDesc || 'nessuna'}` },
-    ],
-    max_tokens: 250,
-    temperature: 0.7,
-  });
-  return res.choices[0]?.message?.content?.trim() || existingDesc;
+  const text = await askGemini(ENRICH_SYSTEM,
+    `Titolo: ${title}\nData: ${date}\nCittà: ${city}\nCategoria: ${category}\nDescrizione attuale: ${existingDesc || 'nessuna'}`,
+    250, 0.7);
+  return text || existingDesc;
 }
 
 export async function enrichAllDescriptions(): Promise<AgentResult> {
@@ -171,9 +164,7 @@ export async function dedupEvents(): Promise<AgentResult> {
 
 /* ───── Riassunto eventi ───── */
 
-const SUMMARIZE_PROMPT = `Sei un organizzatore di eventi. Crea un riassunto accattivante in italiano degli eventi in programma.
-Raggruppa per categoria. Scrivi in modo coinvolgente, max 200 parole.
-Inizia con "🎉 Ecco gli eventi in programma:"`;
+const SUMMARIZE_SYSTEM = 'Sei un organizzatore di eventi. Crea un riassunto accattivante in italiano. Raggruppa per categoria. Scrivi in modo coinvolgente, max 200 parole. Inizia con "🎉 Ecco gli eventi in programma:".';
 
 export async function summarizeEvents(): Promise<AgentResult> {
   const prisma = await getPrisma();
@@ -205,18 +196,10 @@ export async function summarizeEvents(): Promise<AgentResult> {
   }).join('\n');
 
   try {
-    const openai = getClient();
-    const res = await openai.chat.completions.create({
-      model: getModel(),
-      messages: [
-        { role: 'system', content: SUMMARIZE_PROMPT },
-        { role: 'user', content: `Elenco eventi (data | titolo | città | categoria):\n${eventList}` },
-      ],
-      max_tokens: 400,
-      temperature: 0.7,
-    });
-    const summary = res.choices[0]?.message?.content?.trim() || 'Nessun riassunto generato';
-    return { task: 'summarize', processed: events.length, details: summary };
+    const text = await askGemini(SUMMARIZE_SYSTEM,
+      `Elenco eventi (data | titolo | città | categoria):\n${eventList}`,
+      400, 0.7);
+    return { task: 'summarize', processed: events.length, details: text || 'Nessun riassunto generato' };
   } catch (err: any) {
     return { task: 'summarize', processed: 0, details: `Errore: ${err.message?.slice(0, 100)}` };
   }
