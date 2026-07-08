@@ -2,6 +2,7 @@ import { ScrapedEvent } from './scraped-event';
 import { runCentroItaliaScraper } from './centroItaliaScraper';
 import { runLazioNascostoScraper } from './lazionascostoScraper';
 import { runLatinaTodayScraper } from './latinatodayScraper';
+import { runComuneLatinaScraper } from './comuneLatinaScraper';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -21,6 +22,7 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   centroitalia: { name: 'CentroItaliaEvents', url: 'https://www.centroitaliaevents.it/', fn: runCentroItaliaScraper },
   lazionascosto: { name: 'LazioNascosto', url: 'https://www.lazionascosto.it/', fn: runLazioNascostoScraper },
   latinatoday: { name: 'LatinaToday', url: 'https://www.latinatoday.it/', fn: runLatinaTodayScraper },
+  comunelatina: { name: 'Comune di Latina', url: 'https://www.comune.latina.it/', fn: runComuneLatinaScraper },
 };
 
 async function getPrisma() {
@@ -225,6 +227,7 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('CentroItaliaEvents', runCentroItaliaScraper);
   await collect('LazioNascosto', runLazioNascostoScraper);
   await collect('LatinaToday', runLatinaTodayScraper);
+  await collect('Comune di Latina', runComuneLatinaScraper);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;
