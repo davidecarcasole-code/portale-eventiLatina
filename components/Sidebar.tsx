@@ -22,14 +22,11 @@ export function Sidebar() {
 
   return (
     <>
-      <button onClick={() => setOpen(!open)} className={`fixed top-3 left-3 z-50 p-2.5 rounded-xl glass md:hidden transition-opacity ${open ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+      <button onClick={() => setOpen(true)} className="fixed top-3 left-3 z-50 p-2.5 rounded-xl glass md:hidden">
         <Menu size={20} />
       </button>
-      <button onClick={() => setOpen(false)} className={`fixed top-3 left-3 z-[60] p-2.5 rounded-xl glass md:hidden transition-opacity ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-        <X size={20} />
-      </button>
       {open && <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden" onClick={() => setOpen(false)} />}
-      <aside className={`fixed md:sticky top-0 left-0 h-screen w-[var(--sidebar-width)] bg-[var(--card-bg)]/95 backdrop-blur-xl border-r border-[var(--card-border)] z-50 transform transition-all duration-300 ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 flex flex-col`}>
+      <aside className={`${open ? "fixed inset-y-0 left-0 z-50" : "hidden"} md:sticky md:flex md:inset-auto md:z-auto top-0 h-screen w-[var(--sidebar-width)] bg-[var(--card-bg)]/95 backdrop-blur-xl border-r border-[var(--card-border)] flex-col transition-opacity duration-200`}>
         <div className="p-5 flex items-center gap-3 border-b border-[var(--card-border)]">
           <Link href="/dashboard" className="flex items-center gap-3 group">
             <div className="relative">
@@ -41,6 +38,7 @@ export function Sidebar() {
               <span className="text-[10px] text-[var(--text-muted)]">Provincia di Latina</span>
             </div>
           </Link>
+          <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] md:hidden ml-auto"><X size={16} /></button>
         </div>
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {links.map((l) => {
