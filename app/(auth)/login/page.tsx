@@ -74,7 +74,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-50 dark:via-amber-50 dark:to-yellow-50 relative">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-[#2a2725] dark:via-[#2a2725] dark:to-[#2a2725] relative">
         <div className="blur-sphere" style={{ width: 300, height: 300, background: "radial-gradient(circle, rgba(249,115,22,0.08), transparent)", filter: "blur(70px)", top: "10%", right: "-50px" }} />
         <div className="blur-sphere" style={{ width: 250, height: 250, background: "radial-gradient(circle, rgba(251,191,36,0.06), transparent)", filter: "blur(60px)", bottom: "5%", left: "-30px" }} />
         <div className="w-full max-w-sm animate-fade-in relative z-10">
@@ -86,10 +86,10 @@ export default function LoginPage() {
 
           <div className="glass-card rounded-2xl p-6 sm:p-8">
             <div className="flex mb-6 bg-[var(--bg-secondary)] rounded-xl p-1">
-              <button onClick={() => setIsLogin(true)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${isLogin ? "bg-white dark:bg-gray-800 shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+              <button onClick={() => setIsLogin(true)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${isLogin ? "bg-white dark:bg-[var(--card-bg)] shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
                 <LogIn size={16} className="inline mr-1.5" /> Accedi
               </button>
-              <button onClick={() => setIsLogin(false)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${!isLogin ? "bg-white dark:bg-gray-800 shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
+              <button onClick={() => setIsLogin(false)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${!isLogin ? "bg-white dark:bg-[var(--card-bg)] shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
                 <UserPlus size={16} className="inline mr-1.5" /> Registrati
               </button>
             </div>
@@ -109,7 +109,7 @@ export default function LoginPage() {
                 <label className="text-xs font-medium text-[var(--text-secondary)] mb-1.5 block"><Lock size={13} className="inline mr-1" /> Password</label>
                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input" placeholder="••••••••" required minLength={6} />
               </div>
-              {error && <p className="text-red-500 text-sm bg-red-50 dark:bg-red-900/20 rounded-lg p-2.5">{error}</p>}
+              {error && <p className="text-red-500 text-sm bg-red-50 dark:bg-red-950/20 rounded-lg p-2.5">{error}</p>}
               <button type="submit" disabled={loading} className="btn-primary w-full py-2.5 rounded-xl text-sm disabled:opacity-50">
                 {loading ? "Attendere..." : isLogin ? "Accedi" : "Crea Account"}
               </button>
