@@ -11,32 +11,38 @@ export interface AgentResult {
   details: string;
 }
 
-/* ───── Helper Gemini ───── */
+const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+/* ───── Helper Gemini con retry ───── */
 
 async function askGemini(system: string, prompt: string, maxTokens = 200, temp = 0.2): Promise<string> {
   if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY non trovata nelle env');
   const model = getGenModel();
-  const res = await model.generateContent({
-    systemInstruction: system,
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generationConfig: { maxOutputTokens: maxTokens, temperature: temp },
-  });
-  const text = res.response.text();
-  if (!text) throw new Error('Gemini ha risposto vuoto');
-  return text.trim();
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await model.generateContent({
+        systemInstruction: system,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: maxTokens, temperature: temp },
+      });
+      const text = res.response.text();
+      if (!text) throw new Error('Gemini ha risposto vuoto');
+      return text.trim();
+    } catch (err: any) {
+      if (err.message?.includes('429') && attempt < 2) {
+        await delay(2000 * (attempt + 1));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Max retries exceeded');
 }
 
 /* ───── Classificazione intelligente ───── */
 
-const CLASSIFY_PROMPT = `Assegna una categoria a ogni evento dalla lista: ${CATEGORY_LIST.map(c => c.slug).join(', ')}.
-Rispondi SOLO con il nome della categoria in inglese (slug), nient'altro.
-Se non sei sicuro, rispondi con "spettacolo".`;
-
-async function classifyEvent(title: string, description: string): Promise<string> {
-  const slug = await askGemini(CLASSIFY_PROMPT, `Titolo: ${title}\nDescrizione: ${description || 'nessuna'}`, 20, 0.1);
-  const valid = CATEGORY_LIST.find(c => c.slug === slug);
-  return valid ? slug : 'spettacolo';
-}
+const CLASSIFY_SYSTEM = `Sei un classificatore di eventi. Assegna una categoria a ogni evento dalla lista: ${CATEGORY_LIST.map(c => c.slug).join(', ')}.
+Rispondi SOLO con un JSON array di oggetti {"id": numero, "categoria": "slug"}. Se non sei sicuro usa "spettacolo".`;
 
 export async function classifyAllEvents(): Promise<AgentResult> {
   const prisma = await getPrisma();
@@ -46,22 +52,27 @@ export async function classifyAllEvents(): Promise<AgentResult> {
     select: { id: true, title: true, description: true, categoryId: true },
   });
 
-  let updated = 0;
-  let errors: string[] = [];
-  for (const e of events) {
-    try {
-      const slug = await classifyEvent(e.title, e.description || '');
-      const cat = await prisma.category.findUnique({ where: { slug } });
+  if (events.length === 0) return { task: 'classify', processed: 0, details: 'Nessun evento senza categoria' };
+
+  const eventList = events.map(e => `ID:${e.id} | Titolo:${e.title} | Descrizione:${(e.description || 'nessuna').slice(0, 100)}`).join('\n');
+
+  try {
+    const text = await askGemini(CLASSIFY_SYSTEM, `Classifica questi eventi:\n${eventList}`, 500, 0.1);
+    const json = text.replace(/```json?/g, '').replace(/```/g, '').trim();
+    const parsed = JSON.parse(json);
+    let updated = 0;
+    for (const item of parsed) {
+      if (!item.id || !item.categoria) continue;
+      const cat = await prisma.category.findUnique({ where: { slug: item.categoria } });
       if (cat) {
-        await prisma.event.update({ where: { id: e.id }, data: { categoryId: cat.id } });
+        await prisma.event.update({ where: { id: item.id }, data: { categoryId: cat.id } });
         updated++;
       }
-    } catch (err: any) {
-      errors.push(`#${e.id}: ${err.message?.slice(0, 150)}`);
     }
+    return { task: 'classify', processed: updated, details: `Classificati ${updated}/${events.length} eventi` };
+  } catch (err: any) {
+    return { task: 'classify', processed: 0, details: `Errore: ${err.message?.slice(0, 200)}` };
   }
-
-  return { task: 'classify', processed: updated, details: `Classificati ${updated}/${events.length}${errors.length ? `\nPrimo errore: ${errors[0]}` : ''}` };
 }
 
 /* ───── Arricchimento descrizioni ───── */
@@ -92,6 +103,7 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
   let updated = 0;
   let errors: string[] = [];
   for (const e of events) {
+    await delay(1200);
     try {
       const catSlug = e.categoryId ? (await prisma.category.findUnique({ where: { id: e.categoryId }, select: { slug: true } }))?.slug : 'evento';
       const dateStr = e.date ? e.date.toISOString().split('T')[0] : '';
