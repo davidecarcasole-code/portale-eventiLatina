@@ -32,7 +32,7 @@ async function groqFetch(key: string, system: string, prompt: string, maxTokens:
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
         body: JSON.stringify({
-          model: 'llama3-70b-8192',
+          model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: system },
             { role: 'user', content: prompt },
