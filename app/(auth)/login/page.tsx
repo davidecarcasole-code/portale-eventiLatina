@@ -9,8 +9,8 @@ const BG_IMAGES = [
   "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=1920&q=80",
   "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&q=80",
   "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80",
-  "https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?w=1920&q=80",
-  "https://images.unsplash.com/photo-1468413253725-0d5181091126?w=1920&q=80",
+  "https://images.unsplash.com/photo-1719734622048-dc5a15197437?w=1920&q=80",
+  "https://images.unsplash.com/photo-1760111102591-c6390c8a652d?w=1920&q=80",
 ];
 
 export default function LoginPage() {
@@ -48,69 +48,80 @@ export default function LoginPage() {
       {BG_IMAGES.map((src, i) => (
         <div key={src} className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
           style={{ opacity: i === bgIdx ? 1 : 0 }}>
-          <img src={src} alt="" className="w-full h-full object-cover scale-110" style={{ filter: "blur(6px) brightness(0.45)" }} />
+          <img src={src} alt="" className="w-full h-full object-cover scale-110" style={{ filter: "blur(6px) brightness(0.4)" }} />
         </div>
       ))}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
 
       <div className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-8">
-        <div className="w-full max-w-sm animate-fade-in">
-          <div className="text-center mb-6">
-            <img src="/banner.png" alt="" className="w-full max-w-xs mx-auto rounded-2xl shadow-2xl ring-2 ring-white/20" />
+        <div className="w-full max-w-2xl animate-fade-in flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+          <div className="flex-1 text-center lg:text-left">
+            <img src="/banner.png" alt="EventiNLatina" className="w-full max-w-sm mx-auto lg:mx-0 rounded-3xl shadow-2xl ring-2 ring-white/20 mb-6" />
+            <p className="text-white/70 text-base lg:text-lg max-w-sm mx-auto lg:mx-0 leading-relaxed">
+              Scopri eventi, sagre, concerti, mostre e manifestazioni in provincia di Latina e nel Lazio.
+            </p>
+            <div className="flex gap-2 justify-center lg:justify-start mt-5 flex-wrap">
+              {["Musica", "Teatro", "Sagre", "Natura", "Cultura"].map((tag) => (
+                <span key={tag} className="px-3 py-1 rounded-full bg-white/10 text-white/70 text-xs font-medium backdrop-blur-sm border border-white/10">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2 justify-center lg:justify-start mt-8">
+              {BG_IMAGES.map((_, i) => (
+                <button key={i} onClick={() => setBgIdx(i)}
+                  className="h-1.5 rounded-full transition-all duration-500"
+                  style={{ width: i === bgIdx ? 24 : 8, backgroundColor: i === bgIdx ? "#f59e0b" : "rgba(255,255,255,0.3)" }} />
+              ))}
+            </div>
           </div>
 
-          <div className="glass-card rounded-2xl p-6 sm:p-8 bg-black/40 backdrop-blur-xl border-white/10">
-            <div className="flex mb-6 bg-white/10 rounded-xl p-1">
-              <button onClick={() => setIsLogin(true)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${isLogin ? "bg-white/20 shadow-sm text-white" : "text-white/60 hover:text-white"}`}>
-                <LogIn size={16} className="inline mr-1.5" /> Accedi
-              </button>
-              <button onClick={() => setIsLogin(false)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${!isLogin ? "bg-white/20 shadow-sm text-white" : "text-white/60 hover:text-white"}`}>
-                <UserPlus size={16} className="inline mr-1.5" /> Registrati
-              </button>
-            </div>
+          <div className="w-full max-w-sm">
+            <div className="rounded-3xl bg-white/10 backdrop-blur-xl border border-white/10 p-6 sm:p-8 shadow-2xl">
+              <div className="flex mb-6 bg-white/10 rounded-xl p-1">
+                <button onClick={() => setIsLogin(true)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${isLogin ? "bg-white/20 shadow-sm text-white" : "text-white/60 hover:text-white"}`}>
+                  <LogIn size={16} className="inline mr-1.5" /> Accedi
+                </button>
+                <button onClick={() => setIsLogin(false)} className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${!isLogin ? "bg-white/20 shadow-sm text-white" : "text-white/60 hover:text-white"}`}>
+                  <UserPlus size={16} className="inline mr-1.5" /> Registrati
+                </button>
+              </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLogin && (
+                  <div>
+                    <label className="text-xs font-medium text-white/70 mb-1.5 block"><User size={13} className="inline mr-1" /> Nome</label>
+                    <input value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all" placeholder="Il tuo nome" required />
+                  </div>
+                )}
                 <div>
-                  <label className="text-xs font-medium text-white/70 mb-1.5 block"><User size={13} className="inline mr-1" /> Nome</label>
-                  <input value={name} onChange={(e) => setName(e.target.value)} className="input bg-white/10 border-white/20 text-white placeholder:text-white/40" placeholder="Il tuo nome" required />
+                  <label className="text-xs font-medium text-white/70 mb-1.5 block"><Mail size={13} className="inline mr-1" /> Email</label>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all" placeholder="tua@email.com" required />
                 </div>
-              )}
-              <div>
-                <label className="text-xs font-medium text-white/70 mb-1.5 block"><Mail size={13} className="inline mr-1" /> Email</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input bg-white/10 border-white/20 text-white placeholder:text-white/40" placeholder="tua@email.com" required />
+                <div>
+                  <label className="text-xs font-medium text-white/70 mb-1.5 block"><Lock size={13} className="inline mr-1" /> Password</label>
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all" placeholder="••••••••" required minLength={6} />
+                </div>
+                {error && <p className="text-red-400 text-sm bg-red-950/40 rounded-lg p-2.5">{error}</p>}
+                <button type="submit" disabled={loading} className="w-full py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600 disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20">
+                  {loading ? "Attendere..." : isLogin ? "Accedi" : "Crea Account"}
+                </button>
+              </form>
+
+              <div className="mt-5 relative">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
+                <div className="relative flex justify-center text-xs"><span className="bg-black/30 backdrop-blur-sm px-3 text-white/50">oppure</span></div>
               </div>
-              <div>
-                <label className="text-xs font-medium text-white/70 mb-1.5 block"><Lock size={13} className="inline mr-1" /> Password</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input bg-white/10 border-white/20 text-white placeholder:text-white/40" placeholder="••••••••" required minLength={6} />
-              </div>
-              {error && <p className="text-red-400 text-sm bg-red-950/40 rounded-lg p-2.5">{error}</p>}
-              <button type="submit" disabled={loading} className="w-full py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600 disabled:opacity-50 transition-all">
-                {loading ? "Attendere..." : isLogin ? "Accedi" : "Crea Account"}
+              <button onClick={() => setError("Login Google non configurato")} className="w-full mt-4 py-2.5 rounded-xl border border-white/20 text-sm font-medium text-white/80 hover:bg-white/10 transition-all flex items-center justify-center gap-2.5">
+                <Globe size={18} /> Continua con Google
               </button>
-            </form>
-
-            <div className="mt-5 relative">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
-              <div className="relative flex justify-center text-xs"><span className="bg-black/40 px-3 text-white/50">oppure</span></div>
             </div>
-            <button onClick={() => setError("Login Google non configurato")} className="w-full mt-4 py-2.5 rounded-xl border border-white/20 text-sm font-medium text-white/80 hover:bg-white/10 transition-all flex items-center justify-center gap-2.5">
-              <Globe size={18} /> Continua con Google
-            </button>
+
+            <p className="text-center text-xs text-white/40 mt-6">
+              &copy; {new Date().getFullYear()} EventiNLatina
+            </p>
           </div>
-
-          <p className="text-center text-xs text-white/40 mt-6">
-            &copy; {new Date().getFullYear()} EventiNLatina
-          </p>
         </div>
-      </div>
-
-      <div className="absolute bottom-6 right-6 z-10 flex gap-2">
-        {BG_IMAGES.map((_, i) => (
-          <button key={i} onClick={() => setBgIdx(i)}
-            className="w-2 h-2 rounded-full transition-all duration-500"
-            style={{ backgroundColor: i === bgIdx ? "#f59e0b" : "rgba(255,255,255,0.3)" }} />
-        ))}
       </div>
     </div>
   );
