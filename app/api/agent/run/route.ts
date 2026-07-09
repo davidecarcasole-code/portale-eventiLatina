@@ -13,6 +13,11 @@ export async function POST(req: NextRequest) {
 
     for (const t of tasks) {
       switch (t) {
+        case 'reclassify': {
+          const { reclassifyAllEvents } = await import("@/lib/agent/engine");
+          results.push(await reclassifyAllEvents());
+          break;
+        }
         case 'classify': {
           const { classifyAllEvents } = await import("@/lib/agent/engine");
           results.push(await classifyAllEvents());

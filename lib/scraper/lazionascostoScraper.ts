@@ -21,6 +21,9 @@ function detectCategory(title: string, text: string): string {
   if (/festa|fiera|mercatino|collezionismo|luna park|ludico|sfilata|carnevale|mercato|palio|rievocazione/.test(t)) return 'cat_entertainment';
   if (/montagna|rifugio|neve|montagna|vetta|sci|alpino|simbruini|terminillo/.test(t)) return 'cat_mountain';
   if (/gita|borgo|isole|castello|storico|abbazia|eremo|medievale|pellegrinaggio/.test(t)) return 'cat_daytrip';
+  if (/benessere|yoga|relax|spa|wellness|massaggi|olistiche|reiki|meditazione|pilates|bagni\s+termali|terme|termale/.test(t)) return 'cat_benessere';
+  if (/salute|prevenzione|sanità|visita\s+medica|screening|check.up|donazione\s+sangue|giornata\s+della\s+salute|medico/.test(t)) return 'cat_salute';
+  if (/donna|donne|femminile|rosa|8\s+marzo|violenza\s+sulle\s+donne|festadelladonna|al\s+femminile|pari\s+opportunità/.test(t)) return 'cat_rosa';
   return 'cat_entertainment';
 }
 

@@ -18,6 +18,9 @@ const CATEGORY_MAP: Record<string, string> = {
   'equitazione': 'natura', 'basket': 'sport', 'mostra': 'cultura',
   'gratuiti': 'spettacolo', 'danza': 'spettacolo', 'cinema': 'spettacolo',
   'musica jazz': 'musica', 'musica tribute band': 'musica',
+  'benessere': 'benessere', 'yoga': 'benessere',
+  'salute': 'salute',
+  'donna': 'rosa', 'rosa': 'rosa',
 };
 
 function detectCategory(label: string): string {

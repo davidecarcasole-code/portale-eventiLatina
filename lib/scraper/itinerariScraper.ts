@@ -21,6 +21,10 @@ const CATEGORY_MAP: Record<string, string> = {
   'presentazione': 'cultura',
   'laboratorio': 'bambini',
   'visita guidata': 'cultura',
+  'benessere': 'benessere',
+  'yoga': 'benessere',
+  'salute': 'salute',
+  'donna': 'rosa',
 };
 
 function detectCategory(labels: string[]): string {

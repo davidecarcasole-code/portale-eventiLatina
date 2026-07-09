@@ -404,6 +404,7 @@ function AgentTab({ token }: { token: string }) {
 
         <div className="flex flex-wrap gap-2">
           {[
+            { task: 'reclassify', label: 'Riclassifica Tutti', desc: 'Riclassifica tutti gli eventi con le nuove categorie', primary: true },
             { task: 'classify', label: 'Classifica Eventi', desc: 'Assegna categoria a eventi senza' },
             { task: 'enrich', label: 'Arricchisci Descrizioni', desc: 'Genera descrizioni per eventi senza' },
             { task: 'dedup', label: 'Dedup Avanzato', desc: 'Trova e rimuovi duplicati tra fonti' },

@@ -18,6 +18,9 @@ function detectCategory(title: string, kicker: string): string {
   if (k.includes('enogastronomia') || k.includes('sagra')) return 'cat_food';
   if (k.includes('bambini')) return 'cat_kids';
   if (k.includes('mercatini') || k.includes('fiera') || k.includes('manifestazioni')) return 'cat_entertainment';
+  if (k.includes('benessere')) return 'cat_benessere';
+  if (k.includes('salute')) return 'cat_salute';
+  if (k.includes('donna') || k.includes('rosa')) return 'cat_rosa';
   const t = title.toLowerCase();
   if (/concerto|musica|dj|band|rock|jazz|cantante|festival|coro/.test(t)) return 'cat_music';
   if (/teatro|danza|spettacolo|cinema|film/.test(t)) return 'cat_theater';
@@ -29,6 +32,9 @@ function detectCategory(title: string, kicker: string): string {
   if (/bambini|famiglia|giochi/.test(t)) return 'cat_kids';
   if (/festa|mercatino|palio|rievocazione|carnevale/.test(t)) return 'cat_entertainment';
   if (/gita|borgo|castello|storico/.test(t)) return 'cat_daytrip';
+  if (/benessere|yoga|relax|spa|wellness|massaggi|meditazione|pilates/.test(t)) return 'cat_benessere';
+  if (/salute|prevenzione|sanità|screening|medico|ospedale/.test(t)) return 'cat_salute';
+  if (/donna|donne|femminile|rosa|8\s+marzo/.test(t)) return 'cat_rosa';
   return 'cat_entertainment';
 }
 

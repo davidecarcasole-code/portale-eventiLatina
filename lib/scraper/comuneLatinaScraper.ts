@@ -24,6 +24,9 @@ const CATEGORY_MAP: Record<string, string> = {
   'teatro': 'teatro',
   'sport': 'sport',
   'bambini': 'bambini',
+  'benessere': 'benessere',
+  'salute': 'salute',
+  'donna': 'rosa',
 };
 
 function detectCategory(text: string): string {

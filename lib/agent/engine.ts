@@ -102,21 +102,13 @@ async function geminiFetch(key: string, system: string, prompt: string, maxToken
   throw new Error('Max retries');
 }
 
-/* ───── Classificazione (1 chiamata batch) ───── */
+/* ───── Classificazione ───── */
 
-export async function classifyAllEvents(): Promise<AgentResult> {
+async function classifyBatch(events: { id: number; title: string; description?: string | null }[]): Promise<number> {
+  if (!events.length) return 0;
   const prisma = await (await import("@/lib/prisma")).prisma;
-  const events = await prisma.event.findMany({
-    where: { categoryId: null, isPublished: true },
-    take: 30,
-    select: { id: true, title: true, description: true },
-  });
-
-  if (!events.length) return { task: 'classify', processed: 0, details: 'Nessun evento senza categoria' };
-
   const cats = CATEGORY_LIST.map(c => c.slug).join(', ');
   const list = events.map(e => `${e.id}: ${e.title}${e.description ? ` — ${e.description.slice(0, 80)}` : ''}`).join('\n');
-
   try {
     const text = await aiFetch(
       `Sei un classificatore. Categorie: ${cats}. Rispondi SOLO con un JSON array: [{"id":numero,"cat":"slug"}]. Default: "spettacolo".`,
@@ -129,10 +121,35 @@ export async function classifyAllEvents(): Promise<AgentResult> {
       const cat = await prisma.category.findUnique({ where: { slug: item.cat } });
       if (cat) { await prisma.event.update({ where: { id: item.id }, data: { categoryId: cat.id } }); updated++; }
     }
-    return { task: 'classify', processed: updated, details: `Classificati ${updated}/${events.length}` };
-  } catch (err: any) {
-    return { task: 'classify', processed: 0, details: `Errore: ${err.message?.slice(0, 200)}` };
+    return updated;
+  } catch { return 0; }
+}
+
+export async function classifyAllEvents(): Promise<AgentResult> {
+  const prisma = await (await import("@/lib/prisma")).prisma;
+  const events = await prisma.event.findMany({
+    where: { categoryId: null, isPublished: true },
+    take: 30,
+    select: { id: true, title: true, description: true },
+  });
+  if (!events.length) return { task: 'classify', processed: 0, details: 'Nessun evento senza categoria' };
+  const updated = await classifyBatch(events);
+  return { task: 'classify', processed: updated, details: `Classificati ${updated}/${events.length}` };
+}
+
+export async function reclassifyAllEvents(): Promise<AgentResult> {
+  const prisma = await (await import("@/lib/prisma")).prisma;
+  const events = await prisma.event.findMany({
+    where: { isPublished: true },
+    select: { id: true, title: true, description: true },
+  });
+  if (!events.length) return { task: 'reclassify', processed: 0, details: 'Nessun evento pubblicato' };
+  let total = 0;
+  for (let i = 0; i < events.length; i += 20) {
+    const batch = events.slice(i, i + 20);
+    total += await classifyBatch(batch);
   }
+  return { task: 'reclassify', processed: total, details: `Riclassificati ${total}/${events.length} eventi con le nuove categorie` };
 }
 
 /* ───── Arricchimento descrizioni (template offline + AI fallback) ───── */
