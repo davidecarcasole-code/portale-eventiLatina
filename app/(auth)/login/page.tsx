@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/store";
-import { LogIn, UserPlus, Mail, Lock, User, Globe, Sparkles } from "lucide-react";
+import { LogIn, UserPlus, Mail, Lock, User, Globe } from "lucide-react";
+
+const BG_IMAGES = [
+  "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=1920&q=80",
+  "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&q=80",
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80",
+  "https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?w=1920&q=80",
+  "https://images.unsplash.com/photo-1468413253725-0d5181091126?w=1920&q=80",
+];
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,13 +20,18 @@ export default function LoginPage() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [bgIdx, setBgIdx] = useState(0);
   const setAuth = useAuthStore((s) => s.setAuth);
   const router = useRouter();
 
+  useEffect(() => {
+    const id = setInterval(() => setBgIdx((i) => (i + 1) % BG_IMAGES.length), 20000);
+    return () => clearInterval(id);
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
-    setLoading(true);
+    setError(""); setLoading(true);
     try {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
       const body = isLogin ? { email, password } : { email, password, name };
@@ -27,49 +40,37 @@ export default function LoginPage() {
       if (!res.ok) throw new Error(data.error || "Errore");
       setAuth(data.user, data.token);
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleGoogle() {
-    setError("Login Google non configurato");
+    } catch (err: any) { setError(err.message); } finally { setLoading(false); }
   }
 
   return (
     <div className="min-h-screen flex relative overflow-hidden">
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-orange-600 via-amber-700 to-yellow-800">
-        <div className="absolute inset-0" style={{ background: "repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255,255,255,0.03) 40px, rgba(255,255,255,0.03) 80px)" }} />
-        <div className="blur-sphere" style={{ width: 500, height: 500, background: "radial-gradient(circle, rgba(255,255,255,0.1), transparent)", filter: "blur(100px)", top: "-150px", right: "-150px" }} />
-        <div className="blur-sphere" style={{ width: 350, height: 350, background: "radial-gradient(circle, rgba(251,191,36,0.08), transparent)", filter: "blur(80px)", bottom: "-80px", left: "-80px" }} />
-        <div className="absolute top-8 right-12 w-3 h-3 bg-yellow-300 rounded-full animate-float-up opacity-60" />
-        <div className="absolute top-20 left-16 w-2 h-2 bg-white/40 rounded animate-float-up" style={{ animationDelay: "0.7s" }} />
-        <div className="absolute bottom-32 right-24 w-2.5 h-2.5 bg-orange-200 rounded animate-float-up" style={{ animationDelay: "1.2s" }} />
-        <div className="absolute bottom-40 left-20 w-2 h-2 bg-amber-200 rotate-45 animate-float-up" style={{ animationDelay: "0.4s" }} />
-        <div className="absolute inset-0 flex items-center justify-center p-12">
-          <div className="text-center max-w-sm">
-            <img src="/banner.png" alt="" className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl ring-1 ring-white/10" />
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-black">
+        {BG_IMAGES.map((src, i) => (
+          <div key={src} className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+            style={{ opacity: i === bgIdx ? 1 : 0 }}>
+            <img src={src} alt="" className="w-full h-full object-cover scale-110" style={{ filter: "blur(4px) brightness(0.5)" }} />
           </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 p-12 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-          <div className="flex items-center gap-4 mb-4">
-            <img src="/logo.png" alt="Logo" className="w-14 h-14 rounded-2xl ring-4 ring-white/20 shadow-xl" />
-            <div>
-              <h1 className="text-3xl font-bold text-white">EventiNLatina</h1>
-              <p className="text-white/70 text-sm">Eventi, spettacoli e cultura</p>
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="absolute inset-0 flex items-center justify-center p-12 z-10">
+          <div className="text-center max-w-md">
+            <img src="/banner.png" alt="" className="w-full max-w-sm mx-auto rounded-2xl shadow-2xl ring-2 ring-white/20" />
+            <p className="text-white/80 text-lg mt-4 font-light">Scopri tutti gli eventi della provincia di Latina</p>
+            <div className="flex gap-3 justify-center mt-4">
+              {["Musica", "Teatro", "Sagre", "Natura"].map((tag) => (
+                <span key={tag} className="px-3 py-1 rounded-full bg-white/15 text-white/80 text-xs font-medium backdrop-blur-sm border border-white/20">
+                  {tag}
+                </span>
+              ))}
             </div>
-          </div>
-          <p className="text-white/60 text-sm max-w-md leading-relaxed">
-            Scopri tutti gli eventi, sagre, concerti, mostre e manifestazioni in provincia di Latina e nel Lazio. Il calendario completo degli eventi del territorio.
-          </p>
-          <div className="flex gap-6 mt-6">
-            {["Musica", "Teatro", "Sagre", "Natura"].map((tag) => (
-              <span key={tag} className="px-3 py-1 rounded-full bg-white/10 text-white/80 text-xs font-medium backdrop-blur-sm border border-white/10">
-                {tag}
-              </span>
-            ))}
+            <div className="flex items-center justify-center gap-3 mt-6">
+              <div className="w-2 h-2 rounded-full transition-all duration-700" style={{ backgroundColor: bgIdx === 0 ? "#f59e0b" : "rgba(255,255,255,0.3)" }} />
+              <div className="w-2 h-2 rounded-full transition-all duration-700" style={{ backgroundColor: bgIdx === 1 ? "#f59e0b" : "rgba(255,255,255,0.3)" }} />
+              <div className="w-2 h-2 rounded-full transition-all duration-700" style={{ backgroundColor: bgIdx === 2 ? "#f59e0b" : "rgba(255,255,255,0.3)" }} />
+              <div className="w-2 h-2 rounded-full transition-all duration-700" style={{ backgroundColor: bgIdx === 3 ? "#f59e0b" : "rgba(255,255,255,0.3)" }} />
+              <div className="w-2 h-2 rounded-full transition-all duration-700" style={{ backgroundColor: bgIdx === 4 ? "#f59e0b" : "rgba(255,255,255,0.3)" }} />
+            </div>
           </div>
         </div>
       </div>
@@ -119,13 +120,13 @@ export default function LoginPage() {
               <div className="absolute inset-0 flex items-center"><div className="divider" /></div>
               <div className="relative flex justify-center text-xs"><span className="bg-[var(--card-bg)] px-3 text-[var(--text-muted)]">oppure</span></div>
             </div>
-            <button onClick={handleGoogle} className="w-full mt-4 py-2.5 rounded-xl border border-[var(--card-border)] text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-all flex items-center justify-center gap-2.5 btn-ghost">
+            <button onClick={() => setError("Login Google non configurato")} className="w-full mt-4 py-2.5 rounded-xl border border-[var(--card-border)] text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-all flex items-center justify-center gap-2.5 btn-ghost">
               <Globe size={18} /> Continua con Google
             </button>
           </div>
 
           <p className="text-center text-xs text-[var(--text-muted)] mt-6">
-            &copy; {new Date().getFullYear()} EventiNLatina — Tutti gli eventi della provincia di Latina
+            &copy; {new Date().getFullYear()} EventiNLatina
           </p>
         </div>
       </div>

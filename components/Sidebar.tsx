@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Sparkles } from "lucide-react";
+import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store";
 
@@ -66,18 +66,11 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
 }) {
   return (
     <>
-      <div className="p-5 flex items-center gap-3 border-b border-[var(--card-border)]">
-        <Link href="/dashboard" onClick={onClose} className="flex items-center gap-3 group">
-          <div className="relative">
-            <img src="/logo.png" alt="Logo" className="w-9 h-9 rounded-xl ring-2 ring-[var(--accent)]/20 group-hover:ring-[var(--accent)]/40 transition-all" />
-            <Sparkles size={10} className="absolute -top-1 -right-1 text-yellow-400 animate-pulse" />
-          </div>
-          <div>
-            <span className="text-lg font-bold bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-400 bg-clip-text text-transparent leading-tight block">EventiNLatina</span>
-            <span className="text-[10px] text-[var(--text-muted)]">Provincia di Latina</span>
-          </div>
+      <div className="p-4 border-b border-[var(--card-border)]">
+        <Link href="/dashboard" onClick={onClose} className="block group">
+          <img src="/banner.png" alt="EventiNLatina" className="w-full rounded-xl ring-1 ring-[var(--accent)]/10 group-hover:ring-[var(--accent)]/30 transition-all" />
         </Link>
-        {showClose && <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] ml-auto"><X size={16} /></button>}
+        {showClose && <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] ml-auto mt-2"><X size={16} /></button>}
       </div>
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {links.map((l) => {
