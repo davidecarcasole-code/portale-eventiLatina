@@ -14,6 +14,9 @@ const DEFAULT_CATEGORIES = [
   { slug: "enogastronomia", name: "Enogastronomia", icon: "wine", color: "#dc2626" },
   { slug: "bambini", name: "Bambini", icon: "baby", color: "#f97316" },
   { slug: "borghi", name: "Borghi e dintorni", icon: "map", color: "#6366f1" },
+  { slug: "benessere", name: "Benessere", icon: "heart", color: "#10b981" },
+  { slug: "salute", name: "Salute", icon: "activity", color: "#3b82f6" },
+  { slug: "rosa", name: "Eventi in Rosa", icon: "flower", color: "#ec4899" },
 ];
 
 export async function GET(_req: NextRequest) {

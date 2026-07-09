@@ -99,6 +99,27 @@ const TEMPLATES: Record<string, string[]> = {
     '{title}: divertimento per bambini a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
     'A {city} il {date} con {title}. {time?Alle ore }{time}{location?– }{location}.',
   ],
+  benessere: [
+    '{title}, un momento di benessere a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Rigenera corpo e mente.',
+    'Prenditi cura di te con {title} a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Benessere e relax ti aspettano.',
+    'Il {date} a {city} appuntamento con {title}. {time?Alle ore }{time}{location?Presso }{location}. Un\'esperienza di puro benessere.',
+    '{title} a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Ritrova l\'equilibrio tra mente e corpo.',
+    'Benessere a {city}: {title} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Una pausa rigenerante.',
+  ],
+  salute: [
+    '{title}, evento dedicato alla salute a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Informazione e prevenzione.',
+    'Il {date} a {city} si parla di salute con {title}. {time?Alle ore }{time}{location?– }{location}. Partecipa e informati.',
+    'Salute e benessere a {city}: {title} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Un\'occasione per prenderti cura di te.',
+    '{title} ti aspetta a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Insieme per la salute e il benessere.',
+    'A {city} il {date}: {title}. {time?Alle ore }{time}{location?Presso }{location}. Un evento dedicato alla tua salute.',
+  ],
+  rosa: [
+    '{title}, un evento in rosa a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Un\'iniziativa dedicata alle donne.',
+    'Il {date} a {city} torna {title}. {time?Alle ore }{time}{location?– }{location}. Un evento al femminile da non perdere.',
+    'Rosa è {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Insieme per condividere e crescere.',
+    '{title} ti aspetta a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Un evento tutto al femminile.',
+    'A {city} il {date}: {title}. {time?Alle ore }{time}{location?Presso }{location}. Un appuntamento in rosa da segnare.',
+  ],
   borghi: [
     '{title} alla scoperta di {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Storia e bellezze architettoniche.',
     'Esplora i borghi con {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',

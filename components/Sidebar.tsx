@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X } from "lucide-react";
+import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store";
 
@@ -28,6 +28,8 @@ export function Sidebar() {
     { href: "/dashboard", label: "Dashboard", icon: Home },
     { href: "/events", label: "Eventi", icon: Calendar },
     { href: "/radio", label: "Web Radio", icon: Radio },
+    { href: "/spazio-venere", label: "Spazio Venere", icon: Heart },
+    { href: "/spazio-kids", label: "Spazio Kids", icon: Sparkles },
     { href: "/saved", label: "Salvati", icon: Bookmark },
     { href: "/profile", label: "Profilo", icon: User },
     ...(user?.role === "admin" || user?.role === "super_admin" ? [{ href: "/admin", label: "Admin", icon: Shield }] : []),

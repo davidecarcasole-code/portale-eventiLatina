@@ -11,4 +11,7 @@ export const CATEGORY_LIST = [
   { slug: 'enogastronomia', name: 'Enogastronomia' },
   { slug: 'bambini', name: 'Bambini' },
   { slug: 'borghi', name: 'Borghi e dintorni' },
+  { slug: 'benessere', name: 'Benessere' },
+  { slug: 'salute', name: 'Salute' },
+  { slug: 'rosa', name: 'Eventi in Rosa' },
 ];

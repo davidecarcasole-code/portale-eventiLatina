@@ -20,7 +20,11 @@ export async function GET(req: NextRequest) {
     const where: any = { isPublished: true };
     where.date = { gte: dateFrom ? new Date(dateFrom) : new Date(new Date().toDateString()) };
     if (dateTo) where.date.lte = new Date(dateTo);
-    if (category) where.category = { slug: category };
+    if (category) {
+      const slugs = category.split(',').map(s => s.trim()).filter(Boolean);
+      if (slugs.length === 1) where.category = { slug: slugs[0] };
+      else if (slugs.length > 1) where.category = { slug: { in: slugs } };
+    }
     if (province) where.province = province;
     if (city) where.city = { contains: city, mode: "insensitive" };
     if (time_period) where.timePeriod = time_period;
