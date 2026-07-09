@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Baby, ArrowRight } from "lucide-react";
+import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Baby, ArrowRight, Plus } from "lucide-react";
+import { useAuthStore } from "@/lib/store";
 
 const categoryIcons: Record<string, any> = {
   musica: Music, teatro: Theater, cultura: Book, sport: Trophy, natura: Leaf,
@@ -11,6 +12,8 @@ const categoryIcons: Record<string, any> = {
 };
 
 export default function DashboardPage() {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === "admin" || user?.role === "super_admin";
   const [events, setEvents] = useState<any[]>([]);
   const [todayEvents, setTodayEvents] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -82,6 +85,11 @@ export default function DashboardPage() {
             <Link href="/events" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium text-white hover:bg-white/30 transition-all hover:scale-105 active:scale-95">
               Esplora eventi <ArrowRight size={14} />
             </Link>
+            {isAdmin && (
+              <Link href="/admin" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white/90 text-teal-700 rounded-xl text-sm font-medium hover:bg-white transition-all hover:scale-105 active:scale-95 shadow-lg">
+                <Plus size={14} /> Nuovo Evento
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -3,7 +3,8 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Calendar, MapPin, Clock, Search, X, ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { Calendar, MapPin, Clock, Search, X, ChevronLeft, ChevronRight, SlidersHorizontal, Plus } from "lucide-react";
+import { useAuthStore } from "@/lib/store";
 
 const PROVINCES = ["LT", "RM", "FR", "VT", "RI", "CB", "CE", "NA"];
 const PROVINCE_NAMES: Record<string, string> = { LT: "Latina", RM: "Roma", FR: "Frosinone", VT: "Viterbo", RI: "Rieti", CB: "Campobasso", CE: "Caserta", NA: "Napoli" };
@@ -18,6 +19,8 @@ export default function EventsPage() {
 
 function EventsContent() {
   const searchParams = useSearchParams();
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === "admin" || user?.role === "super_admin";
   const [events, setEvents] = useState<any[]>([]);
   const [pagination, setPagination] = useState<any>({ page: 1, totalPages: 1, total: 0 });
   const [loading, setLoading] = useState(true);
@@ -80,6 +83,11 @@ function EventsContent() {
             placeholder="Cerca eventi per titolo, città, categoria..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-all placeholder:text-[var(--text-muted)]" />
         </div>
+        {isAdmin && (
+          <Link href="/admin" className="p-2.5 rounded-xl border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)] transition-all" title="Aggiungi evento">
+            <Plus size={18} />
+          </Link>
+        )}
         <button onClick={() => setShowFilters(!showFilters)}
           className={`p-2.5 rounded-xl border transition-all ${showFilters || hasFilters ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow-lg shadow-[var(--accent-glow)]" : "border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)]"}`}>
           <SlidersHorizontal size={18} />
