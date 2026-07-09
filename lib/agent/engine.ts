@@ -152,15 +152,11 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
   const catMap = new Map(cats.map(c => [c.id, { slug: c.slug, name: c.name }]));
 
   const hasAiKey = !!(process.env.GROQ_API_KEY || process.env.GEMINI_API_KEY);
-  let usedAi = false;
-  let updated = 0;
+  let aiUpdated: number[] = [];
+  let aiErrors: string[] = [];
 
   if (hasAiKey) {
-    // Tentativo AI (batch 5)
-    const { enrichBatch: aiEnrichBatch } = await import('./templates');
-    let errors: string[] = [];
     const batchSize = 5;
-
     for (let i = 0; i < events.length; i += batchSize) {
       const batch = events.slice(i, i + batchSize);
       const list = batch.map(e =>
@@ -178,28 +174,18 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
           const desc = match?.[1]?.trim();
           if (desc && desc.length > 15) {
             await prisma.event.update({ where: { id: e.id }, data: { description: desc } });
-            updated++;
-            usedAi = true;
+            aiUpdated.push(e.id);
           }
         }
       } catch (err: any) {
-        errors.push(`batch ${i + 1}: ${err.message?.slice(0, 100)}`);
+        aiErrors.push(`batch ${i + 1}: ${err.message?.slice(0, 100)}`);
       }
-    }
-
-    // Se l'AI ha fallito su tutti i batch, passa al template engine
-    if (!usedAi || errors.length > 0) {
-      const remaining = events.filter(e => {
-        // Ricarica l'evento per vedere se ha ancora descrizione vuota
-        return true; // li processiamo tutti, tanto il template engine sovrascrive solo se serve
-      });
-      // Il template engine processerà comunque quelli saltati dall'AI
     }
   }
 
-  // Template engine offline – processa tutti quelli ancora senza descrizione
+  // Template engine offline – solo eventi non ancora arricchiti dall'AI
   const { enrichBatch } = await import('./templates');
-  const batch = events.map(e => ({
+  const toEnrich = events.filter(e => !aiUpdated.includes(e.id)).map(e => ({
     id: e.id,
     title: e.title,
     date: e.date,
@@ -210,16 +196,22 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
     categoryName: catMap.get(e.categoryId!)?.name || 'Spettacolo',
   }));
 
-  const descriptions = enrichBatch(batch);
   let templateUpdated = 0;
-
-  for (const [id, desc] of descriptions) {
-    await prisma.event.update({ where: { id }, data: { description: desc } });
-    templateUpdated++;
+  if (toEnrich.length > 0) {
+    const descriptions = enrichBatch(toEnrich);
+    for (const [id, desc] of descriptions) {
+      await prisma.event.update({ where: { id }, data: { description: desc } });
+      templateUpdated++;
+    }
   }
 
-  const method = usedAi ? 'AI' : 'template offline';
-  return { task: 'enrich', processed: templateUpdated, details: `Arricchite ${templateUpdated} eventi (metodo: ${method})` };
+  const method = aiUpdated.length > 0 ? 'AI' : 'template offline';
+  const total = aiUpdated.length + templateUpdated;
+  const details = [`Arricchite ${total} eventi (metodo: ${method})`];
+  if (aiUpdated.length > 0) details.push(`AI: ${aiUpdated.length}`);
+  if (templateUpdated > 0) details.push(`template: ${templateUpdated}`);
+  if (aiErrors.length > 0) details.push(`errori AI: ${aiErrors.join('; ')}`);
+  return { task: 'enrich', processed: total, details: details.join(' | ') };
 }
 
 /* ───── Dedup avanzato ───── */
