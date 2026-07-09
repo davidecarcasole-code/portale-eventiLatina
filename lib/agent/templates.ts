@@ -23,118 +23,125 @@ function pick<T>(arr: T[]): T {
 
 const TEMPLATES: Record<string, string[]> = {
   musica: [
-    '{title} ti aspetta a {city} il {date}{time, per una serata all\'insegna della buona musica}. Un\'occasione imperdibile per gli amanti del genere, in un\'atmosfera coinvolgente.{location, Si terrà presso {location}}.',
-    'Preparati a vivere {title}, l\'evento musicale che animerà {city} il {date}.{time, Appuntamento alle {time}}{location, presso {location}}. Una serata da non perdere!',
-    'Il {date} a {city} va in scena {title}.{time, Alle {time}}{location, presso {location}} musica dal vivo, energia e divertimento ti aspettano.',
-    '{title} arriva a {city}! {date}{time, alle {time}} per una serata di musica e spettacolo.{location, L\'appuntamento è a {location}}.',
-    'Musica a tutto volume a {city} con {title}. {date}{time, – ore {time}}{location, – {location}}. Porta gli amici e vieni a ballare!',
+    '{title} ti aspetta a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Un\'occasione imperdibile per gli amanti del genere.',
+    'Preparati a vivere {title} a {city} il {date}. {time?Alle ore }{time}{location?, }{location}. Una serata da non perdere!',
+    'Il {date} a {city} va in scena {title}. {time?Alle ore }{time}{location?Presso }{location}. Musica dal vivo, energia e divertimento.',
+    '{title} arriva a {city}! {date}. {time?Alle ore }{time}{location?Appuntamento a }{location}.',
+    'Musica a tutto volume a {city} con {title} il {date}. {time?Alle ore }{time}{location?– }{location}. Porta gli amici e vieni a ballare!',
   ],
   teatro: [
-    '{title} va in scena a {city} il {date}.{time, Alle {time}}{location, presso {location}}. Uno spettacolo teatrale che emozionerà il pubblico con una performance unica.',
-    'Il teatro di {city} ospita {title} il {date}.{time, Appuntamento alle {time}}{location, presso {location}}. Una pièce avvincente da vedere assolutamente.',
-    'Sipario su {title}! {date} a {city}{time, alle {time}}{location, – {location}}. Un\'esperienza culturale che unisce tradizione e innovazione.',
-    '{title} – teatro a {city} il {date}.{time, Ore {time}}{location, – {location}}. Lasciati trasportare dalla magia del palcoscenico.',
-    'Grande attesa per {title} in programma a {city} il {date}.{time, Alle {time}}{location, presso {location}} uno spettacolo che promette forti emozioni.',
+    '{title} va in scena a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Uno spettacolo che emozionerà il pubblico.',
+    'Il teatro di {city} ospita {title} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Una pièce da vedere.',
+    'Sipario su {title} a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Un\'esperienza culturale da non perdere.',
+    '{title} – teatro a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Lasciati trasportare dalla magia del palcoscenico.',
+    'Grande attesa per {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
   ],
   cultura: [
-    '{title} è l\'evento culturale da non perdere a {city} il {date}.{time, Alle {time}}{location, presso {location}}. Un\'occasione per approfondire e scoprire qualcosa di nuovo.',
-    'Cultura a {city}: il {date} appuntamento con {title}.{time, Ore {time}}{location, – {location}}. Ingresso aperto a tutti gli appassionati.',
-    '{title} ti aspetta a {city} il {date}.{time, Alle {time}}{location, presso {location}}. Un viaggio affascinante tra arte, storia e conoscenza.',
-    'Il {date} a {city} torna {title}.{time, Dalle {time}}{location, presso {location}}. Un evento culturale che arricchisce il panorama locale.',
-    'Scopri {title} a {city} il {date}.{time, Alle {time}}{location, – {location}}. Un appuntamento con la cultura da segnare in agenda.',
+    '{title}, evento culturale a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Cultura a {city}: {title} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+    '{title} ti aspetta a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Un viaggio tra arte e storia.',
+    'Il {date} a {city} torna {title}. {time?Alle ore }{time}{location?Presso }{location}. Un evento che arricchisce il territorio.',
+    'Scopri {title} a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
   ],
   sport: [
-    'Grande sport a {city} con {title}! {date}{time, alle {time}}{location, – {location}}. Vivi l\'emozione della competizione e tifa i tuoi preferiti.',
-    '{title} anima {city} il {date}.{time, Ore {time}}{location, presso {location}}. Un evento sportivo che unisce atleti e appassionati.',
-    'Pronti, partenza, via! {title} a {city} il {date}{time, alle {time}}{location, presso {location}}. Non mancare a questo appuntamento sportivo.',
-    'Sport e agonismo a {city}: {date} con {title}.{time, Alle {time}}{location, – {location}}. Ingresso libero per tutti gli sportivi.',
-    '{title} – l\'evento sportivo dell\'anno a {city}. {date}{time, ore {time}}{location, – {location}}. Vieni a tifare!',
+    'Grande sport a {city} con {title} il {date}. {time?Alle ore }{time}{location?– }{location}. Vivi l\'emozione della competizione.',
+    '{title} anima {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Un evento per atleti e appassionati.',
+    'Pronti, partenza, via! {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Sport a {city}: {title} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+    '{title} – evento sportivo a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Vieni a tifare!',
   ],
   natura: [
-    '{title} ti porta alla scoperta della natura a {city} il {date}.{time, Alle {time}}{location, – {location}}. Un\'esperienza all\'aria aperta per tutta la famiglia.',
-    'Immergiti nella natura con {title} a {city} il {date}.{time, Ore {time}}{location, presso {location}}. Un\'occasione per riconnettersi con l\'ambiente.',
-    'Il {date} a {city} si celebra {title}.{time, Dalle {time}}{location, presso {location}}. Natura, paesaggi e biodiversità ti aspettano.',
-    '{title}: una giornata nella natura a {city}. {date}{time, alle {time}}{location, – {location}}. Perfetto per grandi e piccoli.',
-    'A {city} il {date} appuntamento con {title}.{time, Alle {time}}{location, presso {location}}. Scopri le meraviglie naturali del territorio.',
+    '{title} ti porta nella natura a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Per tutta la famiglia.',
+    'Immergiti nella natura con {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Il {date} a {city} si celebra {title}. {time?Alle ore }{time}{location?Presso }{location}. Natura e biodiversità.',
+    '{title}: giornata nella natura a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+    'A {city} il {date}: {title}. {time?Alle ore }{time}{location?Presso }{location}.',
   ],
   trekking: [
-    '{title}: un\'escursione imperdibile a {city} il {date}.{time, Ritrovo alle {time}}{location, – {location}}. Scarpe comode e voglia di camminare!',
-    'Cammina con noi! {title} a {city} il {date}{time, alle {time}}{location, presso {location}}. Percorsi suggestivi e panorami mozzafiato.',
-    'Amanti del trekking, {title} vi aspetta a {city} il {date}.{time, Alle {time}}{location, – {location}}. Un itinerario adatto a tutti i livelli.',
-    '{title} – escursione guidata a {city} il {date}.{time, Ore {time}}{location, presso {location}}. Scopri i sentieri più belli del territorio.',
-    'Il {date} a {city} si cammina con {title}.{time, Alle {time}}{location, – {location}}. Natura, aria pulita e paesaggi indimenticabili.',
+    '{title}: escursione a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Scarpe comode e voglia di camminare!',
+    'Cammina con noi! {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Amanti del trekking, {title} vi aspetta a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+    '{title} – escursione a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Il {date} a {city} si cammina con {title}. {time?Alle ore }{time}{location?– }{location}.',
   ],
   montagna: [
-    '{title} vi aspetta tra le montagne di {city} il {date}.{time, Alle {time}}{location, – {location}}. Una giornata all\'insegna dell\'aria pura e dei panorami alpini.',
-    'La montagna chiama! {title} a {city} il {date}{time, alle {time}}{location, presso {location}}. Un\'esperienza rigenerante tra cime e vallate.',
-    'Il {date} a {city} vive la montagna con {title}.{time, Dalle {time}}{location, presso {location}}. Adatto a escursionisti e famiglie.',
-    '{title} – montagna e natura a {city}. {date}{time, ore {time}}{location, – {location}}. Vieni a respirare l\'aria fresca delle alture.',
-    'A {city} il {date} torna {title}.{time, Alle {time}}{location, presso {location}}. Un\'immersione totale nella bellezza della montagna.',
+    '{title} tra le montagne di {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Panorami alpini e aria pura.',
+    'La montagna chiama! {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Il {date} a {city} vive la montagna con {title}. {time?Alle ore }{time}{location?Presso }{location}.',
+    '{title} – montagna a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+    'A {city} il {date} torna {title}. {time?Alle ore }{time}{location?Presso }{location}.',
   ],
   gite: [
-    '{title} è la gita perfetta a {city} il {date}.{time, Alle {time}}{location, – {location}}. Porta la famiglia e trascorri una giornata indimenticabile.',
-    'In gita a {city} con {title}! {date}{time, alle {time}}{location, presso {location}}. Un\'escursione tra cultura, natura e divertimento.',
-    'Il {date} partiamo per {title} da {city}.{time, Alle {time}}{location, – {location}}. Una giornata fuori porta da vivere insieme.',
-    '{title}: gita a {city} il {date}.{time, Ore {time}}{location, presso {location}}. Scopri angoli nascosti e luoghi incantevoli.',
-    'Pronti per una gita? {title} a {city} il {date}{time, alle {time}}{location, – {location}}. Divertimento assicurato per tutte le età.',
+    '{title}: gita a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Una giornata fuori porta.',
+    'In gita a {city} con {title} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Il {date} partiamo per {title} da {city}. {time?Alle ore }{time}{location?– }{location}.',
+    '{title} ti aspetta a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Pronti per una gita? {title} a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
   ],
   spettacolo: [
-    '{title} porta lo spettacolo a {city} il {date}.{time, Alle {time}}{location, – {location}}. Una serata di intrattenimento puro da non perdere.',
-    'Grande spettacolo a {city}: {title} il {date}.{time, Ore {time}}{location, presso {location}}. Risate, emozioni e divertimento vi aspettano.',
-    'Il {date} a {city} va in scena {title}.{time, Alle {time}}{location, presso {location}}. Uno show travolgente per tutte le età.',
-    '{title} – l\'evento da non perdere a {city}. {date}{time, alle {time}}{location, – {location}} preparati a stupirti!',
-    'A {city} il {date} appuntamento con {title}.{time, Dalle {time}}{location, – {location}}. Intrattenimento di qualità per grandi e piccini.',
+    '{title} porta lo spettacolo a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Intrattenimento da non perdere.',
+    'Grande spettacolo a {city}: {title} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Il {date} a {city} va in scena {title}. {time?Alle ore }{time}{location?Presso }{location}.',
+    '{title} a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+    'A {city} il {date}: {title}. {time?Alle ore }{time}{location?– }{location}.',
   ],
   enogastronomia: [
-    '{title} delizia i palati a {city} il {date}.{time, Alle {time}}{location, presso {location}}. Un viaggio tra sapori autentici e tradizione culinaria.',
-    'Gusto e tradizione a {city} con {title} il {date}.{time, Ore {time}}{location, – {location}}. Degustazioni, prodotti tipici e specialità locali.',
-    'Il {date} a {city} si celebra {title}.{time, Dalle {time}}{location, presso {location}}. Un paradiso per gli amanti del buon cibo e del buon vino.',
-    '{title}: enogastronomia a {city} il {date}.{time, Alle {time}}{location, – {location}}. Scopri i sapori autentici del territorio.',
-    'Appuntamento con {title} a {city} il {date}.{time, Alle {time}}{location, presso {location}}. Sapori, aromi e tradizioni ti aspettano.',
+    '{title} delizia i palati a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}. Sapori e tradizione.',
+    'Gusto e tradizione a {city} con {title} il {date}. {time?Alle ore }{time}{location?– }{location}. Prodotti tipici e degustazioni.',
+    'Il {date} a {city} si celebra {title}. {time?Alle ore }{time}{location?Presso }{location}. Un paradiso per buongustai.',
+    '{title}: sapori a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+    'Appuntamento con {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
   ],
   bambini: [
-    '{title} è l\'evento perfetto per i bambini a {city} il {date}.{time, Alle {time}}{location, – {location}}. Giochi, laboratori e tanto divertimento per i più piccoli.',
-    'Festeggiamo i bambini con {title} a {city} il {date}.{time, Ore {time}}{location, presso {location}}. Un pomeriggio di allegria e attività creative.',
-    'Il {date} a {city} c\'è {title}.{time, Dalle {time}}{location, presso {location}}. Porta i tuoi bambini per una giornata indimenticabile.',
-    '{title}: un evento per bambini a {city} il {date}.{time, Alle {time}}{location, – {location}}. Divertimento assicurato per i più piccoli.',
-    'A {city} il {date} con {title}.{time, Alle {time}}{location, – {location}}. Giochi, animazione e sorprese per tutti i bambini.',
+    '{title}, evento per bambini a {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Giochi e laboratori.',
+    'Festeggiamo i bambini con {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Il {date} a {city} c\'è {title}. {time?Alle ore }{time}{location?Presso }{location}.',
+    '{title}: divertimento per bambini a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+    'A {city} il {date} con {title}. {time?Alle ore }{time}{location?– }{location}.',
   ],
   borghi: [
-    '{title} vi porta alla scoperta di {city} il {date}.{time, Alle {time}}{location, – {location}}. Un itinerario tra storia, tradizioni e bellezze architettoniche.',
-    'Esplora i borghi con {title} a {city} il {date}.{time, Ore {time}}{location, presso {location}}. Un viaggio nel cuore dell\'Italia più autentica.',
-    'Il {date} a {city} si visita con {title}.{time, Dalle {time}}{location, presso {location}}. Scopri angoli suggestivi e storie affascinanti.',
-    '{title}: alla scoperta del borgo di {city}. {date}{time, alle {time}}{location, – {location}}. Un\'esperienza tra cultura e tradizione locale.',
-    'Passeggiata tra i vicoli di {city} con {title} il {date}.{time, Alle {time}}{location, – {location}}. Un tuffo nella storia e nell\'atmosfera del borgo.',
+    '{title} alla scoperta di {city} il {date}. {time?Alle ore }{time}{location?– }{location}. Storia e bellezze architettoniche.',
+    'Esplora i borghi con {title} a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+    'Il {date} a {city} con {title}. {time?Alle ore }{time}{location?Presso }{location}. Angoli suggestivi e storie affascinanti.',
+    '{title}: alla scoperta di {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+    'Passeggiata tra i vicoli di {city} con {title} il {date}. {time?Alle ore }{time}{location?– }{location}.',
   ],
 };
 
 const FALLBACK_TEMPLATES = [
-  'Non perdere {title} a {city} il {date}.{time, Alle {time}}{location, – {location}}. Un evento da segnare in agenda!',
-  '{title} ti aspetta a {city} il {date}.{time, Ore {time}}{location, presso {location}}. Ti aspettiamo numerosi!',
-  'Segna la data: {date} a {city} con {title}.{time, Alle {time}}{location, – {location}}. Un appuntamento da non mancare.',
-  '{title} arriva a {city} il {date}.{time, Dalle {time}}{location, presso {location}}. Vi aspettiamo!',
+  'Non perdere {title} a {city} il {date}. {time?Alle ore }{time}{location?– }{location}.',
+  '{title} ti aspetta a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
+  'Segna la data: {date} a {city} con {title}. {time?Alle ore }{time}{location?– }{location}.',
+  '{title} arriva a {city} il {date}. {time?Alle ore }{time}{location?Presso }{location}.',
 ];
 
 /* ───── Interpolazione template ───── */
 
 function fillTemplate(tpl: string, e: EnrichEvent): string {
   const dateStr = e.date ? fmtDate(e.date) : 'data da definire';
+  const timeVal = e.time || '';
+  const locVal = e.location || '';
 
   let result = tpl
     .replace(/\{title\}/g, e.title)
     .replace(/\{city\}/g, e.city || 'Latina')
-    .replace(/\{date\}/g, dateStr)
-    .replace(/\{location\}/g, e.location || 'sede da definire');
+    .replace(/\{date\}/g, dateStr);
 
-  // Gestione blocchi condizionali {time, ...}
-  result = result.replace(/\{time,([^}]+)\}/g, (_, content: string) => {
-    return e.time ? content.trim() : '';
+  // Conditional blocks: {time?prefix } — if time exists, keep "prefix"; else remove
+  // The actual {time} value is handled by the next step
+  result = result.replace(/\{time\?(.+?)\}/g, (_, prefix: string) => {
+    return e.time ? prefix : '';
+  });
+  result = result.replace(/\{location\?(.+?)\}/g, (_, prefix: string) => {
+    return e.location ? prefix : '';
   });
 
-  // Gestione blocchi {location, ...} (fallback se location non presente)
-  result = result.replace(/\{location,([^}]+)\}/g, (_, content: string) => {
-    return e.location ? content.trim() : '';
-  });
+  // Replace remaining {time} and {location} with actual values (trailing space for clean concatenation)
+  result = result.replace(/\{time\}/g, timeVal ? timeVal + ' ' : '');
+  result = result.replace(/\{location\}/g, locVal || '');
+
+  // Clean up: misplaced punctuation, double periods, double spaces
+  result = result.replace(/\s+\./g, '.').replace(/\.{2,}/g, '.').replace(/\s{2,}/g, ' ').replace(/\s+,/g, ',').trim();
 
   return result;
 }
