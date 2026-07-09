@@ -10,4 +10,5 @@ export const CATEGORY_LIST = [
   { slug: 'spettacolo', name: 'Spettacolo' },
   { slug: 'enogastronomia', name: 'Enogastronomia' },
   { slug: 'bambini', name: 'Bambini' },
+  { slug: 'borghi', name: 'Borghi e dintorni' },
 ];

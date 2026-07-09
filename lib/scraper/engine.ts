@@ -19,6 +19,7 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_entertainment: 'spettacolo',
   cat_food: 'enogastronomia',
   cat_kids: 'bambini',
+  cat_borghi: 'borghi',
 };
 
 const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Promise<ScrapedEvent[]> }> = {

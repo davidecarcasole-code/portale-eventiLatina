@@ -1,10 +1,5 @@
 import { CATEGORY_LIST } from './config';
 
-async function getPrisma() {
-  const mod = await import("@/lib/prisma");
-  return mod.prisma;
-}
-
 export interface AgentResult {
   task: string;
   processed: number;
@@ -13,43 +8,86 @@ export interface AgentResult {
 
 const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
 
-/* ───── Fetch diretto Gemini con timeout ───── */
+/* ───── Provider-agnostic AI fetch ───── */
 
-async function geminiFetch(system: string, prompt: string, maxTokens = 200, temp = 0.2): Promise<string> {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) throw new Error('GEMINI_API_KEY mancante');
+async function aiFetch(system: string, prompt: string, maxTokens = 200, temp = 0.2): Promise<string> {
+  const groqKey = process.env.GROQ_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY;
 
+  // Prefer Groq (Llama 3), fallback to Gemini
+  if (groqKey) return groqFetch(groqKey, system, prompt, maxTokens, temp);
+  if (geminiKey) return geminiFetch(geminiKey, system, prompt, maxTokens, temp);
+  throw new Error('Nessuna API key configurata. Imposta GROQ_API_KEY o GEMINI_API_KEY nel .env');
+}
+
+/* ───── Groq (Llama 3 70B) ───── */
+
+async function groqFetch(key: string, system: string, prompt: string, maxTokens: number, temp: number): Promise<string> {
+  const url = 'https://api.groq.com/openai/v1/chat/completions';
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 25000);
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+        body: JSON.stringify({
+          model: 'llama3-70b-8192',
+          messages: [
+            { role: 'system', content: system },
+            { role: 'user', content: prompt },
+          ],
+          max_tokens: maxTokens,
+          temperature: temp,
+        }),
+        signal: ctrl.signal,
+      });
+      clearTimeout(timer);
+      if (!res.ok) {
+        const errText = await res.text().catch(() => '');
+        if (res.status === 429 && attempt < 2) { await delay(3000 * (attempt + 1)); continue; }
+        throw new Error(`Groq ${res.status}: ${errText.slice(0, 150)}`);
+      }
+      const data = await res.json();
+      const text = data?.choices?.[0]?.message?.content;
+      if (!text) throw new Error('Risposta vuota');
+      return text.trim();
+    } catch (err: any) {
+      clearTimeout(timer);
+      if (err.name === 'AbortError') throw new Error('Timeout 25s');
+      if (err.message?.includes('429') && attempt < 2) { await delay(3000 * (attempt + 1)); continue; }
+      throw err;
+    }
+  }
+  throw new Error('Max retries');
+}
+
+/* ───── Gemini ───── */
+
+async function geminiFetch(key: string, system: string, prompt: string, maxTokens: number, temp: number): Promise<string> {
   const model = process.env.AI_MODEL || 'gemini-2.0-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-
-  const body = {
-    systemInstruction: { parts: [{ text: system }] },
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { maxOutputTokens: maxTokens, temperature: temp },
-  };
 
   for (let attempt = 0; attempt < 3; attempt++) {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 20000);
-
     try {
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify(body),
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: maxTokens, temperature: temp },
+        }),
         signal: ctrl.signal,
       });
       clearTimeout(timer);
-
       if (!res.ok) {
         const errText = await res.text().catch(() => '');
-        if (res.status === 429 && attempt < 2) {
-          await delay(3000 * (attempt + 1));
-          continue;
-        }
-        throw new Error(`${res.status} ${errText.slice(0, 150)}`);
+        if (res.status === 429 && attempt < 2) { await delay(3000 * (attempt + 1)); continue; }
+        throw new Error(`Gemini ${res.status}: ${errText.slice(0, 150)}`);
       }
-
       const data = await res.json();
       const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text) throw new Error('Risposta vuota');
@@ -57,10 +95,7 @@ async function geminiFetch(system: string, prompt: string, maxTokens = 200, temp
     } catch (err: any) {
       clearTimeout(timer);
       if (err.name === 'AbortError') throw new Error('Timeout 20s');
-      if (err.message?.includes('429') && attempt < 2) {
-        await delay(3000 * (attempt + 1));
-        continue;
-      }
+      if (err.message?.includes('429') && attempt < 2) { await delay(3000 * (attempt + 1)); continue; }
       throw err;
     }
   }
@@ -70,7 +105,7 @@ async function geminiFetch(system: string, prompt: string, maxTokens = 200, temp
 /* ───── Classificazione (1 chiamata batch) ───── */
 
 export async function classifyAllEvents(): Promise<AgentResult> {
-  const prisma = await getPrisma();
+  const prisma = await (await import("@/lib/prisma")).prisma;
   const events = await prisma.event.findMany({
     where: { categoryId: null, isPublished: true },
     take: 30,
@@ -83,20 +118,17 @@ export async function classifyAllEvents(): Promise<AgentResult> {
   const list = events.map(e => `${e.id}: ${e.title}${e.description ? ` — ${e.description.slice(0, 80)}` : ''}`).join('\n');
 
   try {
-    const text = await geminiFetch(
+    const text = await aiFetch(
       `Sei un classificatore. Categorie: ${cats}. Rispondi SOLO con un JSON array: [{"id":numero,"cat":"slug"}]. Default: "spettacolo".`,
       `Classifica:\n${list}`, 500, 0.1
     );
-
     const json = text.slice(text.indexOf('['), text.lastIndexOf(']') + 1);
     const parsed = JSON.parse(json);
     let updated = 0;
-
     for (const item of parsed) {
       const cat = await prisma.category.findUnique({ where: { slug: item.cat } });
       if (cat) { await prisma.event.update({ where: { id: item.id }, data: { categoryId: cat.id } }); updated++; }
     }
-
     return { task: 'classify', processed: updated, details: `Classificati ${updated}/${events.length}` };
   } catch (err: any) {
     return { task: 'classify', processed: 0, details: `Errore: ${err.message?.slice(0, 200)}` };
@@ -106,7 +138,7 @@ export async function classifyAllEvents(): Promise<AgentResult> {
 /* ───── Arricchimento descrizioni (batch 5 per chiamata) ───── */
 
 export async function enrichAllDescriptions(): Promise<AgentResult> {
-  const prisma = await getPrisma();
+  const prisma = await (await import("@/lib/prisma")).prisma;
   const events = await prisma.event.findMany({
     where: { isPublished: true, OR: [{ description: null }, { description: '' }] },
     take: 10,
@@ -129,12 +161,11 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
     ).join('\n');
 
     try {
-      const text = await geminiFetch(
+      const text = await aiFetch(
         'Sei un copywriter eventi. Genera max 3 frasi accattivanti in italiano per ogni evento.',
         `Per ogni evento, rispondi con "#ID:" seguito dalla descrizione su una nuova riga.\n\nEventi:\n${list}`,
         800, 0.7
       );
-
       for (const e of batch) {
         const match = text.match(new RegExp(`#${e.id}:\\s*(.+?)(?=\\n#\\d|$)`, 's'));
         const desc = match?.[1]?.trim();
@@ -147,7 +178,7 @@ export async function enrichAllDescriptions(): Promise<AgentResult> {
     }
   }
 
-  return { task: 'enrich', processed: batchSize * Math.ceil(events.length / batchSize) - errors.length * batchSize, details: `Arricchite ${events.length}${errors.length ? ` (errori: ${errors.join('; ')})` : ''}` };
+  return { task: 'enrich', processed: events.length, details: `Arricchite ${events.length}${errors.length ? ` (errori: ${errors.join('; ')})` : ''}` };
 }
 
 /* ───── Dedup avanzato ───── */
@@ -167,7 +198,7 @@ function tokenJaccard(a: string, b: string): number {
 }
 
 export async function dedupEvents(): Promise<AgentResult> {
-  const prisma = await getPrisma();
+  const prisma = await (await import("@/lib/prisma")).prisma;
   const events = await prisma.event.findMany({
     where: { isPublished: true },
     select: { id: true, title: true, date: true, city: true },
@@ -189,10 +220,7 @@ export async function dedupEvents(): Promise<AgentResult> {
       const sameDate = a.date && b.date && a.date.toISOString().split('T')[0] === b.date.toISOString().split('T')[0];
       const sameCity = a.city && b.city && normalize(a.city) === normalize(b.city);
       if (!sameDate && !sameCity) continue;
-      if (tokenJaccard(a.title, b.title) >= 0.65) {
-        group.push(j);
-        checked.add(j);
-      }
+      if (tokenJaccard(a.title, b.title) >= 0.65) { group.push(j); checked.add(j); }
     }
     if (group.length > 1) groups.push(group);
   }
@@ -209,10 +237,10 @@ export async function dedupEvents(): Promise<AgentResult> {
   return { task: 'dedup', processed: removed, details: `Rimossi ${removed} duplicati su ${events.length} eventi (${groups.length} gruppi)` };
 }
 
-/* ───── Riassunto eventi (1 chiamata) ───── */
+/* ───── Riassunto eventi ───── */
 
 export async function summarizeEvents(): Promise<AgentResult> {
-  const prisma = await getPrisma();
+  const prisma = await (await import("@/lib/prisma")).prisma;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const end = new Date(today);
@@ -234,7 +262,7 @@ export async function summarizeEvents(): Promise<AgentResult> {
   ).join('\n');
 
   try {
-    const text = await geminiFetch(
+    const text = await aiFetch(
       'Sei un organizzatore eventi. Crea un riassunto accattivante in italiano, max 200 parole, raggruppa per categoria.',
       `Riassunto eventi prossimi giorni:\n${list}`, 400, 0.7
     );
