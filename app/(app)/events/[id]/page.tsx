@@ -168,8 +168,8 @@ export default function EventDetailPage() {
         {(event.source_url || event.source_name) && (
           <>
             <div className="divider" />
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-50 to-transparent dark:from-amber-900/10 dark:to-transparent border border-amber-200/50 dark:border-amber-800/30">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-cyan-50 to-transparent dark:from-cyan-900/10 dark:to-transparent border border-cyan-200/50 dark:border-cyan-800/30">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center flex-shrink-0 shadow-sm">
                 <Globe size={16} className="text-white" />
               </div>
               <div className="min-w-0 flex-1">

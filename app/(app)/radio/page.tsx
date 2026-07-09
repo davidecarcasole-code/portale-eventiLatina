@@ -36,7 +36,7 @@ export default function RadioPage() {
 
       {tab === "listen" && (
         <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl p-6 text-center space-y-4">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--accent)] to-amber-400 flex items-center justify-center mx-auto">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--accent)] to-indigo-500 flex items-center justify-center mx-auto">
             <Radio size={32} className="text-white" />
           </div>
           <h2 className="font-semibold">{settings.station_name || "Radio EventiNLatina"}</h2>

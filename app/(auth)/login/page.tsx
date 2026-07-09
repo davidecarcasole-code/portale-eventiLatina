@@ -71,7 +71,7 @@ export default function LoginPage() {
               {BG_IMAGES.map((_, i) => (
                 <button key={i} onClick={() => setBgIdx(i)}
                   className="h-1.5 rounded-full transition-all duration-500"
-                  style={{ width: i === bgIdx ? 24 : 8, backgroundColor: i === bgIdx ? "#f59e0b" : "rgba(255,255,255,0.3)" }} />
+                  style={{ width: i === bgIdx ? 24 : 8, backgroundColor: i === bgIdx ? "#06b6d4" : "rgba(255,255,255,0.3)" }} />
               ))}
             </div>
           </div>
@@ -91,19 +91,19 @@ export default function LoginPage() {
                 {!isLogin && (
                   <div>
                     <label className="text-xs font-medium text-white/70 mb-1.5 block"><User size={13} className="inline mr-1" /> Nome</label>
-                    <input value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all" placeholder="Il tuo nome" required />
+                    <input value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all" placeholder="Il tuo nome" required />
                   </div>
                 )}
                 <div>
                   <label className="text-xs font-medium text-white/70 mb-1.5 block"><Mail size={13} className="inline mr-1" /> Email</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all" placeholder="tua@email.com" required />
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all" placeholder="tua@email.com" required />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-white/70 mb-1.5 block"><Lock size={13} className="inline mr-1" /> Password</label>
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/50 transition-all" placeholder="••••••••" required minLength={6} />
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all" placeholder="••••••••" required minLength={6} />
                 </div>
                 {error && <p className="text-red-400 text-sm bg-red-950/40 rounded-lg p-2.5">{error}</p>}
-                <button type="submit" disabled={loading} className="w-full py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600 disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20">
+                <button type="submit" disabled={loading} className="w-full py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-cyan-500 to-indigo-500 text-white hover:from-cyan-600 hover:to-indigo-600 disabled:opacity-50 transition-all shadow-lg shadow-cyan-500/20">
                   {loading ? "Attendere..." : isLogin ? "Accedi" : "Crea Account"}
                 </button>
               </form>

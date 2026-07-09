@@ -25,7 +25,7 @@ export default function AdminPage() {
   return (
     <div className="page-container space-y-6 animate-fade-in">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg animate-pulse-neon">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center shadow-lg animate-pulse-neon">
           <Shield size={20} className="text-white" />
         </div>
         <div>
@@ -553,7 +553,7 @@ function UsersTab({ token }: { token: string }) {
           ) : (
             <div key={u.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--accent)] to-amber-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--accent)] to-indigo-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                   {u.name?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <div className="min-w-0">

@@ -62,20 +62,20 @@ export default function DashboardPage() {
     <div className="page-container space-y-6 animate-fade-in relative">
       <div className="blur-sphere blur-sphere-1" />
       <div className="blur-sphere blur-sphere-2" />
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500 p-6 sm:p-8 text-white animate-fire-pulse">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-500 via-teal-500 to-indigo-500 p-6 sm:p-8 text-white animate-fire-pulse">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-        <div className="absolute top-4 left-10 w-3 h-3 bg-yellow-300 rounded-full animate-float-up" style={{ animationDelay: "0s" }} />
+        <div className="absolute top-4 left-10 w-3 h-3 bg-cyan-300 rounded-full animate-float-up" style={{ animationDelay: "0s" }} />
         <div className="absolute top-8 right-20 w-2.5 h-2.5 bg-white/40 rounded animate-float-up" style={{ animationDelay: "0.5s" }} />
         <div className="absolute top-3 right-40 w-2 h-2 bg-pink-300 rounded animate-float-up" style={{ animationDelay: "1s" }} />
-        <div className="absolute bottom-12 left-[30%] w-3 h-3 bg-orange-200 rounded animate-float-up" style={{ animationDelay: "0.8s" }} />
+        <div className="absolute bottom-12 left-[30%] w-3 h-3 bg-cyan-200 rounded animate-float-up" style={{ animationDelay: "0.8s" }} />
         <div className="absolute top-16 left-[60%] w-2 h-2 bg-white/60 rotate-45 animate-float-up" style={{ animationDelay: "1.3s" }} />
-        <div className="absolute bottom-6 right-[25%] w-2.5 h-2.5 bg-amber-200 rounded-full animate-float-up" style={{ animationDelay: "0.3s" }} />
+        <div className="absolute bottom-6 right-[25%] w-2.5 h-2.5 bg-indigo-200 rounded-full animate-float-up" style={{ animationDelay: "0.3s" }} />
         <div className="relative">
           <p className="text-white/70 text-sm font-medium uppercase tracking-wider">{today}</p>
           <h2 className="text-2xl sm:text-3xl font-bold mt-2 flex items-center gap-2">
             Benvenuto su EventiNLatina
-            <Sparkles size={22} className="text-yellow-200" />
+            <Sparkles size={22} className="text-cyan-200" />
           </h2>
           <p className="text-white/80 mt-1.5 max-w-lg">Scopri tutti gli eventi, sagre, concerti e manifestazioni in provincia di Latina e nel Lazio</p>
           <div className="flex gap-2 mt-4">
@@ -135,7 +135,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               Eventi di Oggi
-              <span className="text-xs bg-gradient-to-r from-orange-500 to-amber-500 text-white px-2 py-0.5 rounded-full animate-pulse">Live</span>
+              <span className="text-xs bg-gradient-to-r from-cyan-500 to-indigo-500 text-white px-2 py-0.5 rounded-full animate-pulse">Live</span>
             </h3>
             <span className="text-xs text-[var(--text-muted)]">{todayEvents.length} eventi</span>
           </div>

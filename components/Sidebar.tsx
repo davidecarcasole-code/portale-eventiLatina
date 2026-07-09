@@ -68,7 +68,7 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
     <>
       <div className="p-3 border-b border-[var(--card-border)]">
         <Link href="/dashboard" onClick={onClose} className="block group relative">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/20 via-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <img src="/banner.png" alt="EventiNLatina" className="w-full rounded-2xl ring-1 ring-[var(--accent)]/10 group-hover:ring-[var(--accent)]/30 transition-all shadow-lg" />
         </Link>
         {showClose && <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] ml-auto mt-2"><X size={16} /></button>}
@@ -79,7 +79,7 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
           const Icon = l.icon;
           return (
             <Link key={l.href} href={l.href} onClick={onClose}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${active ? "bg-gradient-to-r from-[var(--accent)] to-amber-500 text-white shadow-lg shadow-[var(--accent-glow)]" : "text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]"}`}>
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${active ? "bg-gradient-to-r from-[var(--accent)] to-indigo-500 text-white shadow-lg shadow-[var(--accent-glow)]" : "text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]"}`}>
               <Icon size={18} strokeWidth={active ? 2.5 : 1.5} />
               {l.label}
             </Link>
@@ -89,7 +89,7 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
       {user && (
         <div className="p-3 border-t border-[var(--card-border)]">
           <div className="flex items-center gap-3 px-3 py-2 mb-2 rounded-xl bg-gradient-to-r from-[var(--accent-subtle)] to-transparent">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center text-white text-xs font-bold">
               {user.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover rounded-full" /> : user.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <span className="text-xs font-medium text-[var(--text-primary)] truncate">{user.name || user.email}</span>

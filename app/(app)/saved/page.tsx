@@ -44,7 +44,7 @@ export default function SavedEventsPage() {
             <div key={e.id} className="gradient-card rounded-xl p-4 group">
               <Link href={`/events/${e.id}`}>
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: (e.category_color || "#f97316") + "20", color: e.category_color || "#f97316" }}>
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: (e.category_color || "#0891b2") + "20", color: e.category_color || "#0891b2" }}>
                     <Calendar size={18} />
                   </div>
                   <div className="min-w-0 flex-1">

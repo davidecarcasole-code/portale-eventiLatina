@@ -187,7 +187,7 @@ function EventsContent() {
                   const pageNum = i + 1;
                   return (
                     <button key={pageNum} onClick={() => setPage(pageNum)}
-                      className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${page === pageNum ? "bg-gradient-to-r from-[var(--accent)] to-amber-500 text-white shadow-md" : "text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)]"}`}>
+                      className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${page === pageNum ? "bg-gradient-to-r from-[var(--accent)] to-indigo-500 text-white shadow-md" : "text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)]"}`}>
                       {pageNum}
                     </button>
                   );
