@@ -154,7 +154,7 @@ function EventsContent() {
                     </div>
                   </div>
                 ) : (
-                  <div className="p-4">
+                  <div className="px-4 pt-4">
                     <div className="flex items-center gap-2 mb-2">
                       {e.category_color && (
                         <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
@@ -163,14 +163,14 @@ function EventsContent() {
                       )}
                       {e.is_new && <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400">Nuovo</span>}
                     </div>
-                    <h3 className="font-semibold text-sm leading-snug mb-2.5 line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{e.title}</h3>
+                    <h3 className="font-semibold text-sm leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{e.title}</h3>
                   </div>
                 )}
-                <div className="p-4 pt-0 -mt-1">
-                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-[var(--text-muted)]">
-                    <span className="flex items-center gap-1"><Calendar size={11} />{new Date(e.date).toLocaleDateString("it-IT")}</span>
-                    {e.time && <span className="flex items-center gap-1"><Clock size={11} />{e.time}</span>}
-                    {e.city && <span className="flex items-center gap-1"><MapPin size={11} />{e.city}</span>}
+                <div className="px-4 pb-4 pt-3">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-[var(--text-muted)]">
+                    <span className="flex items-center gap-1.5 whitespace-nowrap"><Calendar size={12} />{new Date(e.date).toLocaleDateString("it-IT")}</span>
+                    {e.time && <span className="flex items-center gap-1.5 whitespace-nowrap"><Clock size={12} />{e.time}</span>}
+                    {e.city && <span className="flex items-center gap-1.5 whitespace-nowrap"><MapPin size={12} />{e.city}</span>}
                   </div>
                 </div>
               </Link>

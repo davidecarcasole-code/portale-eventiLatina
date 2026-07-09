@@ -66,15 +66,14 @@ function EventsTab({ token }: { token: string }) {
       const r = await fetch("/api/events?limit=100&dateFrom=2020-01-01", { headers: { Authorization: `Bearer ${token}` } });
       const d = await r.json();
       setEvents(d.events || []);
-      if (d.events?.length > 0) {
-        const cats = d.events.map((e: any) => ({ id: e.category_id, name: e.category_name, slug: e.category_slug })).filter(Boolean);
-        const unique = Array.from(new Map(cats.map((c: any) => [c.id, c])).values());
-        setCategories(unique);
-      }
     } catch {}
   }, [token]);
 
   useEffect(() => { loadEvents(); }, [loadEvents]);
+
+  useEffect(() => {
+    fetch("/api/categories").then(r => r.ok && r.json()).then(d => { if (d) setCategories(d); }).catch(() => {});
+  }, []);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
