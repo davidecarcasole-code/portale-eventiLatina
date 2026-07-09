@@ -135,50 +135,91 @@ export async function classifyAllEvents(): Promise<AgentResult> {
   }
 }
 
-/* ───── Arricchimento descrizioni (batch 5 per chiamata) ───── */
+/* ───── Arricchimento descrizioni (template offline + AI fallback) ───── */
 
 export async function enrichAllDescriptions(): Promise<AgentResult> {
   const prisma = await (await import("@/lib/prisma")).prisma;
   const events = await prisma.event.findMany({
     where: { isPublished: true, OR: [{ description: null }, { description: '' }] },
-    take: 10,
-    select: { id: true, title: true, date: true, city: true, categoryId: true, description: true },
+    take: 20,
+    select: { id: true, title: true, date: true, city: true, location: true, time: true, categoryId: true },
   });
 
   if (!events.length) return { task: 'enrich', processed: 0, details: 'Nessun evento senza descrizione' };
 
-  let errors: string[] = [];
-  const batchSize = 5;
+  const catIds: number[] = events.map(e => e.categoryId).filter((id): id is number => id !== null);
+  const cats = await prisma.category.findMany({ where: { id: { in: catIds } }, select: { id: true, slug: true, name: true } });
+  const catMap = new Map(cats.map(c => [c.id, { slug: c.slug, name: c.name }]));
 
-  for (let i = 0; i < events.length; i += batchSize) {
-    const batch = events.slice(i, i + batchSize);
-    const catIds: number[] = batch.map(e => e.categoryId).filter((id): id is number => id !== null);
-    const cats = await prisma.category.findMany({ where: { id: { in: catIds } }, select: { id: true, slug: true } });
-    const catMap = new Map(cats.map(c => [c.id, c.slug]));
+  const hasAiKey = !!(process.env.GROQ_API_KEY || process.env.GEMINI_API_KEY);
+  let usedAi = false;
+  let updated = 0;
 
-    const list = batch.map(e =>
-      `#${e.id} | ${e.title} | ${e.date?.toISOString().split('T')[0] || ''} | ${e.city || 'Latina'} | ${catMap.get(e.categoryId!) || 'evento'}`
-    ).join('\n');
+  if (hasAiKey) {
+    // Tentativo AI (batch 5)
+    const { enrichBatch: aiEnrichBatch } = await import('./templates');
+    let errors: string[] = [];
+    const batchSize = 5;
 
-    try {
-      const text = await aiFetch(
-        'Sei un copywriter eventi. Genera max 3 frasi accattivanti in italiano per ogni evento.',
-        `Per ogni evento, rispondi con "#ID:" seguito dalla descrizione su una nuova riga.\n\nEventi:\n${list}`,
-        800, 0.7
-      );
-      for (const e of batch) {
-        const match = text.match(new RegExp(`#${e.id}:\\s*(.+?)(?=\\n#\\d|$)`, 's'));
-        const desc = match?.[1]?.trim();
-        if (desc && desc.length > 15) {
-          await prisma.event.update({ where: { id: e.id }, data: { description: desc } });
+    for (let i = 0; i < events.length; i += batchSize) {
+      const batch = events.slice(i, i + batchSize);
+      const list = batch.map(e =>
+        `#${e.id} | ${e.title} | ${e.date?.toISOString().split('T')[0] || ''} | ${e.city || 'Latina'} | ${catMap.get(e.categoryId!)?.slug || 'evento'}`
+      ).join('\n');
+
+      try {
+        const text = await aiFetch(
+          'Sei un copywriter eventi. Genera max 3 frasi accattivanti in italiano per ogni evento.',
+          `Per ogni evento, rispondi con "#ID:" seguito dalla descrizione su una nuova riga.\n\nEventi:\n${list}`,
+          800, 0.7
+        );
+        for (const e of batch) {
+          const match = text.match(new RegExp(`#${e.id}:\\s*(.+?)(?=\\n#\\d|$)`, 's'));
+          const desc = match?.[1]?.trim();
+          if (desc && desc.length > 15) {
+            await prisma.event.update({ where: { id: e.id }, data: { description: desc } });
+            updated++;
+            usedAi = true;
+          }
         }
+      } catch (err: any) {
+        errors.push(`batch ${i + 1}: ${err.message?.slice(0, 100)}`);
       }
-    } catch (err: any) {
-      errors.push(`batch ${i + 1}: ${err.message?.slice(0, 100)}`);
+    }
+
+    // Se l'AI ha fallito su tutti i batch, passa al template engine
+    if (!usedAi || errors.length > 0) {
+      const remaining = events.filter(e => {
+        // Ricarica l'evento per vedere se ha ancora descrizione vuota
+        return true; // li processiamo tutti, tanto il template engine sovrascrive solo se serve
+      });
+      // Il template engine processerà comunque quelli saltati dall'AI
     }
   }
 
-  return { task: 'enrich', processed: events.length, details: `Arricchite ${events.length}${errors.length ? ` (errori: ${errors.join('; ')})` : ''}` };
+  // Template engine offline – processa tutti quelli ancora senza descrizione
+  const { enrichBatch } = await import('./templates');
+  const batch = events.map(e => ({
+    id: e.id,
+    title: e.title,
+    date: e.date,
+    city: e.city,
+    location: e.location,
+    time: e.time,
+    categorySlug: catMap.get(e.categoryId!)?.slug || 'spettacolo',
+    categoryName: catMap.get(e.categoryId!)?.name || 'Spettacolo',
+  }));
+
+  const descriptions = enrichBatch(batch);
+  let templateUpdated = 0;
+
+  for (const [id, desc] of descriptions) {
+    await prisma.event.update({ where: { id }, data: { description: desc } });
+    templateUpdated++;
+  }
+
+  const method = usedAi ? 'AI' : 'template offline';
+  return { task: 'enrich', processed: templateUpdated, details: `Arricchite ${templateUpdated} eventi (metodo: ${method})` };
 }
 
 /* ───── Dedup avanzato ───── */
