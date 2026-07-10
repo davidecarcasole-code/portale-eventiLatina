@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Sparkles, Bell, Film } from "lucide-react";
+import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Sparkles, Bell, Film, ExternalLink } from "lucide-react";
 import { InstagramIcon, FacebookIcon, YoutubeIcon, TikTokIcon } from "./SocialIcons";
-import { AdBanner } from "./AdBanner";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store";
 import { NotificationBell } from "./NotificationBell";
@@ -93,7 +92,7 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
         })}
       </nav>
       <div className="px-3 py-2">
-        <AdBanner placement="sidebar" />
+        <SidebarAdSlider />
       </div>
       {user && (
         <div className="p-3 border-t border-[var(--card-border)]">
@@ -129,5 +128,111 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
         </div>
       )}
     </>
+  );
+}
+
+function SidebarAdSlider() {
+  const [ads, setAds] = useState<any[]>([]);
+  const [current, setCurrent] = useState(0);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/ads?placement=sidebar")
+      .then(r => r.json())
+      .then(d => {
+        const items = d.ads || [];
+        setAds(items);
+        setLoaded(true);
+      })
+      .catch(() => setLoaded(true));
+  }, []);
+
+  useEffect(() => {
+    if (ads.length < 2) return;
+    const timer = setInterval(() => {
+      setCurrent(prev => (prev + 1) % ads.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [ads.length]);
+
+  if (!loaded) {
+    return (
+      <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] min-h-[120px] animate-pulse flex items-center justify-center">
+        <span className="text-xs text-[var(--text-muted)]">Caricamento...</span>
+      </div>
+    );
+  }
+
+  if (ads.length === 0) return null;
+
+  const a = ads[current];
+
+  return (
+    <div className="relative overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition-all hover:shadow-[0_0_20px_var(--accent-glow)] group">
+      {ads.length > 1 && (
+        <div className="absolute top-1.5 left-1.5 z-10 flex gap-1">
+          {ads.map((_, i) => (
+            <button key={i}
+              onClick={() => setCurrent(i)}
+              className={`w-1.5 h-1.5 rounded-full transition-all ${i === current ? 'bg-white w-3' : 'bg-white/40'}`}
+            />
+          ))}
+        </div>
+      )}
+      {a.linkUrl ? (
+        <a href={a.linkUrl} target="_blank" rel="noopener noreferrer nofollow"
+          onClick={async () => { try { await fetch(`/api/ads/${a.id}/click`, { method: "POST" }); } catch {} }}
+          className="block"
+        >
+          <AdSlide ad={a} />
+        </a>
+      ) : (
+        <AdSlide ad={a} />
+      )}
+    </div>
+  );
+}
+
+function AdSlide({ ad }: { ad: any }) {
+  const [imgError, setImgError] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+
+  return (
+    <div className="relative">
+      <div className="relative aspect-video">
+        <img
+          src={ad.imageUrl}
+          alt={ad.title}
+          className={`w-full h-full object-cover transition-opacity duration-300 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+          referrerPolicy="no-referrer"
+          onLoad={() => setImgLoaded(true)}
+          onError={() => setImgError(true)}
+        />
+        {!imgLoaded && !imgError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-800 dark:to-gray-700 animate-pulse flex items-center justify-center">
+            <span className="text-xs text-[var(--text-muted)]">Caricamento...</span>
+          </div>
+        )}
+        {imgError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 flex flex-col items-center justify-center gap-1">
+            <span className="text-lg opacity-30">📷</span>
+            <span className="text-[10px] text-[var(--text-muted)]">{ad.title}</span>
+          </div>
+        )}
+        {ad.linkUrl && (
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center">
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs bg-black/40 px-2 py-1 rounded-lg backdrop-blur-sm flex items-center gap-1">
+              Apri <ExternalLink size={10} />
+            </span>
+          </div>
+        )}
+      </div>
+      <div className="absolute top-1.5 right-1.5 bg-black/50 backdrop-blur-sm text-[9px] text-white/70 px-1.5 py-0.5 rounded font-medium uppercase tracking-wider">
+        Ad
+      </div>
+      <div className="px-3 py-1.5 border-t border-[var(--card-border)]">
+        <p className="text-[10px] text-[var(--text-muted)] truncate">{ad.title}</p>
+      </div>
+    </div>
   );
 }
