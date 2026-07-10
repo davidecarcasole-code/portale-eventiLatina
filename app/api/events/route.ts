@@ -33,7 +33,8 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
     const status = searchParams.get("status") || "approved";
 
-    const where: any = { isPublished: true, status };
+    const where: any = { isPublished: true };
+    if (status !== "all") where.status = status;
     where.date = { gte: dateFrom ? new Date(dateFrom) : new Date(new Date().toDateString()) };
     if (dateTo) where.date.lte = new Date(dateTo);
     if (category) {
