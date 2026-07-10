@@ -74,14 +74,15 @@ function EventsTab({ token }: { token: string }) {
   const [form, setForm] = useState({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" });
   const [categories, setCategories] = useState<any[]>([]);
   const [error, setError] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
 
   const loadEvents = useCallback(async () => {
     try {
-      const r = await fetch("/api/events?limit=500&status=all", { headers: { Authorization: `Bearer ${token}` } });
+      const r = await fetch(`/api/events?limit=500&status=${statusFilter}`, { headers: { Authorization: `Bearer ${token}` } });
       const d = await r.json();
       setEvents(d.events || []);
     } catch {}
-  }, [token]);
+  }, [token, statusFilter]);
 
   useEffect(() => { loadEvents(); }, [loadEvents]);
 
@@ -116,7 +117,17 @@ function EventsTab({ token }: { token: string }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[var(--text-muted)]">{events.length} eventi totali</p>
+        <p className="text-sm text-[var(--text-muted)]">{events.length} eventi</p>
+        <div className="flex items-center gap-2">
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as any)} className="select text-sm w-auto">
+            <option value="all">Tutti</option>
+            <option value="pending">In attesa</option>
+            <option value="approved">Approvati</option>
+            <option value="rejected">Rifiutati</option>
+          </select>
+          <button onClick={loadEvents} className="btn-ghost p-2 rounded-lg"><RefreshCw size={14} /></button>
+        </div>
+      </div>
         <div className="flex gap-2">
           <button onClick={async () => { if (!confirm("Eliminare tutti gli eventi con data 2026-01-01 (import errati)?")) return; setCleaning(true); try { const r = await fetch("/api/scraper/cleanup", { method: "POST", headers: { Authorization: `Bearer ${token}` } }); const d = await r.json(); alert(`Eliminati ${d.deleted} eventi`); window.location.reload() } catch {} finally { setCleaning(false) } }}
             className="btn-ghost px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 text-red-500 hover:bg-red-50" disabled={cleaning}>
