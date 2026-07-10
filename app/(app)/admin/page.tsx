@@ -20,10 +20,18 @@ export default function AdminPage() {
   const { user, token } = useAuthStore();
   const [tab, setTab] = useState("events");
   const isSuperAdmin = user?.role === "super_admin";
+  const isAdmin = user?.role === "admin" || user?.role === "super_admin";
+  const isPublisher = user?.role === "publisher";
 
-  if (!user || (user.role !== "admin" && user.role !== "super_admin")) {
+  if (!user || (!isAdmin && !isPublisher)) {
     return <div className="text-center py-24 text-[var(--text-secondary)]">Accesso negato</div>;
   }
+
+  const visibleTabs = TABS.filter((t) => {
+    if (t.adminOnly) return isSuperAdmin;
+    if (isPublisher) return t.key === "events";
+    return true;
+  });
 
   return (
     <div className="page-container space-y-6 animate-fade-in">
@@ -32,13 +40,13 @@ export default function AdminPage() {
           <Shield size={20} className="text-white" />
         </div>
         <div>
-          <h1 className="text-xl font-bold">Pannello Admin</h1>
-          <p className="text-sm text-[var(--text-muted)]">Gestisci eventi, scraper e utenti</p>
+          <h1 className="text-xl font-bold">{isPublisher ? "Pannello Publisher" : "Pannello Admin"}</h1>
+          <p className="text-sm text-[var(--text-muted)]">{isPublisher ? "Gestisci i tuoi eventi" : "Gestisci eventi, scraper e utenti"}</p>
         </div>
       </div>
 
       <div className="flex gap-1 bg-[var(--bg-secondary)] rounded-xl p-1 overflow-x-auto">
-        {TABS.filter((t) => !t.adminOnly || isSuperAdmin).map((t) => (
+        {visibleTabs.map((t) => (
           <button key={t.key} onClick={() => setTab(t.key)}
             className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${tab === t.key ? "bg-white dark:bg-gray-800 shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
             <t.icon size={14} /> {t.label}
