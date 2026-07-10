@@ -15,7 +15,7 @@ interface Notification {
   event?: { id: number; title: string; date: string; imageUrl?: string } | null;
 }
 
-export function NotificationBell() {
+export function NotificationBell({ dropUp = false }: { dropUp?: boolean }) {
   const [items, setItems] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
@@ -103,7 +103,7 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute bottom-full left-0 mb-2 w-80 bg-[var(--card-bg)]/95 backdrop-blur-xl border border-[var(--card-border)] rounded-2xl shadow-2xl z-50 max-h-96 flex flex-col">
+        <div className={`absolute ${dropUp ? 'bottom-full mb-2' : 'top-full mt-2'} right-0 w-80 bg-[var(--card-bg)]/95 backdrop-blur-xl border border-[var(--card-border)] rounded-2xl shadow-2xl z-50 max-h-96 flex flex-col`}>
           <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--card-border)]">
             <span className="text-sm font-semibold text-[var(--text-primary)]">Notifiche</span>
             <div className="flex gap-1">

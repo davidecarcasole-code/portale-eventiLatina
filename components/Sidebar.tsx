@@ -98,7 +98,7 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
               {user.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover rounded-full" /> : user.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <span className="text-xs font-medium text-[var(--text-primary)] truncate">{user.name || user.email}</span>
-            <div className="ml-auto"><NotificationBell /></div>
+            <div className="ml-auto"><NotificationBell dropUp={true} /></div>
           </div>
           <div className="flex items-center justify-center gap-0.5 mb-2">
             <a href="https://www.instagram.com/eventinlatina/" target="_blank" rel="noopener noreferrer"
