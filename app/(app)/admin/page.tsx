@@ -138,8 +138,6 @@ function EventsTab({ token }: { token: string }) {
             <Plus size={14} /> Nuovo Evento
           </button>
         </div>
-      </div>
-
       {showCreate && (
         <form onSubmit={handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
           <div className="flex items-center justify-between">
