@@ -27,6 +27,7 @@ const sizeClasses: Record<string, string> = {
 export function AdBanner({ placement, className = "" }: AdBannerProps) {
   const [ad, setAd] = useState<AdItem | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     fetch(`/api/ads?placement=${placement}`)
@@ -49,11 +50,19 @@ export function AdBanner({ placement, className = "" }: AdBannerProps) {
           src={ad.imageUrl}
           alt={ad.title}
           className={`w-full h-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+          referrerPolicy="no-referrer"
           onLoad={() => setLoaded(true)}
+          onError={() => { setImgError(true); setLoaded(true); }}
         />
-        {!loaded && (
+        {!loaded && !imgError && (
           <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-800 dark:to-gray-700 animate-pulse flex items-center justify-center">
             <span className="text-xs text-[var(--text-muted)]">Caricamento...</span>
+          </div>
+        )}
+        {imgError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 flex flex-col items-center justify-center gap-1">
+            <span className="text-lg opacity-30">📷</span>
+            <span className="text-[10px] text-[var(--text-muted)]">{ad.title}</span>
           </div>
         )}
         <div className="absolute top-1.5 right-1.5 bg-black/50 backdrop-blur-sm text-[9px] text-white/70 px-1.5 py-0.5 rounded font-medium uppercase tracking-wider">
