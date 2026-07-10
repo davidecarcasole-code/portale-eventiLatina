@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Sparkles, Palette, Puzzle, MapPin, Clock, Calendar } from "lucide-react";
+import { Sparkles, Palette, Puzzle, Rocket, MapPin, Clock, Calendar } from "lucide-react";
 
 const SUBCATEGORIES = [
   { slug: "bambini", label: "Eventi Kids", icon: Sparkles, color: "#f97316", desc: "Spettacoli, feste e attività per bambini" },
@@ -53,7 +53,7 @@ export default function SpazioKidsPage() {
         <div className="relative">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
-              <Sparkles size={28} className="text-white" fill="white" />
+              <Rocket size={28} className="text-white" />
             </div>
             <div>
               <p className="text-yellow-200 text-sm font-medium uppercase tracking-widest">Spazio</p>
