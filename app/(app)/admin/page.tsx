@@ -777,6 +777,7 @@ function UsersTab({ token }: { token: string }) {
             <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="Password" className="input" required minLength={6} />
             <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="select">
               <option value="user">User</option>
+              <option value="publisher">Publisher</option>
               <option value="admin">Admin</option>
               <option value="super_admin">Super Admin</option>
             </select>
@@ -803,9 +804,17 @@ function UsersTab({ token }: { token: string }) {
               </div>
               <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="select">
                 <option value="user">User</option>
+                <option value="publisher">Publisher</option>
                 <option value="admin">Admin</option>
                 <option value="super_admin">Super Admin</option>
               </select>
+              {u.role === "publisher" && (
+                <select value={form.publisherStatus || "pending"} onChange={e => setForm({ ...form, publisherStatus: e.target.value })} className="select">
+                  <option value="pending">In attesa</option>
+                  <option value="approved">Approvato</option>
+                  <option value="rejected">Rifiutato</option>
+                </select>
+              )}
               {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
               <div className="flex gap-2">
                 <button onClick={() => handleUpdate(u.id)} className="btn-primary flex-1 py-2 rounded-xl text-sm">Salva</button>
@@ -824,6 +833,15 @@ function UsersTab({ token }: { token: string }) {
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
+                {u.role === "publisher" && u.publisherStatus && (
+                  <span className={`text-[10px] font-medium px-2.5 py-1 rounded-full ${
+                    u.publisherStatus === "approved" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                    u.publisherStatus === "rejected" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
+                    "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                  }`}>
+                    {u.publisherStatus === "approved" ? "Approvato" : u.publisherStatus === "rejected" ? "Rifiutato" : "In attesa"}
+                  </span>
+                )}
                 <span className={`text-[10px] font-medium px-2.5 py-1 rounded-full ${
                   u.role === "super_admin" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
                   u.role === "admin" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
