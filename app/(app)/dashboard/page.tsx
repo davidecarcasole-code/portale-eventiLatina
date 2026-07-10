@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Baby, ArrowRight, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Baby, ArrowRight, Plus, ChevronLeft, ChevronRight, ExternalLink, Mail } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
@@ -236,11 +236,84 @@ export default function DashboardPage() {
 
         <div className="hidden lg:flex flex-col gap-4">
           <div className="sticky top-20 space-y-4">
-            <AdBanner placement="sidebar" showPlaceholder />
-            <AdBanner placement="sidebar" showPlaceholder />
+            <VerticalAdColumn />
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function VerticalAdColumn() {
+  const [ads, setAds] = useState<any[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/ads?placement=sidebar")
+      .then(r => r.json())
+      .then(d => { setAds(d.ads || []); setLoaded(true); })
+      .catch(() => setLoaded(true));
+  }, []);
+
+  if (!loaded) {
+    return (
+      <div className="space-y-4">
+        {[1, 2].map(i => (
+          <div key={i} className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] min-h-[200px] animate-pulse flex items-center justify-center">
+            <span className="text-xs text-[var(--text-muted)]">Caricamento...</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (ads.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--accent-subtle)]/30 p-5 flex flex-col items-center justify-center text-center gap-2 min-h-[200px]">
+        <Mail size={24} className="text-[var(--text-muted)]" />
+        <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+          Contattaci per avere<br />il tuo spazio pubblicitario qui
+        </p>
+        <a href="mailto:info@eventinlatina.it" className="text-[10px] text-[var(--accent)] hover:underline font-medium">
+          info@eventinlatina.it
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {ads.map((a: any) => (
+        <a key={a.id}
+          href={a.linkUrl || "#"}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          onClick={async () => { try { await fetch(`/api/ads/${a.id}/click`, { method: "POST" }); } catch {} }}
+          className="relative group overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition-all hover:shadow-[0_0_20px_var(--accent-glow)] block"
+        >
+          <div className="relative min-h-[200px]">
+            <img
+              src={a.imageUrl}
+              alt={a.title}
+              className="w-full h-full absolute inset-0 object-cover"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute top-1.5 right-1.5 bg-black/50 backdrop-blur-sm text-[9px] text-white/70 px-1.5 py-0.5 rounded font-medium uppercase tracking-wider">
+              Ad
+            </div>
+            {a.linkUrl && (
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center">
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs bg-black/40 px-2 py-1 rounded-lg backdrop-blur-sm flex items-center gap-1">
+                  Apri <ExternalLink size={10} />
+                </span>
+              </div>
+            )}
+          </div>
+          <div className="px-3 py-1.5 border-t border-[var(--card-border)]">
+            <p className="text-[10px] text-[var(--text-muted)] truncate">{a.title}</p>
+          </div>
+        </a>
+      ))}
     </div>
   );
 }
