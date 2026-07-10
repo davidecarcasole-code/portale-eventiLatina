@@ -33,6 +33,12 @@ export async function requireSuperAdmin(req: Request): Promise<{ user: AuthUser 
   return { user };
 }
 
+export async function requirePublisher(req: Request): Promise<{ user: AuthUser }> {
+  const { user } = await requireAuth(req);
+  if (user.role !== "publisher" && user.role !== "admin" && user.role !== "super_admin") throw new AuthError("Accesso negato", 403);
+  return { user };
+}
+
 export class AuthError extends Error {
   status: number;
   constructor(message: string, status: number) {

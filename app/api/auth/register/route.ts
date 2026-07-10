@@ -14,10 +14,11 @@ export async function POST(req: NextRequest) {
     if (existing) return errorResponse("Email già registrata", 409);
     const validRoles = ["user", "publisher", "admin", "super_admin"];
     const userRole = validRoles.includes(role) ? role : "user";
+    const publisherStatus = userRole === "publisher" ? "pending" : null;
     const user = await prisma.user.create({
-      data: { email, name, passwordHash: await hashPassword(password), role: userRole },
+      data: { email, name, passwordHash: await hashPassword(password), role: userRole, publisherStatus },
     });
     const token = generateToken({ id: user.id, email: user.email, role: user.role });
-    return jsonResponse({ user: { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar }, token }, 201);
+    return jsonResponse({ user: { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar, publisherStatus: user.publisherStatus }, token }, 201);
   } catch { return errorResponse ? errorResponse("Errore registrazione", 500) : Response.json({ error: "Errore registrazione" }, { status: 500 }); }
 }

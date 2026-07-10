@@ -10,6 +10,7 @@ export interface AuthUser {
   name: string;
   role: string;
   avatar: string | null;
+  publisherStatus: string | null;
 }
 
 export function hashPassword(password: string): Promise<string> {
@@ -37,7 +38,7 @@ export async function getAuthUser(token: string): Promise<AuthUser | null> {
   if (!decoded) return null;
   const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
   if (!user) return null;
-  return { id: user.id, email: user.email, name: user.name || "", role: user.role, avatar: user.avatar };
+  return { id: user.id, email: user.email, name: user.name || "", role: user.role, avatar: user.avatar, publisherStatus: user.publisherStatus };
 }
 
 export function extractToken(req: Request): string | null {

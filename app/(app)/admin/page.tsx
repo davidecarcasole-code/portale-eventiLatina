@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const TABS = [
@@ -12,6 +12,7 @@ const TABS = [
   { key: "scraper", label: "Motore Ricerca", icon: Search },
   { key: "searchconfig", label: "Criteri Ricerca", icon: RefreshCw },
   { key: "agent", label: "Agent AI", icon: Brain },
+  { key: "publishers", label: "Publisher", icon: Briefcase, adminOnly: true },
   { key: "users", label: "Utenti", icon: Users, adminOnly: true },
 ];
 
@@ -52,6 +53,7 @@ export default function AdminPage() {
       {tab === "scraper" && <ScraperTab token={token!} />}
       {tab === "searchconfig" && <SearchConfigTab />}
       {tab === "agent" && <AgentTab token={token!} />}
+      {tab === "publishers" && isSuperAdmin && <PublishersTab token={token!} />}
       {tab === "users" && isSuperAdmin && <UsersTab token={token!} />}
     </div>
   );
@@ -834,6 +836,74 @@ function UsersTab({ token }: { token: string }) {
           )
         ))}
       </div>
+    </div>
+  );
+}
+
+function PublishersTab({ token }: { token: string }) {
+  const [publishers, setPublishers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadPublishers = useCallback(async () => {
+    setLoading(true);
+    try {
+      const r = await fetch("/api/users?role=publisher", { headers: { Authorization: `Bearer ${token}` } });
+      const data = await r.json();
+      setPublishers(data.users || data || []);
+    } catch {}
+    setLoading(false);
+  }, [token]);
+
+  useEffect(() => { loadPublishers(); }, [loadPublishers]);
+
+  async function updateStatus(userId: string, status: string) {
+    const r = await fetch(`/api/users/${userId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ publisherStatus: status }),
+    });
+    if (r.ok) loadPublishers();
+  }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-[var(--text-muted)]">Richieste publisher in attesa: {publishers.filter(p => p.publisherStatus === "pending").length}</p>
+
+      {loading ? (
+        <div className="flex justify-center py-8"><div className="w-8 h-8 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" /></div>
+      ) : (
+        <div className="space-y-2">
+          {publishers.map((p: any) => (
+            <div key={p.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                  {p.name?.charAt(0).toUpperCase() || "P"}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate">{p.name || "—"}</p>
+                  <p className="text-xs text-[var(--text-muted)] truncate">{p.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className={`text-[10px] font-medium px-2.5 py-1 rounded-full ${
+                  p.publisherStatus === "approved" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                  p.publisherStatus === "rejected" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
+                  "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                }`}>
+                  {p.publisherStatus === "approved" ? "Approvato" : p.publisherStatus === "rejected" ? "Rifiutato" : "In attesa"}
+                </span>
+                {p.publisherStatus === "pending" && (
+                  <>
+                    <button onClick={() => updateStatus(p.id, "approved")} className="btn-ghost p-2 rounded-lg hover:text-green-500" title="Approva"><CheckCircle size={16} /></button>
+                    <button onClick={() => updateStatus(p.id, "rejected")} className="btn-ghost p-2 rounded-lg hover:text-red-500" title="Rifiuta"><XCircle size={16} /></button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+          {publishers.length === 0 && <p className="text-center text-[var(--text-muted)] py-8">Nessun publisher registrato</p>}
+        </div>
+      )}
     </div>
   );
 }

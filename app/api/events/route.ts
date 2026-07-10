@@ -16,8 +16,9 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get("search");
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
+    const status = searchParams.get("status") || "approved";
 
-    const where: any = { isPublished: true };
+    const where: any = { isPublished: true, status };
     where.date = { gte: dateFrom ? new Date(dateFrom) : new Date(new Date().toDateString()) };
     if (dateTo) where.date.lte = new Date(dateTo);
     if (category) {
@@ -78,11 +79,13 @@ export async function POST(req: NextRequest) {
       import("@/lib/api-helpers"),
       import("@/lib/prisma"),
     ]);
-    const { user } = await helpers.requireAdmin(req);
+    const { user } = await helpers.requireAuth(req);
     const body = await req.json();
     if (!body.title || !body.category_id || !body.date) {
       return helpers.errorResponse("Titolo, categoria e data sono obbligatori");
     }
+    const isAdmin = user.role === "admin" || user.role === "super_admin";
+    const eventStatus = isAdmin ? "approved" : "pending";
     const event = await prisma.event.create({
       data: {
         title: body.title,
@@ -99,6 +102,7 @@ export async function POST(req: NextRequest) {
         sourceUrl: body.source_url,
         sourceName: body.source_name,
         createdBy: user.id,
+        status: eventStatus,
       },
     });
     return helpers.jsonResponse(event, 201);

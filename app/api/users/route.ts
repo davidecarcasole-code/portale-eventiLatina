@@ -5,7 +5,10 @@ export async function GET(req: NextRequest) {
     const { prisma } = await import("@/lib/prisma");
     const { jsonResponse, requireSuperAdmin } = await import("@/lib/api-helpers");
     await requireSuperAdmin(req);
-    const users = await prisma.user.findMany({ orderBy: { createdAt: "desc" } });
+    const { searchParams } = new URL(req.url);
+    const role = searchParams.get("role");
+    const where = role ? { role } : {};
+    const users = await prisma.user.findMany({ where, orderBy: { createdAt: "desc" } });
     return jsonResponse(users.map(u => ({ ...u, passwordHash: undefined })));
   } catch (err) {
     console.error("API Error:", err);
