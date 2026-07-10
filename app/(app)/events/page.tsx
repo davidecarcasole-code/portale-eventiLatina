@@ -22,6 +22,8 @@ function EventsContent() {
   const searchParams = useSearchParams();
   const { user } = useAuthStore();
   const isAdmin = user?.role === "admin" || user?.role === "super_admin";
+  const isPublisher = user?.role === "publisher";
+  const canManageEvents = isAdmin || isPublisher;
   const [events, setEvents] = useState<any[]>([]);
   const [pagination, setPagination] = useState<any>({ page: 1, totalPages: 1, total: 0 });
   const [loading, setLoading] = useState(true);
@@ -84,7 +86,7 @@ function EventsContent() {
             placeholder="Cerca eventi per titolo, città, categoria..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent transition-all placeholder:text-[var(--text-muted)]" />
         </div>
-        {isAdmin && (
+        {canManageEvents && (
           <Link href="/admin" className="p-2.5 rounded-xl border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)] transition-all" title="Aggiungi evento">
             <Plus size={18} />
           </Link>

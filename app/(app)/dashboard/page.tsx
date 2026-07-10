@@ -55,6 +55,8 @@ function CategoryCarousel({ categories }: { categories: any[] }) {
 export default function DashboardPage() {
   const { user } = useAuthStore();
   const isAdmin = user?.role === "admin" || user?.role === "super_admin";
+  const isPublisher = user?.role === "publisher";
+  const canManageEvents = isAdmin || isPublisher;
   const [events, setEvents] = useState<any[]>([]);
   const [todayEvents, setTodayEvents] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -126,7 +128,7 @@ export default function DashboardPage() {
             <Link href="/events" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium text-white hover:bg-white/30 transition-all hover:scale-105 active:scale-95">
               Esplora eventi <ArrowRight size={14} />
             </Link>
-            {isAdmin && (
+            {canManageEvents && (
               <Link href="/admin" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white/90 text-teal-700 rounded-xl text-sm font-medium hover:bg-white transition-all hover:scale-105 active:scale-95 shadow-lg">
                 <Plus size={14} /> Nuovo Evento
               </Link>
