@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, Link, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, Link, Sparkles, ArrowRight } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
@@ -16,11 +17,25 @@ export default function EventDetailPage() {
   const [editing, setEditing] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [related, setRelated] = useState<any[]>([]);
 
   useEffect(() => {
     fetch(`/api/events/${id}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
       .then((r) => r.json())
-      .then((data) => { setEvent(data); setIsSaved(data.is_saved || false); })
+      .then((data) => {
+        setEvent(data);
+        setIsSaved(data.is_saved || false);
+        if (data.category_slug) {
+          const from = new Date(data.date);
+          const to = new Date(data.date);
+          from.setDate(from.getDate() - 7);
+          to.setDate(to.getDate() + 14);
+          fetch(`/api/events?category=${data.category_slug}&dateFrom=${from.toISOString().split('T')[0]}&dateTo=${to.toISOString().split('T')[0]}&limit=6`)
+            .then(r => r.json())
+            .then(d => setRelated((d.events || []).filter((e: any) => e.id !== data.id)))
+            .catch(() => {});
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [id]);
@@ -210,6 +225,43 @@ export default function EventDetailPage() {
       <div className="flex justify-center mt-6">
         <AdBanner placement="inline" />
       </div>
+
+      {related.length > 0 && (
+        <div className="mt-10">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Potrebbero interessarti</h3>
+            <Link href={`/events?category=${event.category_slug}`} className="inline-flex items-center gap-1 text-xs text-[var(--accent)] hover:underline font-medium">
+              Vedi tutti <ArrowRight size={12} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {related.map((e: any) => (
+              <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
+                <div className="flex items-start gap-3">
+                  {e.image_url && (
+                    <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+                      <img src={e.image_url} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    {e.category_color && (
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
+                        {e.category_name}
+                      </span>
+                    )}
+                    <h4 className="font-medium text-sm leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors mt-1">{e.title}</h4>
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">{new Date(e.date).toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" })}</p>
+                    <div className="flex items-center gap-3 mt-1 text-xs text-[var(--text-muted)]">
+                      {e.time && <span className="flex items-center gap-1"><Clock size={11} />{e.time}</span>}
+                      {e.city && <span className="flex items-center gap-1"><MapPin size={11} />{e.city}</span>}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {isAdmin && editing && (
         <EditForm event={event} onClose={() => setEditing(false)} onSaved={(e) => { setEvent(e); setEditing(false); }} token={token!} />
