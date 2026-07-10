@@ -704,7 +704,7 @@ function UsersTab({ token }: { token: string }) {
   const [users, setUsers] = useState<any[]>([]);
   const [showCreate, setShowCreate] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "user" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "user", publisherStatus: "pending" });
   const [error, setError] = useState("");
 
   const loadUsers = useCallback(async () => {
@@ -726,7 +726,7 @@ function UsersTab({ token }: { token: string }) {
     const data = await r.json();
     if (!r.ok) { setError(data.error || "Errore"); return; }
     setShowCreate(false);
-    setForm({ name: "", email: "", password: "", role: "user" });
+    setForm({ name: "", email: "", password: "", role: "user", publisherStatus: "pending" });
     loadUsers();
   }
 
@@ -749,7 +749,7 @@ function UsersTab({ token }: { token: string }) {
 
   function startEdit(u: any) {
     setEditingId(u.id);
-    setForm({ name: u.name || "", email: u.email || "", password: "", role: u.role });
+    setForm({ name: u.name || "", email: u.email || "", password: "", role: u.role, publisherStatus: u.publisherStatus || "pending" });
     setError("");
   }
 
@@ -757,7 +757,7 @@ function UsersTab({ token }: { token: string }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-sm text-[var(--text-muted)]">{users.length} utenti</p>
-        <button onClick={() => { setShowCreate(true); setError(""); setForm({ name: "", email: "", password: "", role: "user" }); }}
+        <button onClick={() => { setShowCreate(true); setError(""); setForm({ name: "", email: "", password: "", role: "user", publisherStatus: "pending" }); }}
           className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
           <Plus size={14} /> Nuovo Utente
         </button>
@@ -808,6 +808,13 @@ function UsersTab({ token }: { token: string }) {
                 <option value="admin">Admin</option>
                 <option value="super_admin">Super Admin</option>
               </select>
+              {form.role === "publisher" && (
+                <select value={form.publisherStatus} onChange={e => setForm({ ...form, publisherStatus: e.target.value })} className="select">
+                  <option value="pending">In attesa</option>
+                  <option value="approved">Approvato</option>
+                  <option value="rejected">Rifiutato</option>
+                </select>
+              )}
               {u.role === "publisher" && (
                 <select value={form.publisherStatus || "pending"} onChange={e => setForm({ ...form, publisherStatus: e.target.value })} className="select">
                   <option value="pending">In attesa</option>
