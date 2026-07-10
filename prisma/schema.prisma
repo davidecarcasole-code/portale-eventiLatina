@@ -22,6 +22,7 @@ model User {
   events        Event[]
   savedEvents   SavedEvent[]
   createdPodcasts RadioPodcast[]
+  notifications   Notification[]
 
   @@map("users")
 }
@@ -68,6 +69,7 @@ model Event {
   createdAt       DateTime     @default(now())           @map("created_at")
   updatedAt       DateTime     @updatedAt                @map("updated_at")
   savedBy         SavedEvent[]
+  notifications   Notification[]
 
   @@map("events")
 }
@@ -114,6 +116,21 @@ model ScrapedSource {
   config       SearchConfig? @relation(fields: [configId], references: [id], onDelete: Cascade)
 
   @@map("scraped_sources")
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId    Int?     @map("event_id")
+  event      Event?   @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  type       String   // "upcoming_event" | "recommendation" | "general"
+  title      String
+  body       String?
+  isRead     Boolean  @default(false) @map("is_read")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("notifications")
 }
 
 model RadioSetting {

@@ -25,6 +25,10 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_entertainment: 'spettacolo',
   cat_food: 'enogastronomia',
   cat_kids: 'bambini',
+  cat_borghi: 'borghi',
+  cat_benessere: 'benessere',
+  cat_salute: 'salute',
+  cat_rosa: 'rosa',
 };
 
 function dedupKey(e: ScrapedEvent): string {

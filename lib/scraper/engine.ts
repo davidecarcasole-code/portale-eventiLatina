@@ -6,6 +6,8 @@ import { runComuneLatinaScraper } from './comuneLatinaScraper';
 import { runItinerariScraper } from './itinerariScraper';
 import { runFattivivoScraper } from './fattivivoScraper';
 import { scrapeTeatroIt } from './teatroItScraper';
+import { runLazioEventiScraper } from './lazioeventiScraper';
+import { runEventbriteScraper } from './eventbriteScraper';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -33,6 +35,8 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   itinerari: { name: 'Itinerari nell\'Arte', url: 'https://www.itinerarinellarte.it/', fn: runItinerariScraper },
   fattivivo: { name: 'FattiVivo', url: 'https://www.fattivivo.com/', fn: runFattivivoScraper },
   teatroIt: { name: 'Teatro.it', url: 'https://www.teatro.it/spettacoli/latina', fn: scrapeTeatroIt },
+  lazioeventi: { name: 'LazioEventi.com', url: 'https://lazioeventi.com/oggi-nel-lazio', fn: runLazioEventiScraper },
+  eventbrite: { name: 'Eventbrite', url: 'https://www.eventbrite.it/d/italy--latina/health--events', fn: runEventbriteScraper },
 };
 
 async function getPrisma() {
@@ -205,7 +209,32 @@ export async function runScraper(sourceType?: string): Promise<ScraperResult[]> 
     }
     const result = await runSingleSource(src.name, registryEntry.fn, existingEvents, catMap);
     results.push(result);
-    await prisma.scrapedSource.update({ where: { id: src.id }, data: { lastScrapedAt: new Date() } });
+    try {
+      await prisma.scrapedSource.update({ where: { id: src.id }, data: { lastScrapedAt: new Date() } });
+    } catch (e: any) {
+      console.error(`[Scraper] Failed to update lastScrapedAt for ${src.name}: ${e.message?.slice(0, 100)}`);
+    }
+  }
+
+  // Fallback: if sourceType specified but no DB sources were found, try registry directly
+  if (sourceType && sources.length === 0) {
+    const entry = SCRAPER_REGISTRY[sourceType];
+    if (entry) {
+      console.log(`[Scraper] Running ${entry.name} directly from registry (no DB source record found)`);
+      const result = await runSingleSource(entry.name, entry.fn, existingEvents, catMap);
+      results.push(result);
+    } else {
+      console.log(`[Scraper] Unknown source type "${sourceType}" — not in registry either`);
+    }
+  }
+
+  // Fallback: if running all sources and none from DB, run all from registry
+  if (!sourceType && sources.length === 0) {
+    console.log('[Scraper] No DB sources found, running all from registry directly');
+    for (const [type, entry] of Object.entries(SCRAPER_REGISTRY)) {
+      const result = await runSingleSource(entry.name, entry.fn, existingEvents, catMap);
+      results.push(result);
+    }
   }
 
   console.log(`[Scraper] Done. Results: ${JSON.stringify(results)}`);
@@ -241,6 +270,8 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('Itinerari nell\'Arte', runItinerariScraper);
   await collect('FattiVivo', runFattivivoScraper);
   await collect('Teatro.it', scrapeTeatroIt);
+  await collect('LazioEventi.com', runLazioEventiScraper);
+  await collect('Eventbrite', runEventbriteScraper);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;

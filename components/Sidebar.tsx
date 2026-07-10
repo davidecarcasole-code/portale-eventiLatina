@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Sparkles } from "lucide-react";
+import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Sparkles, Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store";
+import { NotificationBell } from "./NotificationBell";
 
 function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(false);
@@ -95,6 +96,7 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
               {user.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover rounded-full" /> : user.name?.charAt(0).toUpperCase() || "U"}
             </div>
             <span className="text-xs font-medium text-[var(--text-primary)] truncate">{user.name || user.email}</span>
+            <div className="ml-auto"><NotificationBell /></div>
           </div>
           <button onClick={() => { logout(); window.location.href = "/login"; }}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-[var(--text-muted)] hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-500 w-full transition-all duration-200">
