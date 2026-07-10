@@ -1,7 +1,22 @@
 import { NextRequest } from "next/server";
 
+async function ensureSchema() {
+  const { prisma } = await import("@/lib/prisma");
+  try {
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE events ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'approved'
+    `);
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS publisher_status TEXT
+    `);
+  } catch (err) {
+    console.error('[Events] Schema ensure failed:', err);
+  }
+}
+
 export async function GET(req: NextRequest) {
   try {
+    await ensureSchema();
     const [helpers, { prisma }] = await Promise.all([
       import("@/lib/api-helpers"),
       import("@/lib/prisma"),
