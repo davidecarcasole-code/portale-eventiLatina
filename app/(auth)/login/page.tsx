@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/store";
-import { LogIn, UserPlus, Mail, Lock, User, Globe } from "lucide-react";
+import { LogIn, UserPlus, Mail, Lock, User } from "lucide-react";
 
 const BG_IMAGES = [
   "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=1920&q=80",
@@ -107,14 +107,6 @@ export default function LoginPage() {
                   {loading ? "Attendere..." : isLogin ? "Accedi" : "Crea Account"}
                 </button>
               </form>
-
-              <div className="mt-5 relative">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
-                <div className="relative flex justify-center text-xs"><span className="bg-black/30 backdrop-blur-sm px-3 text-white/50">oppure</span></div>
-              </div>
-              <button onClick={() => setError("Login Google non configurato")} className="w-full mt-4 py-2.5 rounded-xl border border-white/20 text-sm font-medium text-white/80 hover:bg-white/10 transition-all flex items-center justify-center gap-2.5">
-                <Globe size={18} /> Continua con Google
-              </button>
             </div>
 
             <p className="text-center text-xs text-white/40 mt-6">
