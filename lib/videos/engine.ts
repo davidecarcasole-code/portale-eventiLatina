@@ -77,7 +77,7 @@ export async function createVideo(data: {
     data: {
       title: data.title,
       description: data.description || null,
-      embedUrl: data.embedUrl,
+      embedUrl: parsed.embedSrc,
       thumbnail: data.thumbnail || null,
       platform: data.platform || parsed.platform,
       sortOrder: data.sortOrder || 0,
