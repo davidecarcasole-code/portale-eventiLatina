@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, Link, Sparkles, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, Link as LinkIcon, Sparkles, ArrowRight } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
@@ -200,7 +200,7 @@ export default function EventDetailPage() {
               </div>
               {event.source_url && (
                 <a href={event.source_url} target="_blank" rel="noopener noreferrer" className="btn-ghost p-2 rounded-lg flex-shrink-0">
-                  <Link size={16} />
+                  <LinkIcon size={16} />
                 </a>
               )}
             </div>
