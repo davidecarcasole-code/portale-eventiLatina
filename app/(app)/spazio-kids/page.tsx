@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Sparkles, Palette, Puzzle, Rocket, MapPin, Clock, Calendar } from "lucide-react";
+import { Sparkles, Palette, Puzzle, MapPin, Clock, Calendar } from "lucide-react";
 
 const SUBCATEGORIES = [
-  { slug: "bambini", label: "Eventi Kids", icon: Rocket, color: "#f97316", desc: "Spettacoli, feste e attività per bambini" },
+  { slug: "bambini", label: "Eventi Kids", icon: Sparkles, color: "#f97316", desc: "Spettacoli, feste e attività per bambini" },
   { slug: "laboratori", label: "Laboratori", icon: Puzzle, color: "#8b5cf6", desc: "Attività creative e didattiche" },
   { slug: "idee", label: "Idee per Bambini", icon: Palette, color: "#06b6d4", desc: "Spunti e idee per giocare e imparare" },
 ];

@@ -9,7 +9,7 @@ import { AdBanner } from "@/components/AdBanner";
 const categoryIcons: Record<string, any> = {
   musica: Music, teatro: Theater, cultura: Book, sport: Trophy, natura: Leaf,
   trekking: Mountain, montagna: Mountain, gite: Car, spettacolo: SparklesIcon,
-  enogastronomia: Wine, bambini: Rocket,
+  enogastronomia: Wine, bambini: Sparkles,
 };
 
 function CategoryCarousel({ categories }: { categories: any[] }) {
