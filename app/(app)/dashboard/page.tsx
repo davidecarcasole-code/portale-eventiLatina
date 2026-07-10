@@ -135,10 +135,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="flex justify-center">
-        <AdBanner placement="inline" />
-      </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: "Eventi Oggi", value: todayEvents.length, icon: Calendar, color: "from-blue-500 to-blue-600" },
@@ -169,71 +165,82 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {todayEvents.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              Eventi di Oggi
-              <span className="text-xs bg-gradient-to-r from-cyan-500 to-indigo-500 text-white px-2 py-0.5 rounded-full animate-pulse">Live</span>
-            </h3>
-            <span className="text-xs text-[var(--text-muted)]">{todayEvents.length} eventi</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {todayEvents.slice(0, 6).map((e: any) => (
-              <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
-                    {React.createElement(categoryIcons[e.category_slug] || Calendar, { size: 18 })}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>{e.category_name}</span>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-3 space-y-6">
+          {todayEvents.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  Eventi di Oggi
+                  <span className="text-xs bg-gradient-to-r from-cyan-500 to-indigo-500 text-white px-2 py-0.5 rounded-full animate-pulse">Live</span>
+                </h3>
+                <span className="text-xs text-[var(--text-muted)]">{todayEvents.length} eventi</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {todayEvents.slice(0, 6).map((e: any) => (
+                  <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
+                        {React.createElement(categoryIcons[e.category_slug] || Calendar, { size: 18 })}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>{e.category_name}</span>
+                        </div>
+                        <h4 className="font-medium text-sm leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{e.title}</h4>
+                        <div className="flex items-center gap-3 mt-1.5 text-xs text-[var(--text-muted)]">
+                          {e.time && <span className="flex items-center gap-1"><Clock size={11} />{e.time}</span>}
+                          {e.city && <span className="flex items-center gap-1"><MapPin size={11} />{e.city}</span>}
+                        </div>
+                      </div>
                     </div>
-                    <h4 className="font-medium text-sm leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{e.title}</h4>
-                    <div className="flex items-center gap-3 mt-1.5 text-xs text-[var(--text-muted)]">
-                      {e.time && <span className="flex items-center gap-1"><Clock size={11} />{e.time}</span>}
-                      {e.city && <span className="flex items-center gap-1"><MapPin size={11} />{e.city}</span>}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
-      {events.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Prossimi Eventi</h3>
-            <Link href="/events" className="inline-flex items-center gap-1 text-xs text-[var(--accent)] hover:underline font-medium">
-              Vedi tutti <ArrowRight size={12} />
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {events.slice(0, 9).map((e: any) => (
-              <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
-                    {React.createElement(categoryIcons[e.category_slug] || Calendar, { size: 18 })}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>{e.category_name}</span>
+          {events.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Prossimi Eventi</h3>
+                <Link href="/events" className="inline-flex items-center gap-1 text-xs text-[var(--accent)] hover:underline font-medium">
+                  Vedi tutti <ArrowRight size={12} />
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {events.slice(0, 9).map((e: any) => (
+                  <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
+                        {React.createElement(categoryIcons[e.category_slug] || Calendar, { size: 18 })}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>{e.category_name}</span>
+                        </div>
+                        <h4 className="font-medium text-sm leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{e.title}</h4>
+                        <p className="text-xs text-[var(--text-secondary)] mt-1">{new Date(e.date).toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" })}</p>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-[var(--text-muted)]">
+                          {e.time && <span className="flex items-center gap-1"><Clock size={11} />{e.time}</span>}
+                          {e.city && <span className="flex items-center gap-1"><MapPin size={11} />{e.city}</span>}
+                        </div>
+                      </div>
                     </div>
-                    <h4 className="font-medium text-sm leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{e.title}</h4>
-                    <p className="text-xs text-[var(--text-secondary)] mt-1">{new Date(e.date).toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" })}</p>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-[var(--text-muted)]">
-                      {e.time && <span className="flex items-center gap-1"><Clock size={11} />{e.time}</span>}
-                      {e.city && <span className="flex items-center gap-1"><MapPin size={11} />{e.city}</span>}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="hidden lg:flex flex-col gap-4">
+          <div className="sticky top-20 space-y-4">
+            <AdBanner placement="inline" />
+            <AdBanner placement="inline" />
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

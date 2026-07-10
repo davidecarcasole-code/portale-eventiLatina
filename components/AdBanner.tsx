@@ -20,7 +20,7 @@ type AdBannerProps = {
 const sizeClasses: Record<string, string> = {
   square: "w-full max-w-[300px]",
   horizontal: "w-full",
-  vertical: "w-full max-w-[160px]",
+  vertical: "w-full",
   leaderboard: "w-full",
 };
 
@@ -45,7 +45,7 @@ export function AdBanner({ placement, className = "" }: AdBannerProps) {
 
   const inner = (
     <div className={`relative group overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition-all hover:shadow-[0_0_20px_var(--accent-glow)] ${sizeClasses[ad.size] || 'w-full'} ${className}`}>
-      <div className="relative aspect-video max-h-[120px] overflow-hidden">
+      <div className={`relative overflow-hidden ${ad.size === 'vertical' ? 'min-h-[300px]' : 'aspect-video max-h-[120px]'}`}>
         <img
           src={ad.imageUrl}
           alt={ad.title}
@@ -66,7 +66,7 @@ export function AdBanner({ placement, className = "" }: AdBannerProps) {
           </div>
         )}
         <div className="absolute top-1.5 right-1.5 bg-black/50 backdrop-blur-sm text-[9px] text-white/70 px-1.5 py-0.5 rounded font-medium uppercase tracking-wider">
-          Sponsor
+          Ad
         </div>
         {ad.linkUrl && (
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center">
