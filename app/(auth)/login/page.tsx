@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/store";
-import { LogIn, UserPlus, Mail, Lock, User } from "lucide-react";
+import { LogIn, UserPlus, Mail, Lock, User, Building2 } from "lucide-react";
 
 const BG_IMAGES = [
   "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=1920&q=80",
@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [role, setRole] = useState<"user" | "publisher">("user");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [bgIdx, setBgIdx] = useState(0);
@@ -34,7 +35,7 @@ export default function LoginPage() {
     setError(""); setLoading(true);
     try {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      const body = isLogin ? { email, password } : { email, password, name };
+      const body = isLogin ? { email, password } : { email, password, name, role };
       const res = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Errore");
@@ -89,10 +90,23 @@ export default function LoginPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 {!isLogin && (
-                  <div>
-                    <label className="text-xs font-medium text-white/70 mb-1.5 block"><User size={13} className="inline mr-1" /> Nome</label>
-                    <input value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all" placeholder="Il tuo nome" required />
-                  </div>
+                  <>
+                    <div>
+                      <label className="text-xs font-medium text-white/70 mb-1.5 block"><User size={13} className="inline mr-1" /> Nome</label>
+                      <input value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all" placeholder="Il tuo nome" required />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-white/70 mb-1.5 block"><Building2 size={13} className="inline mr-1" /> Tipo account</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button type="button" onClick={() => setRole("user")} className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${role === "user" ? "bg-white/20 text-white border border-white/30" : "bg-white/10 text-white/70 border border-white/20 hover:bg-white/15"}`}>
+                          <User size={14} className="inline mr-1.5" /> Utente
+                        </button>
+                        <button type="button" onClick={() => setRole("publisher")} className={`px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${role === "publisher" ? "bg-white/20 text-white border border-white/30" : "bg-white/10 text-white/70 border border-white/20 hover:bg-white/15"}`}>
+                          <Building2 size={14} className="inline mr-1.5" /> Publisher
+                        </button>
+                      </div>
+                    </div>
+                  </>
                 )}
                 <div>
                   <label className="text-xs font-medium text-white/70 mb-1.5 block"><Mail size={13} className="inline mr-1" /> Email</label>
