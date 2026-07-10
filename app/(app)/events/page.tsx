@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Calendar, MapPin, Clock, Search, X, ChevronLeft, ChevronRight, SlidersHorizontal, Plus } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
+import { AdBanner } from "@/components/AdBanner";
 
 const PROVINCES = ["LT", "RM", "FR", "VT", "RI", "CB", "CE", "NA"];
 const PROVINCE_NAMES: Record<string, string> = { LT: "Latina", RM: "Roma", FR: "Frosinone", VT: "Viterbo", RI: "Rieti", CB: "Campobasso", CE: "Caserta", NA: "Napoli" };
@@ -110,6 +111,10 @@ function EventsContent() {
           </select>
         </div>
       )}
+
+      <div className="flex justify-center">
+        <AdBanner placement="inline" />
+      </div>
 
       {hasFilters && (
         <div className="flex items-center gap-2 flex-wrap">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Sparkles, Bell, Film } from "lucide-react";
 import { InstagramIcon, FacebookIcon, YoutubeIcon, TikTokIcon } from "./SocialIcons";
+import { AdBanner } from "./AdBanner";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store";
 import { NotificationBell } from "./NotificationBell";
@@ -91,6 +92,9 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
           );
         })}
       </nav>
+      <div className="px-3 py-2">
+        <AdBanner placement="sidebar" />
+      </div>
       {user && (
         <div className="p-3 border-t border-[var(--card-border)]">
           <div className="flex items-center gap-3 px-3 py-2 mb-2 rounded-xl bg-gradient-to-r from-[var(--accent-subtle)] to-transparent">

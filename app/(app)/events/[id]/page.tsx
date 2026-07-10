@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, Link, Sparkles } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
+import { AdBanner } from "@/components/AdBanner";
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -204,6 +205,10 @@ export default function EventDetailPage() {
             </div>
           </>
         )}
+      </div>
+
+      <div className="flex justify-center mt-6">
+        <AdBanner placement="inline" />
       </div>
 
       {isAdmin && editing && (

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const TABS = [
   { key: "events", label: "Eventi", icon: Globe },
   { key: "videos", label: "Video", icon: Film },
+  { key: "ads", label: "Pubblicità", icon: Megaphone },
   { key: "sources", label: "Fonti", icon: Radio },
   { key: "scraper", label: "Motore Ricerca", icon: Search },
   { key: "searchconfig", label: "Criteri Ricerca", icon: RefreshCw },
@@ -46,6 +47,7 @@ export default function AdminPage() {
 
       {tab === "events" && <EventsTab token={token!} />}
       {tab === "videos" && <VideosTab token={token!} />}
+      {tab === "ads" && <AdsTab token={token!} />}
       {tab === "sources" && <SourcesTab token={token!} />}
       {tab === "scraper" && <ScraperTab token={token!} />}
       {tab === "searchconfig" && <SearchConfigTab />}
@@ -535,6 +537,123 @@ function VideosTab({ token }: { token: string }) {
             <div className="flex gap-1 flex-shrink-0">
               <a href={`/video`} target="_blank" className="btn-ghost p-2 rounded-lg"><Play size={14} /></a>
               <button onClick={() => handleDelete(v.id)} className="btn-ghost p-2 rounded-lg hover:text-red-500"><Trash2 size={14} /></button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AdsTab({ token }: { token: string }) {
+  const [ads, setAds] = useState<any[]>([]);
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState({ title: "", imageUrl: "", linkUrl: "", placement: "sidebar", size: "square", sortOrder: 0, startDate: "", endDate: "" });
+  const [error, setError] = useState("");
+
+  const loadAds = useCallback(async () => {
+    try {
+      const r = await fetch("/api/ads?all=true", { headers: { Authorization: `Bearer ${token}` } });
+      const d = await r.json();
+      setAds(d.ads || []);
+    } catch {}
+  }, [token]);
+
+  useEffect(() => { loadAds(); }, [loadAds]);
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const r = await fetch("/api/ads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(form),
+    });
+    const data = await r.json();
+    if (!r.ok) { setError(data.error || "Errore"); return; }
+    setShowCreate(false);
+    setForm({ title: "", imageUrl: "", linkUrl: "", placement: "sidebar", size: "square", sortOrder: 0, startDate: "", endDate: "" });
+    loadAds();
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm("Eliminare questo annuncio?")) return;
+    const r = await fetch(`/api/ads/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    if (r.ok) loadAds();
+  }
+
+  const placements = [
+    { value: "sidebar", label: "Sidebar" },
+    { value: "banner", label: "Banner" },
+    { value: "inline", label: "In linea" },
+    { value: "footer", label: "Footer" },
+  ];
+
+  const sizes = [
+    { value: "square", label: "Quadrato" },
+    { value: "horizontal", label: "Orizzontale" },
+    { value: "vertical", label: "Verticale" },
+    { value: "leaderboard", label: "Leaderboard" },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-[var(--text-muted)]">{ads.length} annunci</p>
+        <button onClick={() => { setShowCreate(true); setError(""); }}
+          className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+          <Plus size={14} /> Nuovo Annuncio
+        </button>
+      </div>
+
+      {showCreate && (
+        <form onSubmit={handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
+          <div className="flex items-center justify-between">
+            <h4 className="font-semibold text-sm">Aggiungi Annuncio Pubblicitario</h4>
+            <button type="button" onClick={() => setShowCreate(false)} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
+          </div>
+          <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Titolo *" className="input" required />
+          <input value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })} placeholder="URL immagine banner *" className="input" required />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <select value={form.placement} onChange={e => setForm({ ...form, placement: e.target.value })} className="select">
+              {placements.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </select>
+            <select value={form.size} onChange={e => setForm({ ...form, size: e.target.value })} className="select">
+              {sizes.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+            </select>
+          </div>
+          <input value={form.linkUrl} onChange={e => setForm({ ...form, linkUrl: e.target.value })} placeholder="URL di destinazione (opzionale)" className="input" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input value={form.startDate} onChange={e => setForm({ ...form, startDate: e.target.value })} type="date" placeholder="Inizio (opzionale)" className="input" />
+            <input value={form.endDate} onChange={e => setForm({ ...form, endDate: e.target.value })} type="date" placeholder="Fine (opzionale)" className="input" />
+          </div>
+          {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
+          <div className="flex gap-2">
+            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">Aggiungi Annuncio</button>
+            <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
+          </div>
+        </form>
+      )}
+
+      <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+        {ads.map((a: any) => (
+          <div key={a.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-14 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-gray-800">
+                <img src={a.imageUrl} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium truncate">{a.title}</p>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5 flex items-center gap-2">
+                  <span className={`text-[10px] uppercase font-medium ${a.isActive ? 'text-green-500' : 'text-red-400'}`}>{a.isActive ? 'Attivo' : 'Inattivo'}</span>
+                  <span>· {placements.find(p => p.value === a.placement)?.label || a.placement}</span>
+                  <span>· {sizes.find(s => s.value === a.size)?.label || a.size}</span>
+                  <span>· {a.clickCount || 0} click</span>
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-1 flex-shrink-0">
+              <button onClick={() => handleDelete(a.id)} className="btn-ghost p-2 rounded-lg hover:text-red-500"><Trash2 size={14} /></button>
             </div>
           </div>
         ))}

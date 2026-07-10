@@ -1,15 +1,56 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Baby, ArrowRight, Plus } from "lucide-react";
+import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Baby, ArrowRight, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
+import { AdBanner } from "@/components/AdBanner";
 
 const categoryIcons: Record<string, any> = {
   musica: Music, teatro: Theater, cultura: Book, sport: Trophy, natura: Leaf,
   trekking: Mountain, montagna: Mountain, gite: Car, spettacolo: SparklesIcon,
   enogastronomia: Wine, bambini: Baby,
 };
+
+function CategoryCarousel({ categories }: { categories: any[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (dir: 'left' | 'right') => {
+    if (!scrollRef.current) return;
+    const amount = 280;
+    scrollRef.current.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="relative group/carousel">
+      <button onClick={() => scroll('left')}
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-xl bg-[var(--card-bg)]/90 backdrop-blur-sm border border-[var(--card-border)] flex items-center justify-center text-[var(--text-secondary)] opacity-0 group-hover/carousel:opacity-100 hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)] transition-all shadow-lg -translate-x-1/2">
+        <ChevronLeft size={18} />
+      </button>
+      <div ref={scrollRef}
+        className="flex gap-3 overflow-x-auto py-3 scrollbar-none snap-x snap-mandatory"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        {categories.map((cat, i) => {
+          const Icon = categoryIcons[cat.slug] || Calendar;
+          return (
+            <Link key={cat.slug} href={`/events?category=${cat.slug}`}
+              className={`snap-start flex-shrink-0 glass-card rounded-xl p-5 flex flex-col items-center gap-3 min-w-[110px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_var(--accent-glow)] stagger-${i + 1}`}>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:rotate-12 hover:scale-110" style={{ backgroundColor: cat.color + "20", color: cat.color }}>
+                <Icon size={22} />
+              </div>
+              <span className="text-xs font-semibold text-center">{cat.name}</span>
+              <span className="text-[10px] text-[var(--text-muted)]">{cat.count} eventi</span>
+            </Link>
+          );
+        })}
+      </div>
+      <button onClick={() => scroll('right')}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-xl bg-[var(--card-bg)]/90 backdrop-blur-sm border border-[var(--card-border)] flex items-center justify-center text-[var(--text-secondary)] opacity-0 group-hover/carousel:opacity-100 hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)] transition-all shadow-lg translate-x-1/2">
+        <ChevronRight size={18} />
+      </button>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
@@ -94,6 +135,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      <div className="flex justify-center">
+        <AdBanner placement="inline" />
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: "Eventi Oggi", value: todayEvents.length, icon: Calendar, color: "from-blue-500 to-blue-600" },
@@ -120,21 +165,7 @@ export default function DashboardPage() {
             <h3 className="text-lg font-semibold">Categorie</h3>
             <Link href="/events" className="text-xs text-[var(--accent)] hover:underline font-medium">Vedi tutti</Link>
           </div>
-          <div className="flex gap-3 overflow-x-auto py-3 scrollbar-thin">
-            {categories.map((cat, i) => {
-              const Icon = categoryIcons[cat.slug] || Calendar;
-              return (
-                <Link key={cat.slug} href={`/events?category=${cat.slug}`}
-                  className={`flex-shrink-0 glass-card rounded-xl p-5 flex flex-col items-center gap-3 min-w-[110px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_var(--accent-glow)] stagger-${i + 1}`}>
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 hover:rotate-12 hover:scale-110" style={{ backgroundColor: cat.color + "20", color: cat.color }}>
-                    <Icon size={22} />
-                  </div>
-                  <span className="text-xs font-semibold text-center">{cat.name}</span>
-                  <span className="text-[10px] text-[var(--text-muted)]">{cat.count} eventi</span>
-                </Link>
-              );
-            })}
-          </div>
+          <CategoryCarousel categories={categories} />
         </div>
       )}
 
