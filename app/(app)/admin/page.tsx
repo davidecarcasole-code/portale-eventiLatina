@@ -527,8 +527,9 @@ function VideosTab({ token }: { token: string }) {
                 <p className="text-sm font-medium truncate">{v.title}</p>
                 <p className="text-xs text-[var(--text-muted)] mt-0.5 flex items-center gap-2">
                   <span className="text-[10px] uppercase font-medium text-[var(--accent)]">{v.platform}</span>
-                  <span>· {v.sortOrder}</span>
+                  <span>· ordine {v.sortOrder}</span>
                 </p>
+                <p className="text-[10px] text-[var(--text-muted)] truncate mt-0.5 font-mono">{v.embedUrl}</p>
               </div>
             </div>
             <div className="flex gap-1 flex-shrink-0">

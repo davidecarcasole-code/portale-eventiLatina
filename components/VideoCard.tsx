@@ -49,7 +49,9 @@ export function VideoCard({ video }: { video: VideoItem }) {
           className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
+          referrerPolicy="no-referrer-when-downgrade"
           onLoad={() => setLoaded(true)}
+          onError={() => { console.error('Video embed error:', video.embedUrl); setLoaded(true); }}
         />
       </div>
       <div className="p-4 space-y-1">

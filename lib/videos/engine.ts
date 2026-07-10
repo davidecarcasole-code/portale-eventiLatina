@@ -28,7 +28,7 @@ export async function ensureVideosTable() {
 export function parseEmbedUrl(url: string): { platform: string; embedSrc: string } {
   // YouTube
   const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if (ytMatch) return { platform: 'youtube', embedSrc: `https://www.youtube.com/embed/${ytMatch[1]}` };
+  if (ytMatch) return { platform: 'youtube', embedSrc: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?rel=0` };
 
   // Vimeo
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
