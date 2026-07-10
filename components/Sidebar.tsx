@@ -71,12 +71,10 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
 }) {
   return (
     <>
-      <div className="p-3 border-b border-[var(--card-border)]">
+      <div className="px-1.5 py-2 border-b border-[var(--card-border)]">
         <Link href="/dashboard" onClick={onClose} className="block group relative">
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="w-full rounded-2xl bg-white p-1.5 ring-1 ring-[var(--accent)]/20 group-hover:ring-[var(--accent)]/50 transition-all shadow-lg dark:shadow-xl dark:shadow-white/10">
-            <img src="/banner.png" alt="EventiNLatina" className="w-full rounded-xl" />
-          </div>
+          <img src="/banner.png" alt="EventiNLatina" className="w-full rounded-2xl ring-1 ring-[var(--accent)]/10 group-hover:ring-[var(--accent)]/30 transition-all shadow-lg dark:brightness-0 dark:invert" />
         </Link>
         {showClose && <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] ml-auto mt-2"><X size={16} /></button>}
       </div>
