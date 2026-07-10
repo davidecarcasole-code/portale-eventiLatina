@@ -104,6 +104,15 @@ function EventsTab({ token }: { token: string }) {
     loadEvents();
   }
 
+  async function updateEventStatus(eventId: number, status: string) {
+    const r = await fetch(`/api/events/${eventId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ status }),
+    });
+    if (r.ok) loadEvents();
+  }
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -177,8 +186,21 @@ function EventsTab({ token }: { token: string }) {
                 {e.city && <span>· {e.city}</span>}
               </p>
             </div>
-            <div className="flex gap-1 flex-shrink-0">
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                e.status === "pending" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                e.status === "rejected" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
+                "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+              }`}>
+                {e.status === "pending" ? "In attesa" : e.status === "rejected" ? "Rifiutato" : "Approvato"}
+              </span>
               <a href={`/events/${e.id}`} className="btn-ghost p-2 rounded-lg"><Edit3 size={14} /></a>
+              {e.status === "pending" && (
+                <>
+                  <button onClick={() => updateEventStatus(e.id, "approved")} className="btn-ghost p-2 rounded-lg hover:text-green-500" title="Approva"><CheckCircle size={14} /></button>
+                  <button onClick={() => updateEventStatus(e.id, "rejected")} className="btn-ghost p-2 rounded-lg hover:text-red-500" title="Rifiuta"><XCircle size={14} /></button>
+                </>
+              )}
             </div>
           </div>
         ))}
