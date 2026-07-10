@@ -17,6 +17,7 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_nature: 'natura',
   cat_trekking: 'trekking',
   cat_mountain: 'montagna',
+  cat_excursion: 'escursioni',
   cat_daytrip: 'gite',
   cat_entertainment: 'spettacolo',
   cat_food: 'enogastronomia',
@@ -25,6 +26,7 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_benessere: 'benessere',
   cat_salute: 'salute',
   cat_rosa: 'rosa',
+  cat_exhibition: 'mostre',
 };
 
 const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Promise<ScrapedEvent[]> }> = {
