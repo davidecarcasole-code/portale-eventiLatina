@@ -77,7 +77,7 @@ function EventsTab({ token }: { token: string }) {
 
   const loadEvents = useCallback(async () => {
     try {
-      const r = await fetch("/api/events?limit=100&dateFrom=2020-01-01&status=all", { headers: { Authorization: `Bearer ${token}` } });
+      const r = await fetch("/api/events?limit=500&status=all", { headers: { Authorization: `Bearer ${token}` } });
       const d = await r.json();
       setEvents(d.events || []);
     } catch {}
