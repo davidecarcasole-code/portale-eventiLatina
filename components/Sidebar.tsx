@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Sparkles, Bell } from "lucide-react";
+import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Sparkles, Bell, Film } from "lucide-react";
+import { InstagramIcon, FacebookIcon, YoutubeIcon, TikTokIcon } from "./SocialIcons";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store";
 import { NotificationBell } from "./NotificationBell";
@@ -29,6 +30,7 @@ export function Sidebar() {
     { href: "/dashboard", label: "Dashboard", icon: Home },
     { href: "/events", label: "Eventi", icon: Calendar },
     { href: "/radio", label: "Web Radio", icon: Radio },
+    { href: "/video", label: "Video", icon: Film },
     { href: "/spazio-venere", label: "Spazio Venere", icon: Heart },
     { href: "/spazio-kids", label: "Spazio Kids", icon: Sparkles },
     { href: "/saved", label: "Salvati", icon: Bookmark },
@@ -97,6 +99,24 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
             </div>
             <span className="text-xs font-medium text-[var(--text-primary)] truncate">{user.name || user.email}</span>
             <div className="ml-auto"><NotificationBell /></div>
+          </div>
+          <div className="flex items-center justify-center gap-0.5 mb-2">
+            <a href="https://www.instagram.com/eventinlatina/" target="_blank" rel="noopener noreferrer"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all" title="Instagram">
+              <InstagramIcon size={15} />
+            </a>
+            <a href="https://www.facebook.com/eventinlatina" target="_blank" rel="noopener noreferrer"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all" title="Facebook">
+              <FacebookIcon size={15} />
+            </a>
+            <a href="https://www.youtube.com/@eventinlatina" target="_blank" rel="noopener noreferrer"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all" title="YouTube">
+              <YoutubeIcon size={15} />
+            </a>
+            <a href="https://www.tiktok.com/@eventinlatina" target="_blank" rel="noopener noreferrer"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all" title="TikTok">
+              <TikTokIcon size={15} />
+            </a>
           </div>
           <button onClick={() => { logout(); window.location.href = "/login"; }}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-[var(--text-muted)] hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-500 w-full transition-all duration-200">

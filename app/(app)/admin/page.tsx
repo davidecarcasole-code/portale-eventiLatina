@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const TABS = [
   { key: "events", label: "Eventi", icon: Globe },
+  { key: "videos", label: "Video", icon: Film },
   { key: "sources", label: "Fonti", icon: Radio },
   { key: "scraper", label: "Motore Ricerca", icon: Search },
   { key: "searchconfig", label: "Criteri Ricerca", icon: RefreshCw },
@@ -44,6 +45,7 @@ export default function AdminPage() {
       </div>
 
       {tab === "events" && <EventsTab token={token!} />}
+      {tab === "videos" && <VideosTab token={token!} />}
       {tab === "sources" && <SourcesTab token={token!} />}
       {tab === "scraper" && <ScraperTab token={token!} />}
       {tab === "searchconfig" && <SearchConfigTab />}
@@ -434,6 +436,107 @@ function AgentTab({ token }: { token: string }) {
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function VideosTab({ token }: { token: string }) {
+  const [videos, setVideos] = useState<any[]>([]);
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState({ title: "", description: "", embedUrl: "", thumbnail: "", platform: "youtube", sortOrder: 0 });
+  const [error, setError] = useState("");
+
+  const loadVideos = useCallback(async () => {
+    try {
+      const r = await fetch("/api/videos?all=true", { headers: { Authorization: `Bearer ${token}` } });
+      const d = await r.json();
+      setVideos(d.videos || []);
+    } catch {}
+  }, [token]);
+
+  useEffect(() => { loadVideos(); }, [loadVideos]);
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const r = await fetch("/api/videos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(form),
+    });
+    const data = await r.json();
+    if (!r.ok) { setError(data.error || "Errore"); return; }
+    setShowCreate(false);
+    setForm({ title: "", description: "", embedUrl: "", thumbnail: "", platform: "youtube", sortOrder: 0 });
+    loadVideos();
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm("Eliminare questo video?")) return;
+    const r = await fetch(`/api/videos/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+    if (r.ok) loadVideos();
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-[var(--text-muted)]">{videos.length} video</p>
+        <button onClick={() => { setShowCreate(true); setError(""); }}
+          className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+          <Plus size={14} /> Nuovo Video
+        </button>
+      </div>
+
+      {showCreate && (
+        <form onSubmit={handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
+          <div className="flex items-center justify-between">
+            <h4 className="font-semibold text-sm">Aggiungi Video</h4>
+            <button type="button" onClick={() => setShowCreate(false)} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
+          </div>
+          <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Titolo *" className="input" required />
+          <input value={form.embedUrl} onChange={e => setForm({ ...form, embedUrl: e.target.value })} placeholder="URL (YouTube, Vimeo, Instagram, TikTok...) *" className="input" required />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <select value={form.platform} onChange={e => setForm({ ...form, platform: e.target.value })} className="select">
+              <option value="youtube">YouTube</option>
+              <option value="vimeo">Vimeo</option>
+              <option value="instagram">Instagram</option>
+              <option value="facebook">Facebook</option>
+              <option value="tiktok">TikTok</option>
+              <option value="other">Altro</option>
+            </select>
+            <input value={form.thumbnail} onChange={e => setForm({ ...form, thumbnail: e.target.value })} placeholder="URL miniatura (opzionale)" className="input" />
+          </div>
+          <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Descrizione (opzionale)" className="input min-h-[60px]" rows={2} />
+          {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
+          <div className="flex gap-2">
+            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">Aggiungi Video</button>
+            <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
+          </div>
+        </form>
+      )}
+
+      <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+        {videos.map((v: any) => (
+          <div key={v.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500/20 to-purple-600/20 flex items-center justify-center flex-shrink-0">
+                <Film size={16} className="text-red-400" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium truncate">{v.title}</p>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5 flex items-center gap-2">
+                  <span className="text-[10px] uppercase font-medium text-[var(--accent)]">{v.platform}</span>
+                  <span>· {v.sortOrder}</span>
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-1 flex-shrink-0">
+              <a href={`/video`} target="_blank" className="btn-ghost p-2 rounded-lg"><Play size={14} /></a>
+              <button onClick={() => handleDelete(v.id)} className="btn-ghost p-2 rounded-lg hover:text-red-500"><Trash2 size={14} /></button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

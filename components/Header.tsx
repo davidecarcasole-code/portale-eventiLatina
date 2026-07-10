@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { useAuthStore } from "@/lib/store";
-import { Bell, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { NotificationBell } from "./NotificationBell";
+import { InstagramIcon, FacebookIcon, YoutubeIcon, TikTokIcon } from "./SocialIcons";
+
+const socialLinks = [
+  { href: "https://www.instagram.com/eventinlatina/", icon: InstagramIcon, color: "hover:text-pink-500", label: "Instagram" },
+  { href: "https://www.facebook.com/eventinlatina", icon: FacebookIcon, color: "hover:text-blue-600", label: "Facebook" },
+  { href: "https://www.youtube.com/@eventinlatina", icon: YoutubeIcon, color: "hover:text-red-600", label: "YouTube" },
+  { href: "https://www.tiktok.com/@eventinlatina", icon: TikTokIcon, color: "hover:text-purple-500", label: "TikTok" },
+];
 
 export function Header() {
   const user = useAuthStore((s) => s.user);
@@ -17,12 +26,16 @@ export function Header() {
           </div>
           <span className="text-sm font-bold bg-gradient-to-r from-cyan-500 via-teal-400 to-cyan-300 bg-clip-text text-transparent">EventiNLatina</span>
         </Link>
-        <div className="md:hidden" />
-        <div className="flex items-center gap-2 ml-auto">
-          <button className="btn-ghost p-2 rounded-xl relative">
-            <Bell size={18} />
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-          </button>
+        <div className="hidden lg:flex items-center gap-0.5">
+          {socialLinks.map((s) => (
+            <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
+              className={`w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-muted)] ${s.color} hover:bg-[var(--accent-subtle)] transition-all`} title={s.label}>
+              <s.icon size={15} />
+            </a>
+          ))}
+        </div>
+        <div className="flex items-center gap-2 ml-auto lg:ml-0">
+          <NotificationBell />
           {user && (
             <Link href="/profile" className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-[var(--accent-subtle)] transition-all">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-indigo-500 flex items-center justify-center text-white text-xs font-bold overflow-hidden ring-2 ring-[var(--accent)]/20">

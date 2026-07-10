@@ -133,6 +133,20 @@ model Notification {
   @@map("notifications")
 }
 
+model Video {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  embedUrl    String   @map("embed_url")
+  thumbnail   String?
+  platform    String   @default("youtube") // youtube | vimeo | instagram | facebook | tiktok | other
+  sortOrder   Int      @default(0)          @map("sort_order")
+  isPublished Boolean  @default(true)       @map("is_published")
+  createdAt   DateTime @default(now())      @map("created_at")
+
+  @@map("videos")
+}
+
 model RadioSetting {
   id                  Int       @id @default(autoincrement())
   stationName         String?                            @map("station_name")
