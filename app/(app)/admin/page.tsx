@@ -128,7 +128,7 @@ function EventsTab({ token }: { token: string }) {
           <button onClick={loadEvents} className="btn-ghost p-2 rounded-lg"><RefreshCw size={14} /></button>
         </div>
       </div>
-        <div className="flex gap-2">
+      <div className="flex gap-2">
           <button onClick={async () => { if (!confirm("Eliminare tutti gli eventi con data 2026-01-01 (import errati)?")) return; setCleaning(true); try { const r = await fetch("/api/scraper/cleanup", { method: "POST", headers: { Authorization: `Bearer ${token}` } }); const d = await r.json(); alert(`Eliminati ${d.deleted} eventi`); window.location.reload() } catch {} finally { setCleaning(false) } }}
             className="btn-ghost px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 text-red-500 hover:bg-red-50" disabled={cleaning}>
             <Trash2 size={14} /> {cleaning ? "Pulendo..." : "Pulisci date errate"}
