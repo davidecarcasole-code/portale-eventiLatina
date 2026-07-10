@@ -74,7 +74,7 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
       <div className="px-1.5 py-2 border-b border-[var(--card-border)]">
         <Link href="/dashboard" onClick={onClose} className="block group relative">
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <img src="/banner.png" alt="EventiNLatina" className="w-full rounded-2xl ring-1 ring-[var(--accent)]/10 group-hover:ring-[var(--accent)]/30 transition-all shadow-lg dark:brightness-0 dark:invert" />
+          <DarkBanner />
         </Link>
         {showClose && <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[var(--bg-secondary)] ml-auto mt-2"><X size={16} /></button>}
       </div>
@@ -190,6 +190,23 @@ function SidebarAdSlider() {
         <AdSlide ad={a} />
       )}
     </div>
+  );
+}
+
+function DarkBanner() {
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    setDark(document.documentElement.classList.contains('dark'));
+    const obs = new MutationObserver(() => setDark(document.documentElement.classList.contains('dark')));
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <img src="/banner.png" alt="EventiNLatina"
+      className={`w-full rounded-2xl transition-all shadow-lg ${dark ? 'ring-2 ring-white/30' : 'ring-1 ring-[var(--accent)]/10'}`}
+      style={dark ? { filter: 'brightness(0) invert(1)' } : undefined} />
   );
 }
 
