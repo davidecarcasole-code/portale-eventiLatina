@@ -548,7 +548,8 @@ function VideosTab({ token }: { token: string }) {
 function AdsTab({ token }: { token: string }) {
   const [ads, setAds] = useState<any[]>([]);
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ title: "", imageUrl: "", linkUrl: "", placement: "sidebar", size: "square", sortOrder: 0, startDate: "", endDate: "" });
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [form, setForm] = useState({ title: "", imageUrl: "", linkUrl: "", placement: "sidebar", size: "vertical", sortOrder: 0, startDate: "", endDate: "" });
   const [error, setError] = useState("");
 
   const loadAds = useCallback(async () => {
@@ -561,6 +562,11 @@ function AdsTab({ token }: { token: string }) {
 
   useEffect(() => { loadAds(); }, [loadAds]);
 
+  function resetForm() {
+    setForm({ title: "", imageUrl: "", linkUrl: "", placement: "sidebar", size: "vertical", sortOrder: 0, startDate: "", endDate: "" });
+    setError("");
+  }
+
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setError("");
@@ -572,7 +578,21 @@ function AdsTab({ token }: { token: string }) {
     const data = await r.json();
     if (!r.ok) { setError(data.error || "Errore"); return; }
     setShowCreate(false);
-    setForm({ title: "", imageUrl: "", linkUrl: "", placement: "sidebar", size: "square", sortOrder: 0, startDate: "", endDate: "" });
+    resetForm();
+    loadAds();
+  }
+
+  async function handleUpdate(id: number) {
+    setError("");
+    const r = await fetch(`/api/ads/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(form),
+    });
+    const data = await r.json();
+    if (!r.ok) { setError(data.error || "Errore"); return; }
+    setEditingId(null);
+    resetForm();
     loadAds();
   }
 
@@ -580,6 +600,21 @@ function AdsTab({ token }: { token: string }) {
     if (!confirm("Eliminare questo annuncio?")) return;
     const r = await fetch(`/api/ads/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
     if (r.ok) loadAds();
+  }
+
+  function startEdit(a: any) {
+    setEditingId(a.id);
+    setForm({
+      title: a.title || "",
+      imageUrl: a.imageUrl || "",
+      linkUrl: a.linkUrl || "",
+      placement: a.placement || "sidebar",
+      size: a.size || "vertical",
+      sortOrder: a.sortOrder || 0,
+      startDate: a.startDate ? a.startDate.split("T")[0] : "",
+      endDate: a.endDate ? a.endDate.split("T")[0] : "",
+    });
+    setError("");
   }
 
   const placements = [
@@ -590,9 +625,9 @@ function AdsTab({ token }: { token: string }) {
   ];
 
   const sizes = [
+    { value: "vertical", label: "Verticale" },
     { value: "square", label: "Quadrato" },
     { value: "horizontal", label: "Orizzontale" },
-    { value: "vertical", label: "Verticale" },
     { value: "leaderboard", label: "Leaderboard" },
   ];
 
@@ -600,17 +635,17 @@ function AdsTab({ token }: { token: string }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-sm text-[var(--text-muted)]">{ads.length} annunci</p>
-        <button onClick={() => { setShowCreate(true); setError(""); }}
+        <button onClick={() => { setShowCreate(true); setEditingId(null); resetForm(); }}
           className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
           <Plus size={14} /> Nuovo Annuncio
         </button>
       </div>
 
-      {showCreate && (
-        <form onSubmit={handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
+      {(showCreate || editingId !== null) && (
+        <form onSubmit={editingId !== null ? (e) => { e.preventDefault(); handleUpdate(editingId); } : handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
           <div className="flex items-center justify-between">
-            <h4 className="font-semibold text-sm">Aggiungi Annuncio Pubblicitario</h4>
-            <button type="button" onClick={() => setShowCreate(false)} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
+            <h4 className="font-semibold text-sm">{editingId !== null ? "Modifica Annuncio" : "Aggiungi Annuncio Pubblicitario"}</h4>
+            <button type="button" onClick={() => { setShowCreate(false); setEditingId(null); resetForm(); }} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
           </div>
           <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Titolo *" className="input" required />
           <input value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })} placeholder="URL immagine banner *" className="input" required />
@@ -629,8 +664,8 @@ function AdsTab({ token }: { token: string }) {
           </div>
           {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
           <div className="flex gap-2">
-            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">Aggiungi Annuncio</button>
-            <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
+            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">{editingId !== null ? "Salva Modifiche" : "Aggiungi Annuncio"}</button>
+            <button type="button" onClick={() => { setShowCreate(false); setEditingId(null); resetForm(); }} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
           </div>
         </form>
       )}
@@ -653,6 +688,7 @@ function AdsTab({ token }: { token: string }) {
               </div>
             </div>
             <div className="flex gap-1 flex-shrink-0">
+              <button onClick={() => startEdit(a)} className="btn-ghost p-2 rounded-lg hover:text-[var(--accent)]"><Edit3 size={14} /></button>
               <button onClick={() => handleDelete(a.id)} className="btn-ghost p-2 rounded-lg hover:text-red-500"><Trash2 size={14} /></button>
             </div>
           </div>

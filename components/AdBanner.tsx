@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Mail } from "lucide-react";
 
 type AdItem = {
   id: number;
@@ -15,6 +15,7 @@ type AdItem = {
 type AdBannerProps = {
   placement: "sidebar" | "banner" | "inline" | "footer";
   className?: string;
+  showPlaceholder?: boolean;
 };
 
 const sizeClasses: Record<string, string> = {
@@ -24,10 +25,11 @@ const sizeClasses: Record<string, string> = {
   leaderboard: "w-full",
 };
 
-export function AdBanner({ placement, className = "" }: AdBannerProps) {
+export function AdBanner({ placement, className = "", showPlaceholder = false }: AdBannerProps) {
   const [ad, setAd] = useState<AdItem | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [noAds, setNoAds] = useState(false);
 
   useEffect(() => {
     fetch(`/api/ads?placement=${placement}`)
@@ -36,12 +38,29 @@ export function AdBanner({ placement, className = "" }: AdBannerProps) {
         const ads = d.ads || [];
         if (ads.length > 0) {
           setAd(ads[Math.floor(Math.random() * ads.length)]);
+        } else {
+          setNoAds(true);
         }
       })
-      .catch(() => {});
+      .catch(() => setNoAds(true));
   }, [placement]);
 
-  if (!ad) return null;
+  if (!ad) {
+    if (showPlaceholder && noAds) {
+      return (
+        <div className={`rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--accent-subtle)]/30 p-5 flex flex-col items-center justify-center text-center gap-2 min-h-[200px] ${className}`}>
+          <Mail size={24} className="text-[var(--text-muted)]" />
+          <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+            Contattaci per avere<br />il tuo spazio pubblicitario qui
+          </p>
+          <a href="mailto:info@eventinlatina.it" className="text-[10px] text-[var(--accent)] hover:underline font-medium">
+            info@eventinlatina.it
+          </a>
+        </div>
+      );
+    }
+    return null;
+  }
 
   const inner = (
     <div className={`relative group overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition-all hover:shadow-[0_0_20px_var(--accent-glow)] ${sizeClasses[ad.size] || 'w-full'} ${className}`}>

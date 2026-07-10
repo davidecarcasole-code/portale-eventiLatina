@@ -236,8 +236,8 @@ export default function DashboardPage() {
 
         <div className="hidden lg:flex flex-col gap-4">
           <div className="sticky top-20 space-y-4">
-            <AdBanner placement="inline" />
-            <AdBanner placement="inline" />
+            <AdBanner placement="sidebar" showPlaceholder />
+            <AdBanner placement="sidebar" showPlaceholder />
           </div>
         </div>
       </div>

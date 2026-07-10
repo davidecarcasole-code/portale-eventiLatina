@@ -72,6 +72,31 @@ export async function createAd(data: {
   });
 }
 
+export async function updateAd(id: number, data: {
+  title?: string;
+  imageUrl?: string;
+  linkUrl?: string;
+  placement?: string;
+  size?: string;
+  isActive?: boolean;
+  sortOrder?: number;
+  startDate?: string;
+  endDate?: string;
+}) {
+  const prisma = await getPrisma();
+  const updateData: any = {};
+  if (data.title !== undefined) updateData.title = data.title;
+  if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
+  if (data.linkUrl !== undefined) updateData.linkUrl = data.linkUrl || null;
+  if (data.placement !== undefined) updateData.placement = data.placement;
+  if (data.size !== undefined) updateData.size = data.size;
+  if (data.isActive !== undefined) updateData.isActive = data.isActive;
+  if (data.sortOrder !== undefined) updateData.sortOrder = data.sortOrder;
+  if (data.startDate !== undefined) updateData.startDate = data.startDate ? new Date(data.startDate) : null;
+  if (data.endDate !== undefined) updateData.endDate = data.endDate ? new Date(data.endDate) : null;
+  return prisma.ad.update({ where: { id }, data: updateData });
+}
+
 export async function deleteAd(id: number) {
   const prisma = await getPrisma();
   return prisma.ad.delete({ where: { id } });
