@@ -35,7 +35,7 @@ export default function MarePage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="relative mb-8 overflow-hidden rounded-3xl -mx-4 sm:-mx-6 lg:-mx-8">
+      <div className="relative mb-8 overflow-hidden rounded-3xl">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-amber-500 to-amber-700" />
         <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-10" />
         <div className="absolute inset-0 bg-gradient-to-r from-orange-500/30 via-amber-500/20 to-transparent" />

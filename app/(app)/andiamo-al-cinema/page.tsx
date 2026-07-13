@@ -33,7 +33,7 @@ export default function CinemaPage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="relative mb-8 overflow-hidden rounded-3xl -mx-2 sm:-mx-4 lg:-mx-6">
+      <div className="relative mb-8 overflow-hidden rounded-3xl">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-indigo-600 to-indigo-800" />
         <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-10" />
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-indigo-500/20 to-transparent" />
