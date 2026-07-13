@@ -55,6 +55,19 @@ export async function POST(req: NextRequest) {
 
     const prisma = await getPrisma();
 
+    // Ensure categories exist (auto-create missing ones)
+    const requiredCategories = ['cinema', 'mare', 'escursioni', 'musica', 'teatro', 'cultura', 'sport', 'natura', 'trekking', 'montagna', 'gite', 'spettacolo', 'enogastronomia', 'bambini', 'borghi', 'benessere', 'salute', 'rosa', 'mostre'];
+    const existingCats = await prisma.category.findMany({ where: { slug: { in: requiredCategories } }, select: { slug: true } });
+    const existingSlugs = new Set(existingCats.map(c => c.slug));
+    const missingSlugs = requiredCategories.filter(s => !existingSlugs.has(s));
+    if (missingSlugs.length > 0) {
+      await prisma.category.createMany({
+        data: missingSlugs.map(slug => ({ slug, name: slug.charAt(0).toUpperCase() + slug.slice(1) })),
+        skipDuplicates: true,
+      });
+      console.log(`[Ingest] Auto-created missing categories: ${missingSlugs.join(', ')}`);
+    }
+
     const cats = await prisma.category.findMany({ select: { id: true, slug: true } });
     const catMap = new Map<string, number>();
     for (const c of cats) catMap.set(c.slug, c.id);
@@ -73,7 +86,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    let inserted = 0;
+let inserted = 0;
     for (const e of events) {
       if (e.source_url && bySourceUrl.has(e.source_url)) continue;
       const key = dedupKey(e);
@@ -82,8 +95,14 @@ export async function POST(req: NextRequest) {
       try {
         const slug = OLD_TO_NEW_CATEGORY[e.category_id] || e.category_id;
         const catId = catMap.get(slug);
-        console.log(`[Ingest] Event: ${e.title?.slice(0,30)} | category_id from scraper: ${e.category_id} | mapped slug: ${slug} | catId: ${catId}`);
         
+        console.log(`[Ingest] "${e.title?.slice(0, 40)}" | category_id: ${e.category_id} -> slug: ${e.category_id} -> catId: ${catId}`);
+
+        if (!catId) {
+          console.warn(`[Ingest] Category not found for "${e.title?.slice(0, 30)}", skipping`);
+          continue;
+        }
+
         await prisma.event.create({
           data: {
             title: e.title.slice(0, 200),
