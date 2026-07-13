@@ -96,10 +96,15 @@ export async function ensureScrapedSourcesTable() {
         last_scraped_at TIMESTAMP WITH TIME ZONE,
         config_id INTEGER,
         facebook_page_id TEXT,
-        facebook_access_token TEXT
+        facebook_access_token TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       )
     `);
-    console.log('[Scraper] Ensured scraped_sources table exists');
+    // Add missing columns if table already existed
+    await prisma.$executeRawUnsafe(`ALTER TABLE scraped_sources ADD COLUMN IF NOT EXISTS facebook_page_id TEXT`);
+    await prisma.$executeRawUnsafe(`ALTER TABLE scraped_sources ADD COLUMN IF NOT EXISTS facebook_access_token TEXT`);
+    await prisma.$executeRawUnsafe(`ALTER TABLE scraped_sources ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()`);
+    console.log('[Scraper] Ensured scraped_sources table exists with all columns');
   } catch (err) {
     console.error('[Scraper] Failed to ensure scraped_sources table:', err);
   }
