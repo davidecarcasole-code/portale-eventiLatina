@@ -31,6 +31,7 @@ function EventsContent() {
   const [category, setCategory] = useState(searchParams.get("category") || "");
   const [province, setProvince] = useState(searchParams.get("province") || "");
   const [timePeriod, setTimePeriod] = useState(searchParams.get("time_period") || "");
+  const [timeFilter, setTimeFilter] = useState<"upcoming" | "ongoing" | "past">("upcoming");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
@@ -58,6 +59,7 @@ function EventsContent() {
       if (category) params.set("category", category);
       if (province) params.set("province", province);
       if (timePeriod) params.set("time_period", timePeriod);
+      if (timeFilter !== "upcoming") params.set("timeFilter", timeFilter);
       params.set("page", String(page));
       params.set("limit", "20");
       try {
@@ -118,7 +120,7 @@ function EventsContent() {
         <AdBanner placement="inline" />
       </div>
 
-      {hasFilters && (
+{hasFilters && (
         <div className="flex items-center gap-2 flex-wrap">
           {category && <span className="badge">{categories.find((c: any) => c.slug === category)?.name || category}</span>}
           {province && <span className="badge">{PROVINCE_NAMES[province]}</span>}
@@ -128,6 +130,26 @@ function EventsContent() {
           </button>
         </div>
       )}
+
+      <div className="flex gap-2 mb-4 flex-wrap">
+        {["upcoming", "ongoing", "past"].map((t) => (
+          <button key={t}
+            onClick={() => { setTimeFilter(t as any); setPage(1); }}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+              timeFilter === t
+                ? "bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent-glow)]"
+                : "bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)]"
+            }`}>
+            {t === "upcoming" && "Prossimi"}
+            {t === "ongoing" && "In corso"}
+            {t === "past" && "Passati"}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex justify-center">
+        <AdBanner placement="inline" />
+      </div>
 
       {loading ? (
         <div className="flex justify-center py-24">

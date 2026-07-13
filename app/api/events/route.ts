@@ -32,11 +32,26 @@ export async function GET(req: NextRequest) {
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
     const status = searchParams.get("status") || "approved";
+    const timeFilter = searchParams.get("timeFilter") || "upcoming";
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const where: any = { isPublished: true };
     if (status !== "all") where.status = status;
-    where.date = { gte: dateFrom ? new Date(dateFrom) : new Date(new Date().toDateString()) };
-    if (dateTo) where.date.lte = new Date(dateTo);
+
+    if (timeFilter === "upcoming") {
+      where.date = { gte: dateFrom ? new Date(dateFrom) : today };
+      if (dateTo) where.date.lte = new Date(dateTo);
+    } else if (timeFilter === "ongoing") {
+      where.date = { lte: today };
+      where.endDate = { gte: today };
+    } else if (timeFilter === "past") {
+      where.date = { lt: today };
+    } else {
+      where.date = { gte: dateFrom ? new Date(dateFrom) : today };
+      if (dateTo) where.date.lte = new Date(dateTo);
+    }
     if (category) {
       const slugs = category.split(',').map(s => s.trim()).filter(Boolean);
       if (slugs.length === 1) where.category = { slug: slugs[0] };

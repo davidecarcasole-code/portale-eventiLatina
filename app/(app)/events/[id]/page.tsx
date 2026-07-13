@@ -26,11 +26,10 @@ export default function EventDetailPage() {
         setEvent(data);
         setIsSaved(data.is_saved || false);
         if (data.category_slug) {
-          const from = new Date(data.date);
+          const today = new Date().toISOString().split('T')[0];
           const to = new Date(data.date);
-          from.setDate(from.getDate() - 7);
           to.setDate(to.getDate() + 14);
-          fetch(`/api/events?category=${data.category_slug}&dateFrom=${from.toISOString().split('T')[0]}&dateTo=${to.toISOString().split('T')[0]}&limit=6`)
+          fetch(`/api/events?category=${data.category_slug}&dateFrom=${today}&dateTo=${to.toISOString().split('T')[0]}&limit=6`)
             .then(r => r.json())
             .then(d => setRelated((d.events || []).filter((e: any) => e.id !== data.id)))
             .catch(() => {});
