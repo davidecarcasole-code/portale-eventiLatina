@@ -22,7 +22,8 @@ const MONTHS_IT: Record<string, string> = {
 function detectCategory(title: string, text: string): string {
   const t = `${title} ${text}`.toLowerCase();
   if (/concerto|musica|dj|band|rock|jazz|coro|orchestra|live|festival\s+musicale|cantante|gruppo\s+musicale/.test(t)) return 'cat_music';
-  if (/teatro|danza|spettacolo|commedia|opera|film|cinema|balletto|musical|palcoscenico/.test(t)) return 'cat_theater';
+  if (/teatro|danza|spettacolo|commedia|opera|balletto|musical|palcoscenico/.test(t)) return 'cat_theater';
+  if (/film|cinema|proiezione|rassegna|cinemateca|cineforum|pellicola|regista|cine\s+club/.test(t)) return 'cat_cinema';
   if (/mostra|museo|arte|fotografia|cultura|conferenza|presentazione|libro|letteratura|poesia|storia|exhibition|esposizione/.test(t)) return 'cat_culture';
   if (/sport|gara|podistica|torneo|yoga|bici|ciclismo|corsa|calcio|pallavolo|basket|tennis|nuoto|maratona|atletica/.test(t)) return 'cat_sports';
   if (/natura|parco|picnic|giardino|orto|flora|fauna|ambiente|riserva|birdwatching|lago/.test(t)) return 'cat_nature';
@@ -30,11 +31,12 @@ function detectCategory(title: string, text: string): string {
   if (/sagra|enogastronomia|vino|cibo|street food|birra|cucina|gastronomia|food|degustazione|olio/.test(t)) return 'cat_food';
   if (/bambini|famiglia|burattini|giochi|animazione|ludoteca|bimbi|ragazzi|scuola|didattica|fattoria/.test(t)) return 'cat_kids';
   if (/festa|fiera|mercatino|collezionismo|luna park|ludico|sfilata|carnevale|mercato|palio|rievocazione/.test(t)) return 'cat_entertainment';
-  if (/montagna|rifugio|neve|montagna|vetta|sci|alpino|simbruini|terminillo/.test(t)) return 'cat_mountain';
+  if (/montagna|rifugio|neve|vetta|sci|alpino|simbruini|terminillo/.test(t)) return 'cat_mountain';
   if (/gita|borgo|isole|castello|storico|abbazia|eremo|medievale|pellegrinaggio/.test(t)) return 'cat_daytrip';
   if (/benessere|yoga|relax|spa|wellness|massaggi|olistiche|reiki|meditazione|pilates|bagni\s+termali|terme|termale/.test(t)) return 'cat_benessere';
   if (/salute|prevenzione|sanità|visita\s+medica|screening|check.up|donazione\s+sangue|giornata\s+della\s+salute|medico/.test(t)) return 'cat_salute';
   if (/donna|donne|femminile|rosa|8\s+marzo|violenza\s+sulle\s+donne|festadelladonna|al\s+femminile|pari\s+opportunità/.test(t)) return 'cat_rosa';
+  if (/mare|spiaggia|lido|bagno|costa|litorale|sabbia|nuoto|vela|windsurf|kitesurf|sub|immersione|porto|approdo|mare/.test(t)) return 'cat_sea';
   return 'cat_entertainment';
 }
 

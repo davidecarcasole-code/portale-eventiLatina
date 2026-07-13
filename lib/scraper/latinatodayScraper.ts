@@ -11,7 +11,8 @@ const MONTHS_MAP: Record<string, string> = {
 function detectCategory(title: string, kicker: string): string {
   const k = kicker.toLowerCase();
   if (k.includes('concerti') || k.includes('musica')) return 'cat_music';
-  if (k.includes('teatro') || k.includes('cinema')) return 'cat_theater';
+  if (k.includes('teatro')) return 'cat_theater';
+  if (k.includes('cinema')) return 'cat_cinema';
   if (k.includes('mostra') || k.includes('cultura')) return 'cat_culture';
   if (k.includes('sport')) return 'cat_sports';
   if (k.includes('natura')) return 'cat_nature';
@@ -23,7 +24,8 @@ function detectCategory(title: string, kicker: string): string {
   if (k.includes('donna') || k.includes('rosa')) return 'cat_rosa';
   const t = title.toLowerCase();
   if (/concerto|musica|dj|band|rock|jazz|cantante|festival|coro/.test(t)) return 'cat_music';
-  if (/teatro|danza|spettacolo|cinema|film/.test(t)) return 'cat_theater';
+  if (/teatro|danza|spettacolo/.test(t)) return 'cat_theater';
+  if (/cinema|film|documentario|proiezione|rassegna|cinemateca|cineforum/.test(t)) return 'cat_cinema';
   if (/mostra|museo|arte|cultura|fotografia|conferenza|libro/.test(t)) return 'cat_culture';
   if (/sport|gara|maratona|bici/.test(t)) return 'cat_sports';
   if (/natura|parco|giardino|lago|riserva/.test(t)) return 'cat_nature';
@@ -32,6 +34,7 @@ function detectCategory(title: string, kicker: string): string {
   if (/bambini|famiglia|giochi/.test(t)) return 'cat_kids';
   if (/festa|mercatino|palio|rievocazione|carnevale/.test(t)) return 'cat_entertainment';
   if (/gita|borgo|castello|storico/.test(t)) return 'cat_daytrip';
+  if (/mare|spiaggia|lido|bagno|costa|litorale|sabbia|nuoto|vela|windsurf|kitesurf|sub|immersione|porto|approdo/.test(t)) return 'cat_sea';
   if (/benessere|yoga|relax|spa|wellness|massaggi|meditazione|pilates/.test(t)) return 'cat_benessere';
   if (/salute|prevenzione|sanità|screening|medico|ospedale/.test(t)) return 'cat_salute';
   if (/donna|donne|femminile|rosa|8\s+marzo/.test(t)) return 'cat_rosa';

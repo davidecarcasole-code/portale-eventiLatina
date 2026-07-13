@@ -5,6 +5,12 @@ const LISTING = 'https://www.eventbrite.it/d/italy--latina/health--events';
 
 function detectCategory(title: string, description: string): string {
   const text = `${title} ${description}`.toLowerCase();
+  if (text.includes('cinema') || text.includes('film') || text.includes('documentario') || text.includes('proiezione') || text.includes('rassegna') || text.includes('cinemateca') || text.includes('cineforum') || text.includes('pellicola') || text.includes('regista')) {
+    return 'cinema';
+  }
+  if (text.includes('mare') || text.includes('spiaggia') || text.includes('lido') || text.includes('bagno') || text.includes('costa') || text.includes('litorale') || text.includes('sabbia') || text.includes('nuoto') || text.includes('vela') || text.includes('windsurf') || text.includes('kitesurf') || text.includes('sub') || text.includes('immersione') || text.includes('porto') || text.includes('approdo')) {
+    return 'mare';
+  }
   if (text.includes('yoga') || text.includes('meditazione') || text.includes('mindfulness') ||
       text.includes('pilates') || text.includes('olistico') || text.includes('wellness') ||
       text.includes('detox') || text.includes('ritiro') || text.includes('spa') ||

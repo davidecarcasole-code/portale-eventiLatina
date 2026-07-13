@@ -28,6 +28,8 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_salute: 'salute',
   cat_rosa: 'rosa',
   cat_exhibition: 'mostre',
+  cat_cinema: 'cinema',
+  cat_sea: 'mare',
 };
 
 const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Promise<ScrapedEvent[]> }> = {

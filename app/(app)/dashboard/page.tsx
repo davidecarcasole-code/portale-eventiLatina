@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Rocket, ArrowRight, Plus, ChevronLeft, ChevronRight, ExternalLink, Mail } from "lucide-react";
+import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Rocket, ArrowRight, Plus, ChevronLeft, ChevronRight, ExternalLink, Mail, Film, Waves } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
 const categoryIcons: Record<string, any> = {
   musica: Music, teatro: Theater, cultura: Book, sport: Trophy, natura: Leaf,
   trekking: Mountain, montagna: Mountain, gite: Car, spettacolo: SparklesIcon,
-  enogastronomia: Wine, bambini: Rocket,
+  enogastronomia: Wine, bambini: Rocket, cinema: Film, mare: Waves,
 };
 
 function CategoryCarousel({ categories }: { categories: any[] }) {

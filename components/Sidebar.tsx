@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Rocket, Bell, Film, ExternalLink } from "lucide-react";
+import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Rocket, Bell, Film, ExternalLink, Waves } from "lucide-react";
 import { InstagramIcon, FacebookIcon, YoutubeIcon, TikTokIcon } from "./SocialIcons";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store";
@@ -31,6 +31,8 @@ export function Sidebar() {
     { href: "/events", label: "Eventi", icon: Calendar },
     { href: "/radio", label: "Web Radio", icon: Radio },
     { href: "/video", label: "Video", icon: Film },
+    { href: "/andiamo-al-cinema", label: "Andiamo al Cinema", icon: Film },
+    { href: "/tutti-al-mare", label: "Tutti al Mare", icon: Waves },
     { href: "/spazio-venere", label: "Spazio Venere", icon: Heart },
     { href: "/spazio-kids", label: "Spazio Kids", icon: Rocket },
     { href: "/saved", label: "Salvati", icon: Bookmark },

@@ -11,7 +11,8 @@ const MONTHS_SLUG: Record<string, string> = {
 function detectCategory(title: string, text: string): string {
   const t = `${title} ${text}`.toLowerCase();
   if (/concerto|musica|dj|band|rock|jazz|coro|orchestra|live|festival\s+musicale|cantante|gruppo\s+musicale|rassegna musicale/.test(t)) return 'cat_music';
-  if (/teatro|danza|spettacolo|commedia|opera|film|cinema|balletto|musical|palcoscenico/.test(t)) return 'cat_theater';
+  if (/teatro|danza|spettacolo|commedia|opera|balletto|musical|palcoscenico/.test(t)) return 'cat_theater';
+  if (/cinema|film|documentario|proiezione|rassegna|cinemateca|cineforum|pellicola|regista/.test(t)) return 'cat_cinema';
   if (/mostra|museo|arte|fotografia|cultura|conferenza|presentazione|libro|letteratura|poesia|storia|exhibition|esposizione/.test(t)) return 'cat_culture';
   if (/sport|gara|podistica|torneo|yoga|bici|ciclismo|corsa|calcio|pallavolo|basket|tennis|nuoto|maratona|atletica/.test(t)) return 'cat_sports';
   if (/natura|parco|picnic|giardino|orto|flora|fauna|ambiente|riserva|birdwatching|lago/.test(t)) return 'cat_nature';
@@ -21,6 +22,7 @@ function detectCategory(title: string, text: string): string {
   if (/festa|fiera|mercatino|collezionismo|luna park|ludico|sfilata|carnevale|mercato|palio|rievocazione/.test(t)) return 'cat_entertainment';
   if (/montagna|rifugio|neve|montagna|vetta|sci|alpino|simbruini|terminillo/.test(t)) return 'cat_mountain';
   if (/gita|borgo|isole|castello|storico|abbazia|eremo|medievale|pellegrinaggio/.test(t)) return 'cat_daytrip';
+  if (/mare|spiaggia|lido|bagno|costa|litorale|sabbia|nuoto|vela|windsurf|kitesurf|sub|immersione|porto|approdo/.test(t)) return 'cat_sea';
   if (/benessere|yoga|relax|spa|wellness|massaggi|olistiche|reiki|meditazione|pilates|bagni\s+termali|terme|termale/.test(t)) return 'cat_benessere';
   if (/salute|prevenzione|sanità|visita\s+medica|screening|check.up|donazione\s+sangue|giornata\s+della\s+salute|medico/.test(t)) return 'cat_salute';
   if (/donna|donne|femminile|rosa|8\s+marzo|violenza\s+sulle\s+donne|festadelladonna|al\s+femminile|pari\s+opportunità/.test(t)) return 'cat_rosa';

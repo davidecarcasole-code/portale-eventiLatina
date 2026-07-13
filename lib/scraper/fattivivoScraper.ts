@@ -16,11 +16,12 @@ const CATEGORY_MAP: Record<string, string> = {
   'bambini': 'bambini', 'bambino': 'bambini',
   'festival': 'spettacolo', 'libri': 'cultura', 'turismo': 'gite',
   'equitazione': 'natura', 'basket': 'sport', 'mostra': 'cultura',
-  'gratuiti': 'spettacolo', 'danza': 'spettacolo', 'cinema': 'spettacolo',
+  'gratuiti': 'spettacolo', 'danza': 'spettacolo', 'cinema': 'cinema',
   'musica jazz': 'musica', 'musica tribute band': 'musica',
   'benessere': 'benessere', 'yoga': 'benessere',
   'salute': 'salute',
   'donna': 'rosa', 'rosa': 'rosa',
+  'mare': 'mare', 'spiaggia': 'mare', 'lido': 'mare', 'costa': 'mare', 'litorale': 'mare',
 };
 
 function detectCategory(label: string): string {

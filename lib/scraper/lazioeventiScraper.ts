@@ -8,7 +8,8 @@ const LISTING = `${BASE}/oggi-nel-lazio`;
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
   musica: ['concerto', 'musica', 'live', 'dj set', 'band', 'cantante', 'orchestra', 'coro', 'musicista', 'festival musicale', 'note'],
   teatro: ['teatro', 'spettacolo teatrale', 'commedia', 'dramma', 'opera', 'balletto', 'circo', 'one man show', 'cabaret'],
-  cultura: ['conferenza', 'convegno', 'incontro', 'presentazione', 'libro', 'reading', 'poesia', 'cinema', 'film', 'documentario', 'arte', 'fotografia'],
+  cultura: ['conferenza', 'convegno', 'incontro', 'presentazione', 'libro', 'reading', 'poesia', 'arte', 'fotografia'],
+  cinema: ['cinema', 'film', 'documentario', 'proiezione', 'rassegna', 'cinemateca', 'cineforum', 'pellicola', 'regista'],
   mostre: ['mostra', 'esposizione', 'vernissage', 'galleria', 'museo', 'collezione', 'artista', 'pittura', 'scultura'],
   sport: ['sport', 'partita', 'gara', 'corsa', 'torneo', 'maratona', 'ciclismo', 'calcio', 'pallavolo', 'basket', 'tennis'],
   natura: ['natura', 'parco', 'giardino', 'passeggiata', 'ambiente', 'flora', 'fauna', 'giardino botanico', 'riserva', 'oasi'],
@@ -23,6 +24,7 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
   benessere: ['benessere', 'yoga', 'meditazione', 'relax', 'spa', 'olistico', 'mindfulness', 'pilates', 'benessere psicologico'],
   salute: ['salute', 'medicina', 'prevenzione', 'salute pubblica', 'benessere fisico', 'cura'],
   rosa: ['donna', 'femminile', 'parità', 'genere', 'mamma', 'rosa'],
+  mare: ['mare', 'spiaggia', 'lido', 'bagno', 'mare', 'costa', 'litorale', 'sabbia', 'mare', 'nuoto', 'vela', 'windsurf', 'kitesurf', 'sub', 'immersione', 'porto', 'approdo', 'mare'],
 };
 
 function detectCategory(title: string): string {
