@@ -180,8 +180,7 @@ async function runSingleSource(
         existingEvents.byDedup.add(key);
       } catch (err: any) {
         console.error(`[Scraper] Insert error: ${err.message?.slice(0, 100)} for "${e.title.slice(0, 40)}"`);
-      }
-    }
+}
 
     console.log(`[Scraper] ${name}: ${inserted} new events inserted`);
     return { source: name, found: events.length, inserted };
