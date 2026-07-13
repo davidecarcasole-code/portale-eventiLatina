@@ -997,7 +997,7 @@ function FacebookPagesTab({ token }: { token: string }) {
     const r = await fetch("/api/facebook-pages", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, facebookPageId: form.pageId }),
     });
     const data = await r.json();
     if (!r.ok) { setError(data.error || "Errore"); return; }
