@@ -81,6 +81,7 @@ export async function POST(req: NextRequest) {
             title: e.title.slice(0, 200),
             description: e.description?.slice(0, 2000) || null,
             categoryId: (() => {
+              // Map old category IDs to new slugs, with fallback to direct slug
               const slug = OLD_TO_NEW_CATEGORY[e.category_id] || e.category_id;
               return catMap.get(slug) ?? null;
             })(),
