@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, Facebook, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const TABS = [
@@ -10,6 +10,7 @@ const TABS = [
   { key: "ads", label: "Pubblicità", icon: Megaphone },
   { key: "sources", label: "Fonti", icon: Radio },
   { key: "scraper", label: "Motore Ricerca", icon: Search },
+  { key: "facebook", label: "Facebook", icon: Facebook },
   { key: "searchconfig", label: "Criteri Ricerca", icon: RefreshCw },
   { key: "agent", label: "Agent AI", icon: Brain },
   { key: "publishers", label: "Publisher", icon: Briefcase, adminOnly: true },
@@ -59,6 +60,7 @@ export default function AdminPage() {
       {tab === "ads" && <AdsTab token={token!} />}
       {tab === "sources" && <SourcesTab token={token!} />}
       {tab === "scraper" && <ScraperTab token={token!} />}
+      {tab === "facebook" && <FacebookPagesTab token={token!} />}
       {tab === "searchconfig" && <SearchConfigTab />}
       {tab === "agent" && <AgentTab token={token!} />}
       {tab === "publishers" && isSuperAdmin && <PublishersTab token={token!} />}
@@ -968,6 +970,127 @@ function PublishersTab({ token }: { token: string }) {
           {publishers.length === 0 && <p className="text-center text-[var(--text-muted)] py-8">Nessun publisher registrato</p>}
         </div>
       )}
+    </div>
+  );
+}
+
+function FacebookPagesTab({ token }: { token: string }) {
+  const [pages, setPages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
+  const [form, setForm] = useState({ name: "", pageId: "", accessToken: "", url: "" });
+  const [error, setError] = useState("");
+  const [testing, setTesting] = useState<string | null>(null);
+
+  const loadPages = useCallback(async () => {
+    try {
+      const r = await fetch("/api/facebook-pages", { headers: { Authorization: `Bearer ${token}` } });
+      if (r.ok) setPages(await r.json());
+    } catch {}
+  }, [token]);
+
+  useEffect(() => { loadPages(); }, [loadPages]);
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    const r = await fetch("/api/facebook-pages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(form),
+    });
+    const data = await r.json();
+    if (!r.ok) { setError(data.error || "Errore"); return; }
+    setShowCreate(false);
+    setForm({ name: "", pageId: "", accessToken: "", url: "" });
+    loadPages();
+  }
+
+  async function handleDelete(page: any) {
+    if (!confirm(`Eliminare la pagina "${page.name}"?`)) return;
+    const r = await fetch("/api/facebook-pages", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ id: page.id }),
+    });
+    if (r.ok) loadPages();
+  }
+
+  async function testPage(page: any) {
+    setTesting(page.id);
+    const r = await fetch("/api/facebook-pages/test", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ pageId: page.pageId, accessToken: page.accessToken }),
+    });
+    const data = await r.json();
+    setTesting(null);
+    alert(r.ok ? `OK: ${data.events || 0} eventi trovati` : `Errore: ${data.error}`);
+  }
+
+  async function runScraperForPage(page: any) {
+    const r = await fetch("/api/scraper/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ source: "facebook", pageId: page.id }),
+    });
+    const data = await r.json();
+    alert(`Scraper completato: ${data.totalInserted || 0} nuovi eventi`);
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-[var(--text-muted)]">{pages.length} pagine Facebook</p>
+        <button onClick={() => { setShowCreate(true); setError(""); setForm({ name: "", pageId: "", accessToken: "", url: "" }); }}
+          className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+          <Plus size={14} /> Aggiungi Pagina
+        </button>
+      </div>
+
+      {showCreate && (
+        <form onSubmit={handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
+          <div className="flex items-center justify-between">
+            <h4 className="font-semibold text-sm">Aggiungi Pagina Facebook</h4>
+            <button type="button" onClick={() => { setShowCreate(false); setError(""); }} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
+          </div>
+          <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Nome (es. Eventi Latina)" className="input" required />
+          <input value={form.pageId} onChange={e => setForm({ ...form, pageId: e.target.value })} placeholder="Page ID (es. 123456789)" className="input" required />
+          <input type="password" value={form.accessToken} onChange={e => setForm({ ...form, accessToken: e.target.value })} placeholder="Access Token" className="input" required />
+          <input value={form.url} onChange={e => setForm({ ...form, url: e.target.value })} placeholder="URL pagina (opzionale)" className="input" />
+          {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
+          <div className="flex gap-2">
+            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">Aggiungi</button>
+            <button type="button" onClick={() => { setShowCreate(false); setError(""); }} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
+          </div>
+        </form>
+      )}
+
+      <div className="space-y-2">
+        {pages.map((p: any) => (
+          <div key={p.id} className="glass-card rounded-xl p-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-9 h-9 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                <span className="text-blue-500 text-xs font-bold">fb</span>
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">{p.name}</p>
+                <p className="text-xs text-[var(--text-muted)] truncate">Page ID: {p.pageId}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <button onClick={() => testPage(p)} disabled={testing === p.id} className="btn-ghost p-2 rounded-lg hover:text-blue-500" title="Test connessione">
+                {testing === p.id ? <span className="animate-spin">⏳</span> : <span>🔍</span>}
+              </button>
+              <button onClick={() => runScraperForPage(p)} className="btn-ghost p-2 rounded-lg hover:text-green-500" title="Esegui scraper">
+                <RefreshCw size={16} />
+              </button>
+              <button onClick={() => handleDelete(p)} className="btn-ghost p-2 rounded-lg hover:text-red-500" title="Elimina"><Trash2 size={16} /></button>
+            </div>
+          </div>
+        ))}
+        {pages.length === 0 && <p className="text-center text-[var(--text-muted)] py-8">Nessuna pagina Facebook configurata</p>}
+      </div>
     </div>
   );
 }
