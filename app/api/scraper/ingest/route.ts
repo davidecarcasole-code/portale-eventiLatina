@@ -29,6 +29,10 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_benessere: 'benessere',
   cat_salute: 'salute',
   cat_rosa: 'rosa',
+  cat_exhibition: 'mostre',
+  cat_cinema: 'cinema',
+  cat_sea: 'mare',
+  cat_excursion: 'escursioni',
 };
 
 function dedupKey(e: ScrapedEvent): string {

@@ -9,6 +9,7 @@ import { scrapeTeatroIt } from './teatroItScraper';
 import { runLazioEventiScraper } from './lazioeventiScraper';
 import { runEventbriteScraper } from './eventbriteScraper';
 import { scrapeAllFacebookPages } from './facebookScraper';
+import { runMYMoviesCinemaScraper } from './myMoviesCinemaScraper';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -37,11 +38,12 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   lazionascosto: { name: 'LazioNascosto', url: 'https://www.lazionascosto.it/', fn: runLazioNascostoScraper },
   latinatoday: { name: 'LatinaToday', url: 'https://www.latinatoday.it/', fn: runLatinaTodayScraper },
   comunelatina: { name: 'Comune di Latina', url: 'https://www.comune.latina.it/', fn: runComuneLatinaScraper },
-  itinerari: { name: 'Itinerari nell\'Arte', url: 'https://www.itinerarinellarte.it/', fn: runItinerariScraper },
+  itinerari: { name: "Itinerari nell'Arte", url: 'https://www.itinerarinellarte.it/', fn: runItinerariScraper },
   fattivivo: { name: 'FattiVivo', url: 'https://www.fattivivo.com/', fn: runFattivivoScraper },
   teatroIt: { name: 'Teatro.it', url: 'https://www.teatro.it/spettacoli/latina', fn: scrapeTeatroIt },
   lazioeventi: { name: 'LazioEventi.com', url: 'https://lazioeventi.com/oggi-nel-lazio', fn: runLazioEventiScraper },
   eventbrite: { name: 'Eventbrite', url: 'https://www.eventbrite.it/d/italy--latina/health--events', fn: runEventbriteScraper },
+  mymoviescinema: { name: 'MYmovies Cinema Latina', url: 'https://www.mymovies.it/cinema/latina', fn: runMYMoviesCinemaScraper },
   facebook: { name: 'Facebook', url: 'https://www.facebook.com/', fn: async () => { return []; } },
 };
 
