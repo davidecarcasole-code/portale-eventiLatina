@@ -10,6 +10,7 @@ import { runLazioEventiScraper } from './lazioeventiScraper';
 import { runEventbriteScraper } from './eventbriteScraper';
 import { scrapeAllFacebookPages } from './facebookScraper';
 import { runMYMoviesCinemaScraper } from './myMoviesCinemaScraper';
+import { runComingSoonCinemaScraper } from './comingSoonCinemaScraper';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -44,6 +45,7 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   lazioeventi: { name: 'LazioEventi.com', url: 'https://lazioeventi.com/oggi-nel-lazio', fn: runLazioEventiScraper },
   eventbrite: { name: 'Eventbrite', url: 'https://www.eventbrite.it/d/italy--latina/health--events', fn: runEventbriteScraper },
   mymoviescinema: { name: 'MYmovies Cinema Latina', url: 'https://www.mymovies.it/cinema/latina', fn: runMYMoviesCinemaScraper },
+  comingsoonscinema: { name: 'ComingSoon Cinema Latina', url: 'https://www.comingsoon.it/cinema/latina', fn: runComingSoonCinemaScraper },
   facebook: { name: 'Facebook', url: 'https://www.facebook.com/', fn: async () => { return []; } },
 };
 

@@ -33,6 +33,8 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_cinema: 'cinema',
   cat_sea: 'mare',
   cat_excursion: 'escursioni',
+  cat_comingsoon_cinema: 'cinema',
+  cat_comingsoon_sea: 'mare',
 };
 
 function dedupKey(e: ScrapedEvent): string {
