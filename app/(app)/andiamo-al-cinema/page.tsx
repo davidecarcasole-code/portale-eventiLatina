@@ -33,14 +33,14 @@ export default function CinemaPage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="relative mb-8 overflow-hidden rounded-3xl -mx-4 sm:-mx-6 lg:-mx-8">
+      <div className="relative mb-8 overflow-hidden rounded-3xl -mx-2 sm:-mx-4 lg:-mx-6">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-indigo-600 to-indigo-800" />
         <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-10" />
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-indigo-500/20 to-transparent" />
         <div className="absolute top-6 right-12 w-3 h-3 rounded-full bg-purple-300/40 animate-float-up" style={{ animationDelay: "0.2s" }} />
         <div className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-indigo-300/40 animate-float-up" style={{ animationDelay: "0.7s" }} />
         <div className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-purple-300/30 animate-float-up" style={{ animationDelay: "1.2s" }} />
-        <div className="relative p-6 sm:p-8">
+        <div className="relative p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
               <Film size={28} className="text-white" fill="white" />
