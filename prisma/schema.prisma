@@ -103,19 +103,22 @@ model SearchConfig {
 }
 
 model ScrapedSource {
-  id           Int          @id @default(autoincrement())
-  name         String
-  url          String
-  type         String       @default("html")
-  isActive     Boolean      @default(true)               @map("is_active")
-  selectors    String?
-  city         String?
-  province     String?
-  categoryId   Int?                                      @map("category_id")
-  category     Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  lastScrapedAt DateTime?                                @map("last_scraped_at")
-  configId     Int?                                      @map("config_id")
-  config       SearchConfig? @relation(fields: [configId], references: [id], onDelete: Cascade)
+  id               Int          @id @default(autoincrement())
+  name             String
+  url              String
+  type             String       @default("html")
+  isActive         Boolean      @default(true)               @map("is_active")
+  selectors        String?
+  city             String?
+  province         String?
+  categoryId       Int?                                      @map("category_id")
+  category         Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  lastScrapedAt    DateTime?                                @map("last_scraped_at")
+  configId         Int?                                      @map("config_id")
+  config           SearchConfig? @relation(fields: [configId], references: [id], onDelete: Cascade)
+  facebookPageId   String?                                  @map("facebook_page_id")
+  facebookAccessToken String?                               @map("facebook_access_token")
+  createdAt        DateTime     @default(now())              @map("created_at")
 
   @@map("scraped_sources")
 }

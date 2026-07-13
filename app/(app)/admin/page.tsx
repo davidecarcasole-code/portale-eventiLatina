@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, Facebook, ChevronLeft, ChevronRight } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const TABS = [
@@ -10,7 +10,7 @@ const TABS = [
   { key: "ads", label: "Pubblicità", icon: Megaphone },
   { key: "sources", label: "Fonti", icon: Radio },
   { key: "scraper", label: "Motore Ricerca", icon: Search },
-  { key: "facebook", label: "Facebook", icon: Facebook },
+  { key: "facebook", label: "Facebook", icon: Share2 },
   { key: "searchconfig", label: "Criteri Ricerca", icon: RefreshCw },
   { key: "agent", label: "Agent AI", icon: Brain },
   { key: "publishers", label: "Publisher", icon: Briefcase, adminOnly: true },

@@ -102,7 +102,6 @@ export async function ensureScrapedSourcesTable() {
     console.error('[Scraper] Failed to ensure scraped_sources table:', err);
   }
 }
-}
 
 export async function ensureDefaultSources() {
   await ensureScrapedSourcesTable();
@@ -180,14 +179,16 @@ async function runSingleSource(
         existingEvents.byDedup.add(key);
       } catch (err: any) {
         console.error(`[Scraper] Insert error: ${err.message?.slice(0, 100)} for "${e.title.slice(0, 40)}"`);
-}
+      }
 
     console.log(`[Scraper] ${name}: ${inserted} new events inserted`);
     return { source: name, found: events.length, inserted };
-  } catch (err: any) {
+  }
+} catch (err: any) {
     console.error(`[Scraper] ${name} error: ${err.message?.slice(0, 100)}`);
     return { source: name, found: 0, inserted: 0 };
   }
+  return { source: name, found: 0, inserted: 0 };
 }
 
 export async function runScraper(sourceType?: string): Promise<ScraperResult[]> {
@@ -269,6 +270,18 @@ export async function runScraper(sourceType?: string): Promise<ScraperResult[]> 
     }
 
     const registryEntry = SCRAPER_REGISTRY[src.type];
+    if (!registryEntry) {
+      console.log(`[Scraper] Unknown type "${src.type}" for source "${src.name}" — skipping`);
+      continue;
+    }
+    const result = await runSingleSource(src.name, registryEntry.fn, existingEvents, catMap);
+    results.push(result);
+    try {
+      await prisma.scrapedSource.update({ where: { id: src.id }, data: { lastScrapedAt: new Date() } });
+    } catch (e: any) {
+      console.error(`[Scraper] Failed to update lastScrapedAt for ${src.name}: ${e.message?.slice(0, 100)}`);
+    }
+  }
 
   // Fallback: if sourceType specified but no DB sources were found, try registry directly
   if (sourceType && sources.length === 0) {

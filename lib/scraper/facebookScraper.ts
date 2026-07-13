@@ -35,8 +35,9 @@ export async function scrapeFacebookPage(pageId: string, accessToken: string): P
   }
 }
 
-export async function scrapeAllFacebookPages(pages: FacebookPageConfig[]): Promise<{ events: any[] }> {
+export async function scrapeAllFacebookPages(pages: FacebookPageConfig[]): Promise<{ events: any[]; results: any[] }> {
   const allEvents: any[] = [];
+  const results: any[] = [];
   
   for (const page of pages) {
     try {
@@ -60,10 +61,12 @@ export async function scrapeAllFacebookPages(pages: FacebookPageConfig[]): Promi
           category_id: 'enogastronomia', // default, will be reclassified
         });
       }
+      results.push({ page: page.name, count: events.length });
     } catch (err: any) {
       console.error(`[Facebook] Error with page ${page.name}:`, err.message);
+      results.push({ page: page.name, count: 0, error: err.message });
     }
   }
   
-  return { events: allEvents };
+  return { events: allEvents, results };
 }
