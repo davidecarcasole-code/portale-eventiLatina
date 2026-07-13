@@ -1,9 +1,12 @@
 import { NextRequest } from "next/server";
 import { jsonResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 
+const CRON_SECRET = process.env.CRON_SECRET || "vercel-cron-secret";
+
 export async function POST(req: NextRequest) {
   try {
-    await requireAdmin(req);
+    const isCron = req.headers.get("x-vercel-cron") === "1" || req.headers.get("authorization") === `Bearer ${CRON_SECRET}`;
+    if (!isCron) await requireAdmin(req);
     const { source } = await req.json().catch(() => ({}));
     const { runScraper } = await import("@/lib/scraper/engine");
     const results = await runScraper(source || undefined);
