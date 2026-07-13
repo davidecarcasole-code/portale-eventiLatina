@@ -76,6 +76,10 @@ export async function POST(req: NextRequest) {
       if (byDedup.has(key)) continue;
 
       try {
+        const slug = OLD_TO_NEW_CATEGORY[e.category_id] || e.category_id;
+        const catId = catMap.get(slug);
+        console.log(`[Ingest] Event: ${e.title?.slice(0,30)} | category_id from scraper: ${e.category_id} | mapped slug: ${slug} | catId: ${catId}`);
+        
         await prisma.event.create({
           data: {
             title: e.title.slice(0, 200),
