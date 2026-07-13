@@ -88,7 +88,8 @@ export async function POST(req: NextRequest) {
 
 let inserted = 0;
     for (const e of events) {
-      if (e.source_url && bySourceUrl.has(e.source_url)) continue;
+      // Don't deduplicate by source_url - each event from same source should be inserted
+      // if (e.source_url && bySourceUrl.has(e.source_url)) continue;
       const key = dedupKey(e);
       if (byDedup.has(key)) continue;
 
