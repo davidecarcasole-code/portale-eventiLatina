@@ -1,0 +1,20 @@
+name: Run Scraper
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # Every 30 minutes
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Call Scraper API
+        run: |
+          curl -X POST "https://portale-eventi-latina.vercel.app/api/scraper/run" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
