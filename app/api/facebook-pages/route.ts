@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { jsonResponse, errorResponse, requireAdmin } from "@/lib/api-helpers";
+import { ensureScrapedSourcesTable } from "@/lib/scraper/engine";
 
 export async function GET(req: NextRequest) {
   try {
@@ -21,6 +22,7 @@ export async function POST(req: NextRequest) {
     const { prisma } = await import("@/lib/prisma");
     const { jsonResponse, errorResponse, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
+    await ensureScrapedSourcesTable();
     const body = await req.json();
     const { name, facebookPageId, facebookAccessToken, url, isActive } = body;
     if (!name || !facebookPageId) return errorResponse("Nome e Page ID sono obbligatori");
