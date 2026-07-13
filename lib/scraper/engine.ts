@@ -32,6 +32,12 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_exhibition: 'mostre',
   cat_cinema: 'cinema',
   cat_sea: 'mare',
+  cat_comingsoon_cinema: 'cinema',
+  cat_comingsoon_sea: 'mare',
+  // Direct slugs from scrapers
+  cinema: 'cinema',
+  mare: 'mare',
+  escursioni: 'escursioni',
 };
 
 const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Promise<ScrapedEvent[]> }> = {

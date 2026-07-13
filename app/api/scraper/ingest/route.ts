@@ -21,6 +21,7 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_nature: 'natura',
   cat_trekking: 'trekking',
   cat_mountain: 'montagna',
+  cat_excursion: 'escursioni',
   cat_daytrip: 'gite',
   cat_entertainment: 'spettacolo',
   cat_food: 'enogastronomia',
@@ -32,9 +33,12 @@ const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_exhibition: 'mostre',
   cat_cinema: 'cinema',
   cat_sea: 'mare',
-  cat_excursion: 'escursioni',
   cat_comingsoon_cinema: 'cinema',
   cat_comingsoon_sea: 'mare',
+  // Direct slugs from scrapers
+  cinema: 'cinema',
+  mare: 'mare',
+  escursioni: 'escursioni',
 };
 
 function dedupKey(e: ScrapedEvent): string {
