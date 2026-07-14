@@ -2,6 +2,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { AdBannerClient } from "@/components/AdBannerClient";
+import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { AuthProvider } from "../providers";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -16,6 +17,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <AdBannerClient placement="banner" />
           </div>
           <Footer />
+          <CookieConsentBanner />
         </div>
       </div>
     </AuthProvider>
