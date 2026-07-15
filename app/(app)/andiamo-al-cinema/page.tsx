@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Film, Sparkles, MapPin, Clock, Calendar, MapPin as MapPinIcon, Clock as ClockIcon } from "lucide-react";
+import { Clapperboard, Sparkles, MapPin, Clock, Calendar, MapPin as MapPinIcon, Clock as ClockIcon } from "lucide-react";
 
 const SUBCATEGORIES = [
-  { slug: "cinema", label: "Cinema", icon: Film, color: "#8b5cf6", desc: "Proiezioni e rassegne cinematografiche" },
+  { slug: "cinema", label: "Cinema", icon: Clapperboard, color: "#8b5cf6", desc: "Proiezioni e rassegne cinematografiche" },
   { slug: "rassegna", label: "Rassegne", icon: Sparkles, color: "#f43f5e", desc: "Festival e rassegne tematiche" },
-  { slug: "allaperto", label: "Cinema all'aperto", icon: Film, color: "#22c55e", desc: "Proiezioni sotto le stelle" },
+  { slug: "allaperto", label: "Cinema all'aperto", icon: Clapperboard, color: "#22c55e", desc: "Proiezioni sotto le stelle" },
 ];
 
 export default function CinemaPage() {
@@ -43,7 +43,7 @@ export default function CinemaPage() {
         <div className="relative p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
-              <Film size={28} className="text-white" fill="white" />
+              <Clapperboard size={28} className="text-white" fill="white" />
             </div>
             <div>
               <p className="text-purple-200 text-sm font-medium uppercase tracking-widest">Sezione</p>
@@ -51,7 +51,7 @@ export default function CinemaPage() {
             </div>
           </div>
           <p className="text-white/90 max-w-xl text-sm sm:text-base leading-relaxed">
-            Scopri tutte le proiezioni, rassegne e cinema all'aperto in provincia di Latina. Film d'autore, blockbuster, classici restaurati e anteprime.
+            Scopri tutte le proiezioni, rassegne e cinema all'aperto in provincia di Latina. Clapperboard d'autore, blockbuster, classici restaurati e anteprime.
           </p>
           <div className="flex gap-2 mt-6 flex-wrap">
             {SUBCATEGORIES.map((s) => (
@@ -79,7 +79,7 @@ export default function CinemaPage() {
       ) : events.length === 0 ? (
         <div className="text-center py-24">
           <div className="w-16 h-16 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mx-auto mb-4">
-            <Film size={28} className="text-purple-500" />
+            <Clapperboard size={28} className="text-purple-500" />
           </div>
           <p className="text-lg font-medium text-[var(--text-primary)]">Nessuna proiezione trovata</p>
           <p className="text-sm text-[var(--text-muted)] mt-1">Prova a cambiare filtro o cerca altro</p>
@@ -90,7 +90,7 @@ export default function CinemaPage() {
             <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-2xl p-4 hover:shadow-[0_0_20px_rgba(139,92,246,0.2)] transition-all duration-300 group">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300">
-                  <Film size={18} className="text-white" />
+                  <Clapperboard size={18} className="text-white" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
