@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FacebookIcon, InstagramIcon, YoutubeIcon, TikTokIcon, MailIcon, MapPinIcon, ShieldIcon, CookieIcon } from "@/components/SocialIcons";
+import { FacebookIcon, InstagramIcon, YoutubeIcon, TikTokIcon } from "@/components/SocialIcons";
 
 export function Footer() {
   return (
@@ -61,19 +61,9 @@ export function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-semibold">Legal & Privacy</h4>
+            <h4 className="font-semibold">Legal</h4>
             <nav className="space-y-2">
-              <Link href="/privacy" className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">
-                <ShieldIcon size={14} className="text-[var(--text-muted)]" />
-                Informativa Privacy
-              </Link>
-              <Link href="/cookie-policy" className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">
-                <CookieIcon size={14} className="text-[var(--text-muted)]" />
-                Cookie Policy
-              </Link>
-              <Link href="/terms" className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">
-                Termini di Servizio
-              </Link>
+              <Link href="/terms" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Termini di Servizio</Link>
             </nav>
           </div>
         </div>

@@ -38,10 +38,6 @@ export function parseEmbedUrl(url: string): { platform: string; embedSrc: string
   const igMatch = url.match(/instagram\.com\/(?:p|reel|tv)\/([a-zA-Z0-9_-]+)/);
   if (igMatch) return { platform: 'instagram', embedSrc: `https://www.instagram.com/p/${igMatch[1]}/embed` };
 
-  // Facebook video
-  const fbMatch = url.match(/facebook\.com\/(?:[^/]+\/)?videos\/(\d+)/);
-  if (fbMatch) return { platform: 'facebook', embedSrc: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}` };
-
   // TikTok
   const ttMatch = url.match(/tiktok\.com\/@[\w.-]+\/video\/(\d+)/);
   if (ttMatch) return { platform: 'tiktok', embedSrc: `https://www.tiktok.com/embed/v2/${ttMatch[1]}` };

@@ -116,8 +116,6 @@ model ScrapedSource {
   lastScrapedAt    DateTime?                                @map("last_scraped_at")
   configId         Int?                                      @map("config_id")
   config           SearchConfig? @relation(fields: [configId], references: [id], onDelete: Cascade)
-  facebookPageId   String?                                  @map("facebook_page_id")
-  facebookAccessToken String?                               @map("facebook_access_token")
   createdAt        DateTime     @default(now())              @map("created_at")
 
   @@map("scraped_sources")
@@ -204,18 +202,4 @@ model RadioLiveChunk {
   createdAt  DateTime @default(now())                    @map("created_at")
 
   @@map("radio_live_chunks")
-}
-
-model FacebookPage {
-  id            Int       @id @default(autoincrement())
-  name          String
-  pageId        String    @unique @map("page_id")
-  accessToken   String?   @map("access_token")
-  url           String?
-  isActive      Boolean   @default(true) @map("is_active")
-  lastScrapedAt DateTime? @map("last_scraped_at")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-
-  @@map("facebook_pages")
 }

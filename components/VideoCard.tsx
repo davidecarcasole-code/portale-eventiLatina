@@ -19,7 +19,6 @@ export function VideoCard({ video }: { video: VideoItem }) {
     youtube: "▶",
     vimeo: "V",
     instagram: "📷",
-    facebook: "f",
     tiktok: "♪",
   };
 
