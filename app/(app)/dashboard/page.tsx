@@ -108,29 +108,56 @@ export default function DashboardPage() {
     <div className="page-container space-y-6 animate-fade-in relative">
       <div className="blur-sphere blur-sphere-1" />
       <div className="blur-sphere blur-sphere-2" />
-      <div className="relative overflow-hidden rounded-2xl mb-8">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-teal-500 to-indigo-500" />
-        <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-teal-500/20 to-transparent" />
-        <div className="absolute top-4 left-10 w-3 h-3 bg-cyan-300 rounded-full animate-float-up" style={{ animationDelay: "0s" }} />
-        <div className="absolute top-8 right-20 w-2.5 h-2.5 bg-white/40 rounded animate-float-up" style={{ animationDelay: "0.5s" }} />
-        <div className="absolute top-3 right-40 w-2 h-2 bg-pink-300 rounded animate-float-up" style={{ animationDelay: "1s" }} />
-        <div className="absolute bottom-12 left-[30%] w-3 h-3 bg-cyan-200 rounded animate-float-up" style={{ animationDelay: "0.8s" }} />
-        <div className="absolute top-16 left-[60%] w-2 h-2 bg-white/60 rotate-45 animate-float-up" style={{ animationDelay: "1.3s" }} />
-        <div className="absolute bottom-6 right-[25%] w-2.5 h-2.5 bg-indigo-200 rounded-full animate-float-up" style={{ animationDelay: "0.3s" }} />
+      <div className="relative overflow-hidden rounded-2xl mb-8 group">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-950 to-gray-900" />
+        <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-5" />
+        
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 left-1/4 w-64 h-64 bg-cyan-500 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: "4s" }} />
+          <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-fuchsia-500 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: "3s", animationDelay: "1s" }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-lime-400 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: "5s", animationDelay: "0.5s" }} />
+        </div>
+        
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-2 left-[10%] w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_6px_2px_#22d3ee] animate-float-up" style={{ animationDelay: "0s" }} />
+          <div className="absolute top-8 right-[15%] w-1.5 h-1.5 bg-fuchsia-400 rounded-full shadow-[0_0_8px_3px_#d946ef] animate-float-up" style={{ animationDelay: "0.4s" }} />
+          <div className="absolute bottom-8 left-[25%] w-1 h-1 bg-lime-400 rounded-full shadow-[0_0_6px_2px_#a3e635] animate-float-up" style={{ animationDelay: "0.8s" }} />
+          <div className="absolute top-4 left-[60%] w-1 h-1 bg-yellow-300 rounded-full shadow-[0_0_6px_2px_#fde047] animate-float-up" style={{ animationDelay: "1.2s" }} />
+          <div className="absolute bottom-4 right-[30%] w-1.5 h-1.5 bg-cyan-300 rounded-full shadow-[0_0_8px_3px_#67e8f9] animate-float-up" style={{ animationDelay: "0.6s" }} />
+          <div className="absolute top-12 left-[40%] w-1 h-1 bg-fuchsia-300 rounded-full shadow-[0_0_6px_2px_#f0abfc] animate-float-up" style={{ animationDelay: "1.5s" }} />
+        </div>
+        
+        <div className="absolute inset-0 opacity-20">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="neon-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <line x1="0" y1="0" x2="40" y2="0" stroke="#22d3ee" strokeWidth="0.3" />
+                <line x1="0" y1="0" x2="0" y2="40" stroke="#d946ef" strokeWidth="0.3" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#neon-grid)" />
+          </svg>
+        </div>
+
+        <div className="absolute inset-0 border-2 border-transparent rounded-2xl" style={{ 
+          borderImage: "linear-gradient(135deg, #22d3ee, #d946ef, #a3e635, #22d3ee) 1" 
+        }} />
+        
         <div className="relative p-6 sm:p-8 text-white">
-          <p className="text-white/70 text-sm font-medium uppercase tracking-wider">{today}</p>
+          <p className="text-cyan-300 text-sm font-medium uppercase tracking-wider drop-shadow-[0_0_10px_#22d3ee]">{today}</p>
           <h2 className="text-2xl sm:text-3xl font-bold mt-2 flex items-center gap-2">
-            Benvenuto su EventiNLatina
-            <Sparkles size={22} className="text-cyan-200" />
+            <span className="bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-lime-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(217,70,239,0.5)]">
+              Benvenuto su EventiNLatina
+            </span>
+            <Sparkles size={22} className="text-fuchsia-400 drop-shadow-[0_0_10px_#d946ef] animate-pulse" />
           </h2>
-          <p className="text-white/80 mt-1.5 max-w-lg">Scopri tutti gli eventi, sagre, concerti e manifestazioni in provincia di Latina e nel Lazio</p>
+          <p className="text-white/70 mt-1.5 max-w-lg">Scopri tutti gli eventi, sagre, concerti e manifestazioni in provincia di Latina e nel Lazio</p>
           <div className="flex flex-wrap gap-2 mt-4">
-            <Link href="/events" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium text-white hover:bg-white/30 transition-all hover:scale-105 active:scale-95">
+            <Link href="/events" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-cyan-500/20 backdrop-blur-sm border border-cyan-400/30 rounded-xl text-sm font-medium text-cyan-300 hover:bg-cyan-500/30 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-all hover:scale-105 active:scale-95">
               Esplora eventi <ArrowRight size={14} />
             </Link>
             {canManageEvents && (
-              <Link href="/admin" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-white/90 text-teal-700 rounded-xl text-sm font-medium hover:bg-white transition-all hover:scale-105 active:scale-95 shadow-lg">
+              <Link href="/admin" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-fuchsia-500/20 backdrop-blur-sm border border-fuchsia-400/30 text-fuchsia-300 rounded-xl text-sm font-medium hover:bg-fuchsia-500/30 hover:border-fuchsia-400/50 hover:shadow-[0_0_20px_rgba(217,70,239,0.3)] transition-all hover:scale-105 active:scale-95">
                 <Plus size={14} /> Nuovo Evento
               </Link>
             )}
