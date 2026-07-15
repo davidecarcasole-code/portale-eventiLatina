@@ -21,7 +21,7 @@ export function Header() {
       <div className="flex items-center justify-between px-4 md:px-6 py-2.5" style={{ minHeight: "var(--header-height)" }}>
         <Link href="/dashboard" className="md:hidden flex items-center gap-2">
           <div className="relative">
-            <img src="/logo.png" alt="Logo" className="w-7 h-7 rounded-lg ring-2 ring-[var(--accent)]/20" />
+            <img src="/logo.png" alt="Logo" className="w-7 h-7" />
             <Sparkles size={8} className="absolute -top-0.5 -right-0.5 text-cyan-400 animate-pulse" />
           </div>
           <span className="text-sm font-bold bg-gradient-to-r from-cyan-500 via-teal-400 to-cyan-300 bg-clip-text text-transparent">EventiNLatina</span>

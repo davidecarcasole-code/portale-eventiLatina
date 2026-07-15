@@ -73,9 +73,9 @@ function SidebarContent({ links, pathname, user, logout, onClose, showClose }: {
 }) {
   return (
     <>
-      <div className="px-1.5 py-2 border-b border-[var(--card-border)]">
+      <div className="px-1.5 py-2">
         <Link href="/dashboard" onClick={onClose} className="block group relative">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <DarkBanner />
         </Link>
       </div>
@@ -207,7 +207,7 @@ function DarkBanner() {
 
   return (
     <img src="/Bannertrasp.png" alt="EventiNLatina"
-      className="w-full rounded-2xl transition-all shadow-lg"
+      className="w-full transition-all"
       style={dark ? { filter: 'brightness(0) invert(1)' } : undefined} />
   );
 }
