@@ -33,7 +33,7 @@ export function Footer() {
 
           <div className="space-y-4">
             <h4 className="font-semibold">Eventi</h4>
-            <nav className="space-y-2">
+            <nav className="flex flex-col gap-2">
               <Link href="/events" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Tutti gli eventi</Link>
               <Link href="/events?category=musica" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Musica & Concerti</Link>
               <Link href="/events?category=teatro" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Teatro & Spettacoli</Link>
@@ -48,7 +48,7 @@ export function Footer() {
 
           <div className="space-y-4">
             <h4 className="font-semibold">Sezioni Speciali</h4>
-            <nav className="space-y-2">
+            <nav className="flex flex-col gap-2">
               <Link href="/spazio-venere" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Spazio Venere</Link>
               <Link href="/spazio-kids" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Spazio Kids</Link>
               <Link href="/radio" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Web Radio</Link>
@@ -59,7 +59,7 @@ export function Footer() {
 
           <div className="space-y-4">
             <h4 className="font-semibold">Legal</h4>
-            <nav className="space-y-2">
+            <nav className="flex flex-col gap-2">
               <Link href="/terms" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Termini di Servizio</Link>
             </nav>
           </div>
