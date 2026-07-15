@@ -10,7 +10,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <img src="/Logotrasp.png" alt="EventiNLatina" className="w-16 h-16" />
+              <img src="/Bannertrasp.png" alt="EventiNLatina" className="w-16 h-16" />
             </Link>
             <p className="text-sm text-[var(--text-muted)] max-w-xs">
               Il portale degli eventi in provincia di Latina. Scopri concerti, sagre, teatro, cinema e cultura.
