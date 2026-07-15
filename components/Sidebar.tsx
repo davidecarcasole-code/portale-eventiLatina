@@ -206,7 +206,7 @@ function DarkBanner() {
   }, []);
 
   return (
-    <img src="/banner.png" alt="EventiNLatina"
+    <img src="/logo.png" alt="EventiNLatina"
       className="w-full rounded-2xl transition-all shadow-lg"
       style={dark ? { filter: 'brightness(0) invert(1)' } : undefined} />
   );
