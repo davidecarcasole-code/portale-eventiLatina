@@ -10,6 +10,12 @@ import { runLazioEventiScraper } from './lazioeventiScraper';
 import { runEventbriteScraper } from './eventbriteScraper';
 import { runMYMoviesCinemaScraper } from './myMoviesCinemaScraper';
 import { runComingSoonCinemaScraper } from './comingSoonCinemaScraper';
+import { runVisitLazioScraper } from './visitlazioScraper';
+import { runCheventiScraper } from './cheventiScraper';
+import { runLazioinfestaScraper } from './lazioinfestaScraper';
+import { runCulturalazioScraper } from './culturalazioScraper';
+import { runLatinaonlineScraper } from './latinaonlineScraper';
+import { runLatinaquotidianoScraper } from './latinaquotidianoScraper';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -51,6 +57,12 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   eventbrite: { name: 'Eventbrite', url: 'https://www.eventbrite.it/d/italy--latina/health--events', fn: runEventbriteScraper },
   mymoviescinema: { name: 'MYmovies Cinema Latina', url: 'https://www.mymovies.it/cinema/latina', fn: runMYMoviesCinemaScraper },
   comingsoonscinema: { name: 'ComingSoon Cinema Latina', url: 'https://www.comingsoon.it/cinema/latina', fn: runComingSoonCinemaScraper },
+  visitlazio: { name: 'VisitLazio', url: 'https://www.visitlazio.com/eventi/', fn: runVisitLazioScraper },
+  cheventi: { name: 'Cheventi', url: 'https://www.cheventi.it/regioni/lazio/latina/', fn: runCheventiScraper },
+  lazioinfesta: { name: 'LazioInfesta', url: 'https://www.lazioinfesta.com/eventi/provincia/lt/latina.html', fn: runLazioinfestaScraper },
+  culturalazio: { name: 'CulturaLazio', url: 'https://www.culturalazio.com/agenda/', fn: runCulturalazioScraper },
+  latinaonline: { name: 'LatinaOnline', url: 'https://www.latinaonline.it/cosa-fare-a-latina/', fn: runLatinaonlineScraper },
+  latinaquotidiano: { name: 'LatinaQuotidiano', url: 'https://www.latinaquotidiano.it/', fn: runLatinaquotidianoScraper },
 };
 
 async function getPrisma() {
@@ -289,6 +301,12 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('Teatro.it', scrapeTeatroIt);
   await collect('LazioEventi.com', runLazioEventiScraper);
   await collect('Eventbrite', runEventbriteScraper);
+  await collect('VisitLazio', runVisitLazioScraper);
+  await collect('Cheventi', runCheventiScraper);
+  await collect('LazioInfesta', runLazioinfestaScraper);
+  await collect('CulturaLazio', runCulturalazioScraper);
+  await collect('LatinaOnline', runLatinaonlineScraper);
+  await collect('LatinaQuotidiano', runLatinaquotidianoScraper);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;
