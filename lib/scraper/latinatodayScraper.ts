@@ -35,6 +35,7 @@ function detectCategory(title: string, kicker: string): string {
   if (/festa|mercatino|palio|rievocazione|carnevale/.test(t)) return 'cat_entertainment';
   if (/gita|borgo|castello|storico/.test(t)) return 'cat_daytrip';
   if (/mare|spiaggia|lido|bagno|costa|litorale|sabbia|nuoto|vela|windsurf|kitesurf|sub|immersione|porto|approdo/.test(t)) return 'cat_sea';
+  if (/circeo|sabaudia|terracina|formia|gaeta|san felice|santa marinella|sperlonga|pontina|torre/.test(t)) return 'cat_sea';
   if (/benessere|yoga|relax|spa|wellness|massaggi|meditazione|pilates/.test(t)) return 'cat_benessere';
   if (/salute|prevenzione|sanità|screening|medico|ospedale/.test(t)) return 'cat_salute';
   if (/donna|donne|femminile|rosa|8\s+marzo/.test(t)) return 'cat_rosa';

@@ -24,7 +24,7 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
   benessere: ['benessere', 'yoga', 'meditazione', 'relax', 'spa', 'olistico', 'mindfulness', 'pilates', 'benessere psicologico'],
   salute: ['salute', 'medicina', 'prevenzione', 'salute pubblica', 'benessere fisico', 'cura'],
   rosa: ['donna', 'femminile', 'parità', 'genere', 'mamma', 'rosa'],
-  mare: ['mare', 'spiaggia', 'lido', 'bagno', 'mare', 'costa', 'litorale', 'sabbia', 'mare', 'nuoto', 'vela', 'windsurf', 'kitesurf', 'sub', 'immersione', 'porto', 'approdo', 'mare'],
+  mare: ['mare', 'spiaggia', 'lido', 'bagno', 'costa', 'litorale', 'sabbia', 'nuoto', 'vela', 'windsurf', 'kitesurf', 'sub', 'immersione', 'porto', 'approdo', 'circeo', 'sabaudia', 'terracina', 'formia', 'gaeta', 'san felice', 'santa marinella', 'sperlonga', 'pontina', 'torre'],
 };
 
 function detectCategory(title: string): string {

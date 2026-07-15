@@ -111,7 +111,9 @@ async function classifyBatch(events: { id: number; title: string; description?: 
   const list = events.map(e => `${e.id}: ${e.title}${e.description ? ` — ${e.description.slice(0, 80)}` : ''}`).join('\n');
   try {
     const text = await aiFetch(
-      `Sei un classificatore. Categorie: ${cats}. Rispondi SOLO con un JSON array: [{"id":numero,"cat":"slug"}]. Default: "spettacolo".`,
+      `Sei un classificatore. Categorie: ${cats}. Rispondi SOLO con un JSON array: [{"id":numero,"cat":"slug"}]. Default: "spettacolo".
+
+Regole speciali per MARE: classifica come "mare" eventi che contengono: mare, spiaggia, lido, costa, litorale, bagno, immersione, sub, vela, surf, yacht, porto turistico, promontorio, Circeo, Sabaudia, Terracina, Formia, Gaeta, San Felice Circeo, Santa Marinella, torre di pausa, baia, cala, scogliera, sabbia, nuoto, pesca sportiva, kayak, SUP, beach club, beach party, aperitivo al tramonto sul mare, concerto sulla spiaggia, festival del mare, regata. La posizione costiera o sul mare conta come indizio forte.`,
       `Classifica:\n${list}`, 500, 0.1
     );
     const json = text.slice(text.indexOf('['), text.lastIndexOf(']') + 1);

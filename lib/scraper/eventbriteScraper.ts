@@ -11,6 +11,9 @@ function detectCategory(title: string, description: string): string {
   if (text.includes('mare') || text.includes('spiaggia') || text.includes('lido') || text.includes('bagno') || text.includes('costa') || text.includes('litorale') || text.includes('sabbia') || text.includes('nuoto') || text.includes('vela') || text.includes('windsurf') || text.includes('kitesurf') || text.includes('sub') || text.includes('immersione') || text.includes('porto') || text.includes('approdo')) {
     return 'mare';
   }
+  if (text.includes('circeo') || text.includes('sabaudia') || text.includes('terracina') || text.includes('formia') || text.includes('gaeta') || text.includes('san felice') || text.includes('santa marinella') || text.includes('sperlonga') || text.includes('pontina') || text.includes('torre')) {
+    return 'mare';
+  }
   if (text.includes('yoga') || text.includes('meditazione') || text.includes('mindfulness') ||
       text.includes('pilates') || text.includes('olistico') || text.includes('wellness') ||
       text.includes('detox') || text.includes('ritiro') || text.includes('spa') ||

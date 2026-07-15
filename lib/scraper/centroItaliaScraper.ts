@@ -36,7 +36,8 @@ function detectCategory(title: string, text: string): string {
   if (/benessere|yoga|relax|spa|wellness|massaggi|olistiche|reiki|meditazione|pilates|bagni\s+termali|terme|termale/.test(t)) return 'cat_benessere';
   if (/salute|prevenzione|sanità|visita\s+medica|screening|check.up|donazione\s+sangue|giornata\s+della\s+salute|medico/.test(t)) return 'cat_salute';
   if (/donna|donne|femminile|rosa|8\s+marzo|violenza\s+sulle\s+donne|festadelladonna|al\s+femminile|pari\s+opportunità/.test(t)) return 'cat_rosa';
-  if (/mare|spiaggia|lido|bagno|costa|litorale|sabbia|nuoto|vela|windsurf|kitesurf|sub|immersione|porto|approdo|mare/.test(t)) return 'cat_sea';
+  if (/mare|spiaggia|lido|bagno|costa|litorale|sabbia|nuoto|vela|windsurf|kitesurf|sub|immersione|porto|approdo/.test(t)) return 'cat_sea';
+  if (/circeo|sabaudia|terracina|formia|gaeta|san felice|santa marinella|sperlonga|pontina|torre/.test(t)) return 'cat_sea';
   return 'cat_entertainment';
 }
 
