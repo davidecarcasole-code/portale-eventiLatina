@@ -108,6 +108,17 @@ export async function POST(req: NextRequest) {
     const { prisma } = await import("@/lib/prisma");
     await prisma.$executeRawUnsafe(CREATE_TABLE);
 
+    // Clean up old MyMovies cinema events
+    const deleted = await prisma.event.deleteMany({
+      where: {
+        OR: [
+          { sourceName: { contains: "MYmovies", mode: "insensitive" } },
+          { sourceUrl: { contains: "mymovies.it", mode: "insensitive" } },
+        ],
+      },
+    });
+    console.log(`[Cinemas] Deleted ${deleted.count} old MyMovies events`);
+
     const { runCinemaLatinaScraper } = await import(
       "@/lib/scraper/cinemaLatinaScraper"
     );

@@ -8,7 +8,6 @@ import { runFattivivoScraper } from './fattivivoScraper';
 import { scrapeTeatroIt } from './teatroItScraper';
 import { runLazioEventiScraper } from './lazioeventiScraper';
 import { runEventbriteScraper } from './eventbriteScraper';
-import { runMYMoviesCinemaScraper } from './myMoviesCinemaScraper';
 import { runComingSoonCinemaScraper } from './comingSoonCinemaScraper';
 import { runVisitLazioScraper } from './visitlazioScraper';
 import { runCheventiScraper } from './cheventiScraper';
@@ -67,7 +66,6 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   teatroIt: { name: 'Teatro.it', url: 'https://www.teatro.it/spettacoli/latina', fn: scrapeTeatroIt },
   lazioeventi: { name: 'LazioEventi.com', url: 'https://lazioeventi.com/oggi-nel-lazio', fn: runLazioEventiScraper },
   eventbrite: { name: 'Eventbrite', url: 'https://www.eventbrite.it/d/italy--latina/health--events', fn: runEventbriteScraper },
-  mymoviescinema: { name: 'MYmovies Cinema Latina', url: 'https://www.mymovies.it/cinema/latina', fn: runMYMoviesCinemaScraper },
   comingsoonscinema: { name: 'ComingSoon Cinema Latina', url: 'https://www.comingsoon.it/cinema/latina', fn: runComingSoonCinemaScraper },
   visitlazio: { name: 'VisitLazio', url: 'https://www.visitlazio.com/eventi/', fn: runVisitLazioScraper },
   cheventi: { name: 'Cheventi', url: 'https://www.cheventi.it/regioni/lazio/latina/', fn: runCheventiScraper },
