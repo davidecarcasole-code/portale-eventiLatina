@@ -195,45 +195,26 @@ function EventsContent() {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {events.map((e: any, idx: number) => (
               <Link key={e.id} href={`/events/${e.id}`} className={`glass-card rounded-xl overflow-hidden card-hover group stagger-${Math.min(idx + 1, 5)}`}>
-                {e.image_url ? (
-                  <div className="relative h-40 overflow-hidden">
-                    <img src={e.image_url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-                    <div className="absolute top-3 left-3 flex gap-1.5">
-                      {e.category_color && (
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/90 text-gray-800 shadow-sm backdrop-blur-sm">
-                          {e.category_name}
-                        </span>
-                      )}
-                      {e.is_new && <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500 text-white shadow-sm">Nuovo</span>}
-                      {e.province && e.province !== "LT" && (
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-sm backdrop-blur-sm">
-                          {PROVINCE_NAMES[e.province] || e.province}
-                        </span>
-                      )}
-                    </div>
-                    <div className="absolute bottom-3 left-3 right-3">
-                      <h3 className="font-semibold text-sm text-white drop-shadow-lg line-clamp-2">{e.title}</h3>
-                    </div>
+                <div className="relative h-40 overflow-hidden">
+                  <img src={e.image_url || "/Banner.png"} alt="" onError={(ev) => { (ev.target as HTMLImageElement).src = "/Banner.png"; }} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                  <div className="absolute top-3 left-3 flex gap-1.5">
+                    {e.category_color && (
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/90 text-gray-800 shadow-sm backdrop-blur-sm">
+                        {e.category_name}
+                      </span>
+                    )}
+                    {e.is_new && <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500 text-white shadow-sm">Nuovo</span>}
+                    {e.province && e.province !== "LT" && (
+                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-sm backdrop-blur-sm">
+                        {PROVINCE_NAMES[e.province] || e.province}
+                      </span>
+                    )}
                   </div>
-                ) : (
-                  <div className="px-4 pt-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      {e.category_color && (
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
-                          {e.category_name}
-                        </span>
-                      )}
-                      {e.is_new && <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400">Nuovo</span>}
-                      {e.province && e.province !== "LT" && (
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
-                          {PROVINCE_NAMES[e.province] || e.province}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-semibold text-sm leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{e.title}</h3>
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <h3 className="font-semibold text-sm text-white drop-shadow-lg line-clamp-2">{e.title}</h3>
                   </div>
-                )}
+                </div>
                 <div className="px-4 pb-4 pt-3">
                   <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-[var(--text-muted)]">
                     <span className="flex items-center gap-1.5 whitespace-nowrap"><Calendar size={12} />{new Date(e.date).toLocaleDateString("it-IT")}</span>
