@@ -7,8 +7,8 @@ import { Calendar, MapPin, Clock, Search, X, ChevronLeft, ChevronRight, SlidersH
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
-const PROVINCES = ["LT", "RM", "FR", "VT", "RI", "CB", "CE", "NA"];
-const PROVINCE_NAMES: Record<string, string> = { LT: "Latina", RM: "Roma", FR: "Frosinone", VT: "Viterbo", RI: "Rieti", CB: "Campobasso", CE: "Caserta", NA: "Napoli" };
+const PROVINCES = ["LT", "RM", "FR", "VT", "RI"];
+const PROVINCE_NAMES: Record<string, string> = { LT: "Latina", RM: "Roma", FR: "Frosinone", VT: "Viterbo", RI: "Rieti" };
 const TIME_PERIODS = ["mattina", "pomeriggio", "sera", "intera_giornata"];
 const TIME_LABELS: Record<string, string> = { mattina: "Mattina", pomeriggio: "Pomeriggio", sera: "Sera", intera_giornata: "Intera Giornata" };
 
