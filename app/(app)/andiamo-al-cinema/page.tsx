@@ -182,9 +182,9 @@ export default function CinemaPage() {
                   {/* Poster */}
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={film.posterUrl || "/anteprimaciak.png"}
+                      src={film.posterUrl || "/sezcinema.png"}
                       alt={film.filmTitle}
-                      onError={(e) => { (e.target as HTMLImageElement).src = "/anteprimaciak.png"; }}
+                      onError={(e) => { (e.target as HTMLImageElement).src = "/sezcinema.png"; }}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
