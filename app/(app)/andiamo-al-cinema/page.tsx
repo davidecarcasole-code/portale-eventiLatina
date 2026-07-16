@@ -226,6 +226,13 @@ export default function CinemaPage() {
                       )}
                     </div>
 
+                    {/* Description */}
+                    {film.filmDescription && (
+                      <p className="text-xs text-[var(--text-muted)] leading-relaxed line-clamp-3">
+                        {film.filmDescription}
+                      </p>
+                    )}
+
                     {/* Showtimes */}
                     {film.showtimes.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
