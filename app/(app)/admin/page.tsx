@@ -90,6 +90,12 @@ function EventsTab({ token }: { token: string }) {
     fetch("/api/categories").then(r => r.ok && r.json()).then(d => { if (d) setCategories(d); }).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("new") === "1") {
+      setShowCreate(true);
+    }
+  }, []);
+
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setError("");

@@ -157,7 +157,7 @@ export default function DashboardPage() {
               Esplora eventi <ArrowRight size={14} />
             </Link>
             {canManageEvents && (
-              <Link href="/admin" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-fuchsia-500/20 backdrop-blur-sm border border-fuchsia-400/30 text-fuchsia-300 rounded-xl text-sm font-medium hover:bg-fuchsia-500/30 hover:border-fuchsia-400/50 hover:shadow-[0_0_20px_rgba(217,70,239,0.3)] transition-all hover:scale-105 active:scale-95">
+              <Link href="/admin?new=1" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-fuchsia-500/20 backdrop-blur-sm border border-fuchsia-400/30 text-fuchsia-300 rounded-xl text-sm font-medium hover:bg-fuchsia-500/30 hover:border-fuchsia-400/50 hover:shadow-[0_0_20px_rgba(217,70,239,0.3)] transition-all hover:scale-105 active:scale-95">
                 <Plus size={14} /> Nuovo Evento
               </Link>
             )}
