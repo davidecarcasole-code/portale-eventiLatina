@@ -196,7 +196,7 @@ function EventsContent() {
             {events.map((e: any, idx: number) => (
               <Link key={e.id} href={`/events/${e.id}`} className={`glass-card rounded-xl overflow-hidden card-hover group stagger-${Math.min(idx + 1, 5)}`}>
                 <div className="relative h-40 overflow-hidden">
-                  <img src={e.image_url || "/Banner.png"} alt="" onError={(ev) => { (ev.target as HTMLImageElement).src = "/Banner.png"; }} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={e.image_url || "/banner.png"} alt="" onError={(ev) => { (ev.target as HTMLImageElement).src = "/banner.png"; }} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
                   <div className="absolute top-3 left-3 flex gap-1.5">
                     {e.category_color && (
