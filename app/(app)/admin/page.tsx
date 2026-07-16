@@ -104,6 +104,7 @@ function EventsTab({ token }: { token: string }) {
     const { cinema, ...payload } = form;
     if (isCinemaCategory && cinema) {
       payload.location = cinema;
+      payload.address = CINEMAS_LATINA.find(c => c.name === cinema)?.address || payload.address;
     }
     const r = await fetch("/api/events", {
       method: "POST",

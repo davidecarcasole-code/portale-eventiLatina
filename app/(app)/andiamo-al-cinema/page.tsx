@@ -48,15 +48,19 @@ export default function CinemaPage() {
   useEffect(() => {
     Promise.all([
       fetch("/api/cinemas").then((r) => r.json()),
-      fetch("/api/events?category=cinema&limit=100").then((r) => r.json()),
+      fetch("/api/events?category=cinema&limit=100&timeFilter=all").then((r) => r.json()),
     ])
       .then(([cinemaData, eventsData]) => {
         const list: Cinema[] = cinemaData.cinemas || [];
         const adminEvents = eventsData.events || [];
 
         for (const event of adminEvents) {
-          const cinemaName = event.location;
-          const cinema = list.find((c) => c.name === cinemaName);
+          const cinemaName = (event.location || "").trim();
+          if (!cinemaName) continue;
+          const cinema = list.find((c) =>
+            c.name.toLowerCase() === cinemaName.toLowerCase() ||
+            c.slug.toLowerCase() === cinemaName.toLowerCase()
+          );
           if (cinema) {
             cinema.films.push({
               id: -event.id,
