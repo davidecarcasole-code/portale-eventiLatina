@@ -11,7 +11,6 @@ const TABS = [
   { key: "ads", label: "Pubblicità", icon: Megaphone },
   { key: "sources", label: "Fonti", icon: Radio },
   { key: "scraper", label: "Motore Ricerca", icon: Search },
-  { key: "searchconfig", label: "Criteri Ricerca", icon: RefreshCw },
   { key: "agent", label: "Agent AI", icon: Brain },
   { key: "publishers", label: "Publisher", icon: Briefcase, adminOnly: true },
   { key: "users", label: "Utenti", icon: Users, adminOnly: true },
@@ -60,7 +59,6 @@ export default function AdminPage() {
       {tab === "ads" && <AdsTab token={token!} />}
       {tab === "sources" && <SourcesTab token={token!} />}
       {tab === "scraper" && <ScraperTab token={token!} />}
-      {tab === "searchconfig" && <SearchConfigTab />}
       {tab === "agent" && <AgentTab token={token!} />}
       {tab === "publishers" && isSuperAdmin && <PublishersTab token={token!} />}
       {tab === "users" && isSuperAdmin && <UsersTab token={token!} />}
