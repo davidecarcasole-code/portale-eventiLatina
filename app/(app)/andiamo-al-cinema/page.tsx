@@ -180,44 +180,26 @@ export default function CinemaPage() {
                   className="glass-card rounded-2xl overflow-hidden hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 group"
                 >
                   {/* Poster */}
-                  {film.posterUrl ? (
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={film.posterUrl}
-                        alt={film.filmTitle}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                      {film.year && (
-                        <span className="absolute top-3 right-3 text-[10px] font-medium px-2 py-0.5 rounded-full bg-black/50 text-white backdrop-blur-sm flex items-center gap-1">
-                          <Calendar size={10} />
-                          {film.year}
-                        </span>
-                      )}
-                      <div className="absolute bottom-3 left-3 right-3">
-                        <h3 className="font-semibold text-sm text-white drop-shadow-lg line-clamp-2">
-                          {film.filmTitle}
-                        </h3>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="px-4 pt-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300">
-                          <Film size={16} className="text-white" />
-                        </div>
-                      </div>
-                      <h3 className="font-semibold text-sm leading-snug line-clamp-2 group-hover:text-purple-500 transition-colors">
+                  <div className="relative h-48 overflow-hidden">
+                    <img
+                      src={film.posterUrl || "/anteprimaciak.png"}
+                      alt={film.filmTitle}
+                      onError={(e) => { (e.target as HTMLImageElement).src = "/anteprimaciak.png"; }}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                    {film.year && (
+                      <span className="absolute top-3 right-3 text-[10px] font-medium px-2 py-0.5 rounded-full bg-black/50 text-white backdrop-blur-sm flex items-center gap-1">
+                        <Calendar size={10} />
+                        {film.year}
+                      </span>
+                    )}
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <h3 className="font-semibold text-sm text-white drop-shadow-lg line-clamp-2">
                         {film.filmTitle}
                       </h3>
-                      {film.year && (
-                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-purple-100 dark:bg-purple-900/30 text-purple-600 mt-1 inline-flex items-center gap-1">
-                          <Calendar size={9} />
-                          {film.year}
-                        </span>
-                      )}
                     </div>
-                  )}
+                  </div>
 
                   {/* Info */}
                   <div className="px-4 pb-4 pt-3 space-y-2">
