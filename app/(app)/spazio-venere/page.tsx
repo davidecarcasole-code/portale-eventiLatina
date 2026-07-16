@@ -37,16 +37,10 @@ export default function SpazioVenerePage() {
   return (
     <div className="min-h-screen animate-fade-in">
       {/* HERO */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-500 via-rose-500 to-purple-600 p-8 sm:p-12 text-white mb-8">
-        <div className="absolute -top-20 -right-20 w-80 h-80 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-pink-300/10 rounded-full blur-2xl" />
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="absolute text-pink-200/15 animate-float-up pointer-events-none select-none"
-            style={{ left: `${10 + i * 11}%`, top: `${20 + (i % 5) * 15}%`, animationDelay: `${i * 0.4}s`, fontSize: `${16 + i * 4}px` }}>
-            &#10084;
-          </div>
-        ))}
-        <div className="relative">
+      <div className="relative overflow-hidden rounded-3xl mb-8">
+        <div className="absolute inset-0 bg-[url('/bannerspaziovenere.png')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-900/60 via-rose-900/50 to-purple-900/60" />
+        <div className="relative p-8 sm:p-12 text-white">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
               <Heart size={28} className="text-white" fill="white" />

@@ -35,22 +35,10 @@ export default function SpazioKidsPage() {
   return (
     <div className="min-h-screen animate-fade-in">
       {/* HERO */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-yellow-400 via-orange-400 to-pink-500 p-8 sm:p-12 text-white mb-8">
-        <div className="absolute -top-16 -right-16 w-72 h-72 bg-yellow-300/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-pink-300/10 rounded-full blur-2xl" />
-        {/* Stelle fluttuanti */}
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="absolute text-yellow-200/20 animate-float-up pointer-events-none select-none"
-            style={{ left: `${8 + i * 15}%`, top: `${15 + (i % 4) * 20}%`, animationDelay: `${i * 0.5}s`, fontSize: `${20 + i * 6}px` }}>
-            {i % 2 === 0 ? '\u2605' : '\u2726'}
-          </div>
-        ))}
-        {/* Pallini colorati */}
-        <div className="absolute top-6 right-12 w-3 h-3 rounded-full bg-yellow-300/40 animate-float-up" style={{ animationDelay: "0.2s" }} />
-        <div className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-pink-300/40 animate-float-up" style={{ animationDelay: "0.7s" }} />
-        <div className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-orange-300/30 animate-float-up" style={{ animationDelay: "1.2s" }} />
-
-        <div className="relative">
+      <div className="relative overflow-hidden rounded-3xl mb-8">
+        <div className="absolute inset-0 bg-[url('/bannerkids.png')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/60 via-orange-900/50 to-pink-900/60" />
+        <div className="relative p-8 sm:p-12 text-white">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
               <Rocket size={28} className="text-white" />

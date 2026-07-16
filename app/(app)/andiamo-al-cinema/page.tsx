@@ -60,9 +60,8 @@ export default function CinemaPage() {
     <div className="animate-fade-in">
       {/* Hero */}
       <div className="relative mb-8 overflow-hidden rounded-3xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-indigo-600 to-indigo-800" />
-        <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-indigo-500/20 to-transparent" />
+        <div className="absolute inset-0 bg-[url('/bannercinema.png')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/70 via-indigo-900/60 to-indigo-950/80" />
         <div
           className="absolute top-6 right-12 w-3 h-3 rounded-full bg-purple-300/40 animate-float-up"
           style={{ animationDelay: "0.2s" }}

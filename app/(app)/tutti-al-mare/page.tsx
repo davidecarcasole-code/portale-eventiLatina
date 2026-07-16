@@ -36,33 +36,8 @@ export default function MarePage() {
   return (
     <div className="animate-fade-in">
       <div className="relative mb-8 overflow-hidden rounded-3xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 via-cyan-600 to-cyan-800" />
-        <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-10" />
-        <div className="absolute inset-0 opacity-[0.07]">
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="beach-icons" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
-                <g fill="white" fillOpacity="1">
-                  <circle cx="20" cy="20" r="1.5" />
-                  <circle cx="80" cy="15" r="1" />
-                  <circle cx="50" cy="80" r="1.2" />
-                  <circle cx="100" cy="60" r="1" />
-                  <path d="M10 50 L15 35 L20 50 Z" />
-                  <path d="M70 90 L75 75 L80 90 Z" />
-                  <path d="M95 25 L100 10 L105 25 Z" />
-                  <line x1="15" y1="35" x2="15" y2="25" stroke="white" strokeWidth="1" />
-                  <line x1="75" y1="75" x2="75" y2="65" stroke="white" strokeWidth="1" />
-                  <line x1="100" y1="10" x2="100" y2="0" stroke="white" strokeWidth="1" />
-                  <path d="M40 30 Q45 20 50 30 Q45 25 40 30" />
-                  <path d="M90 80 Q95 70 100 80 Q95 75 90 80" />
-                  <path d="M25 90 Q30 80 35 90 Q30 85 25 90" />
-                </g>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#beach-icons)" />
-          </svg>
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-cyan-500/20 to-transparent" />
+        <div className="absolute inset-0 bg-[url('/bannertuttialmare.png')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/70 via-cyan-900/60 to-cyan-950/80" />
         <div className="absolute top-6 right-12 w-3 h-3 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.2s" }} />
         <div className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.7s" }} />
         <div className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-cyan-300/30 animate-float-up" style={{ animationDelay: "1.2s" }} />
