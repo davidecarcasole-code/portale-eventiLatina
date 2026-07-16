@@ -91,7 +91,10 @@ export function NotificationBell({ dropUp = false }: { dropUp?: boolean }) {
   return (
     <div ref={dropdownRef} className="relative">
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          setOpen(!open);
+          if (!open && unreadCount > 0) markAllRead();
+        }}
         className="relative p-2 rounded-xl hover:bg-[var(--accent-subtle)] transition-all duration-200"
       >
         <Bell size={18} strokeWidth={1.5} className="text-[var(--text-secondary)]" />
@@ -103,7 +106,7 @@ export function NotificationBell({ dropUp = false }: { dropUp?: boolean }) {
       </button>
 
       {open && (
-        <div className={`absolute ${dropUp ? 'bottom-full mb-2' : 'top-full mt-2'} right-0 w-80 bg-[var(--card-bg)]/95 backdrop-blur-xl border border-[var(--card-border)] rounded-2xl shadow-2xl z-50 max-h-96 flex flex-col`}>
+        <div className={`absolute ${dropUp ? 'bottom-full mb-2' : 'top-full mt-2'} left-1/2 -translate-x-1/2 w-80 bg-[var(--card-bg)]/95 backdrop-blur-xl border border-[var(--card-border)] rounded-2xl shadow-2xl z-50 max-h-96 flex flex-col`}>
           <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--card-border)]">
             <span className="text-sm font-semibold text-[var(--text-primary)]">Notifiche</span>
             <div className="flex gap-1">
