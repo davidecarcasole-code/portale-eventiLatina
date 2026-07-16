@@ -29,12 +29,21 @@ export async function GET() {
       `SELECT * FROM cinema_showtimes ORDER BY cinema_slug, film_title`
     );
 
-    // Auto-scrape if table is empty
-    if (rows.length === 0) {
-      console.log('[Cinemas] No showtimes found, auto-scraping...');
+    // Auto-scrape if table is empty or data is older than 24h
+    const shouldScrape = rows.length === 0 || (rows.length > 0 && (() => {
+      const latest = rows.reduce((max: Date, r: any) => {
+        const d = new Date(r.scraped_at);
+        return d > max ? d : max;
+      }, new Date(0));
+      return Date.now() - latest.getTime() > 24 * 60 * 60 * 1000;
+    })());
+
+    if (shouldScrape) {
+      console.log(`[Cinemas] ${rows.length === 0 ? 'No showtimes found' : 'Data older than 24h'}, auto-scraping...`);
       try {
         const { runCinemaLatinaScraper } = await import('@/lib/scraper/cinemaLatinaScraper');
         const results = await runCinemaLatinaScraper();
+        await prisma.$executeRawUnsafe(`DELETE FROM cinema_showtimes`);
         for (const r of results) {
           await prisma.$executeRawUnsafe(
             `INSERT INTO cinema_showtimes
