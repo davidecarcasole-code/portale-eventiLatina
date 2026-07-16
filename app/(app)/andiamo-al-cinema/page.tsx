@@ -9,7 +9,9 @@ import {
   Film,
   ExternalLink,
   PlayCircle,
+  Sparkles,
 } from "lucide-react";
+import { CINEMAS_LATINA } from "@/lib/cinema/cinemas";
 
 interface Showtime {
   id: number;
@@ -24,6 +26,7 @@ interface Showtime {
   showtimes: string[];
   sourceUrl?: string;
   scrapedAt?: string;
+  isAdmin?: boolean;
 }
 
 interface Cinema {
@@ -43,10 +46,30 @@ export default function CinemaPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/cinemas")
-      .then((r) => r.json())
-      .then((data) => {
-        const list: Cinema[] = data.cinemas || [];
+    Promise.all([
+      fetch("/api/cinemas").then((r) => r.json()),
+      fetch("/api/events?category=cinema&limit=100").then((r) => r.json()),
+    ])
+      .then(([cinemaData, eventsData]) => {
+        const list: Cinema[] = cinemaData.cinemas || [];
+        const adminEvents = eventsData.events || [];
+
+        for (const event of adminEvents) {
+          const cinemaName = event.location;
+          const cinema = list.find((c) => c.name === cinemaName);
+          if (cinema) {
+            cinema.films.push({
+              id: -event.id,
+              filmTitle: event.title,
+              filmDescription: event.description,
+              posterUrl: event.image_url,
+              showtimes: event.time ? [event.time] : [],
+              sourceUrl: event.source_url,
+              isAdmin: true,
+            });
+          }
+        }
+
         setCinemas(list);
         if (list.length > 0) setActiveCinema(list[0].slug);
       })
@@ -188,6 +211,12 @@ export default function CinemaPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                    {film.isAdmin && (
+                      <span className="absolute top-3 left-3 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-1 shadow-lg">
+                        <Sparkles size={10} />
+                        Speciale
+                      </span>
+                    )}
                     {film.year && (
                       <span className="absolute top-3 right-3 text-[10px] font-medium px-2 py-0.5 rounded-full bg-black/50 text-white backdrop-blur-sm flex items-center gap-1">
                         <Calendar size={10} />

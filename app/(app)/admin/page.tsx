@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
+import { CINEMAS_LATINA } from "@/lib/cinema/cinemas";
 
 const TABS = [
   { key: "events", label: "Eventi", icon: Globe },
@@ -71,7 +72,7 @@ function EventsTab({ token }: { token: string }) {
   const [events, setEvents] = useState<any[]>([]);
   const [showCreate, setShowCreate] = useState(false);
   const [cleaning, setCleaning] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" });
+  const [form, setForm] = useState({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" });
   const [categories, setCategories] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
@@ -99,15 +100,20 @@ function EventsTab({ token }: { token: string }) {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    const isCinemaCategory = categories.find((c: any) => c.id == form.category_id)?.name === "Cinema";
+    const { cinema, ...payload } = form;
+    if (isCinemaCategory && cinema) {
+      payload.location = cinema;
+    }
     const r = await fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
     const data = await r.json();
     if (!r.ok) { setError(data.error || "Errore"); return; }
     setShowCreate(false);
-    setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" });
+    setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" });
     loadEvents();
   }
 
@@ -139,7 +145,7 @@ function EventsTab({ token }: { token: string }) {
             className="btn-ghost px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 text-red-500 hover:bg-red-50" disabled={cleaning}>
             <Trash2 size={14} /> {cleaning ? "Pulendo..." : "Pulisci date errate"}
           </button>
-          <button onClick={() => { setShowCreate(true); setError(""); setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "" }); }}
+          <button onClick={() => { setShowCreate(true); setError(""); setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" }); }}
             className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
             <Plus size={14} /> Nuovo Evento
           </button>
@@ -173,6 +179,14 @@ function EventsTab({ token }: { token: string }) {
               <option value="">Seleziona categoria *</option>
               {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
+            {categories.find((c: any) => c.id == form.category_id)?.name === "Cinema" && (
+              <select value={form.cinema} onChange={e => setForm({ ...form, cinema: e.target.value })} className="select">
+                <option value="">Seleziona multisala</option>
+                {CINEMAS_LATINA.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+              </select>
+            )}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="URL immagine copertina" className="input" />
           </div>
           <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Descrizione" className="input min-h-[80px]" rows={3} />
