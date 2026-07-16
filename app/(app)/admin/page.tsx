@@ -72,6 +72,7 @@ function EventsTab({ token }: { token: string }) {
   const [events, setEvents] = useState<any[]>([]);
   const [showCreate, setShowCreate] = useState(false);
   const [cleaning, setCleaning] = useState(false);
+  const [cleaningMyMovies, setCleaningMyMovies] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" });
   const [categories, setCategories] = useState<any[]>([]);
   const [error, setError] = useState("");
@@ -145,6 +146,10 @@ function EventsTab({ token }: { token: string }) {
           <button onClick={async () => { if (!confirm("Eliminare tutti gli eventi con data 2026-01-01 (import errati)?")) return; setCleaning(true); try { const r = await fetch("/api/scraper/cleanup", { method: "POST", headers: { Authorization: `Bearer ${token}` } }); const d = await r.json(); alert(`Eliminati ${d.deleted} eventi`); window.location.reload() } catch {} finally { setCleaning(false) } }}
             className="btn-ghost px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 text-red-500 hover:bg-red-50" disabled={cleaning}>
             <Trash2 size={14} /> {cleaning ? "Pulendo..." : "Pulisci date errate"}
+          </button>
+          <button onClick={async () => { if (!confirm("Eliminare tutti gli eventi Cinema derivati da MyMovies?")) return; setCleaningMyMovies(true); try { const r = await fetch("/api/scraper/cleanup-mymovies", { method: "POST", headers: { Authorization: `Bearer ${token}` } }); const d = await r.json(); alert(`Eliminati ${d.deleted} eventi MyMovies`); loadEvents(); } catch {} finally { setCleaningMyMovies(false) } }}
+            className="btn-ghost px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 text-orange-500 hover:bg-orange-50" disabled={cleaningMyMovies}>
+            <Trash2 size={14} /> {cleaningMyMovies ? "Pulendo..." : "Pulisci MyMovies"}
           </button>
           <button onClick={() => { setShowCreate(true); setError(""); setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" }); }}
             className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
