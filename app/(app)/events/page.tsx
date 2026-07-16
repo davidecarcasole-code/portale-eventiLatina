@@ -145,6 +145,27 @@ function EventsContent() {
             {t === "past" && "Passati"}
           </button>
         ))}
+        <div className="border-l border-[var(--card-border)] mx-1" />
+        <button
+          onClick={() => { setProvince(province === "LT" ? "" : "LT"); setPage(1); }}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            province === "LT"
+              ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/25"
+              : "bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-cyan-50 hover:text-cyan-600 hover:border-cyan-300"
+          }`}>
+          <MapPin size={14} className="inline mr-1" />
+          Solo Latina
+        </button>
+        <button
+          onClick={() => { setProvince(province === "PROVINCIA" ? "" : "PROVINCIA"); setPage(1); }}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            province === "PROVINCIA"
+              ? "bg-amber-500 text-white shadow-lg shadow-amber-500/25"
+              : "bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-amber-50 hover:text-amber-600 hover:border-amber-300"
+          }`}>
+          <MapPin size={14} className="inline mr-1" />
+          Provincia
+        </button>
       </div>
 
       <div className="flex justify-center">
@@ -185,6 +206,11 @@ function EventsContent() {
                         </span>
                       )}
                       {e.is_new && <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500 text-white shadow-sm">Nuovo</span>}
+                      {e.province && e.province !== "LT" && (
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-sm backdrop-blur-sm">
+                          {PROVINCE_NAMES[e.province] || e.province}
+                        </span>
+                      )}
                     </div>
                     <div className="absolute bottom-3 left-3 right-3">
                       <h3 className="font-semibold text-sm text-white drop-shadow-lg line-clamp-2">{e.title}</h3>
@@ -199,6 +225,11 @@ function EventsContent() {
                         </span>
                       )}
                       {e.is_new && <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400">Nuovo</span>}
+                      {e.province && e.province !== "LT" && (
+                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+                          {PROVINCE_NAMES[e.province] || e.province}
+                        </span>
+                      )}
                     </div>
                     <h3 className="font-semibold text-sm leading-snug line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{e.title}</h3>
                   </div>

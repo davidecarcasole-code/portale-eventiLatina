@@ -57,7 +57,11 @@ export async function GET(req: NextRequest) {
       if (slugs.length === 1) where.category = { slug: slugs[0] };
       else if (slugs.length > 1) where.category = { slug: { in: slugs } };
     }
-    if (province) where.province = province;
+    if (province === "PROVINCIA") {
+      where.province = { in: ["RM", "FR", "RI", "VT"] };
+    } else if (province) {
+      where.province = province;
+    }
     if (city) where.city = { contains: city, mode: "insensitive" };
     if (time_period) where.timePeriod = time_period;
     if (search) {
