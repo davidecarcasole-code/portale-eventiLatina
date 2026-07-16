@@ -128,7 +128,7 @@ export default function CinemaPage() {
                 className={`flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
                   activeCinema === cinema.slug
                     ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/25 scale-105"
-                    : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
+                    : "bg-[var(--card-bg)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] border border-[var(--card-border)]"
                 }`}
               >
                 {cinema.name}

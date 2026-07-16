@@ -25,9 +25,34 @@ export async function GET() {
     const { prisma } = await import("@/lib/prisma");
     await prisma.$executeRawUnsafe(CREATE_TABLE);
 
-    const rows: any[] = await prisma.$queryRawUnsafe(
+    let rows: any[] = await prisma.$queryRawUnsafe(
       `SELECT * FROM cinema_showtimes ORDER BY cinema_slug, film_title`
     );
+
+    // Auto-scrape if table is empty
+    if (rows.length === 0) {
+      console.log('[Cinemas] No showtimes found, auto-scraping...');
+      try {
+        const { runCinemaLatinaScraper } = await import('@/lib/scraper/cinemaLatinaScraper');
+        const results = await runCinemaLatinaScraper();
+        for (const r of results) {
+          await prisma.$executeRawUnsafe(
+            `INSERT INTO cinema_showtimes
+              (cinema_slug, film_title, film_description, director, genre, year, duration, poster_url, trailer_url, showtimes, source_url, scraped_at)
+             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,NOW())`,
+            r.cinemaSlug, r.filmTitle, r.filmDescription || null, r.director || null,
+            r.genre || null, r.year || null, r.duration || null, r.posterUrl || null,
+            r.trailerUrl || null, JSON.stringify(r.showtimes || []), r.sourceUrl || null
+          );
+        }
+        console.log(`[Cinemas] Auto-scraped ${results.length} showtimes`);
+        rows = await prisma.$queryRawUnsafe(
+          `SELECT * FROM cinema_showtimes ORDER BY cinema_slug, film_title`
+        );
+      } catch (scrapeErr: any) {
+        console.error(`[Cinemas] Auto-scrape failed: ${scrapeErr.message?.slice(0, 100)}`);
+      }
+    }
 
     const cinemaMap = new Map<string, any[]>();
     for (const cinema of CINEMAS_LATINA) {
