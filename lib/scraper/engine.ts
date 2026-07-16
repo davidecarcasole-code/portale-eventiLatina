@@ -16,6 +16,18 @@ import { runLazioinfestaScraper } from './lazioinfestaScraper';
 import { runCulturalazioScraper } from './culturalazioScraper';
 import { runLatinaonlineScraper } from './latinaonlineScraper';
 import { runLatinaquotidianoScraper } from './latinaquotidianoScraper';
+import { runEventiYogaScraper } from './eventiyogaScraper';
+import { runLaFilibustaScraper } from './lafilibustapontinaScraper';
+import { runParksScraper } from './parksScraper';
+import { runOrangogoScraper } from './orangogoScraper';
+import { runOpesLatinaScraper } from './opeslatinaScraper';
+import { runAtleticaLatinaScraper } from './atleticalatinaScraper';
+import { runTuttoCampiScraper } from './tuttocampiestiviScraper';
+import { runAgesciScraper } from './agesciScraper';
+import { runTrekkingRomaScraper } from './trekkingromaScraper';
+import { runEscursionismoScraper } from './escursionismoScraper';
+import { runLatiumVetusScraper } from './latiumvetusScraper';
+import { runMondorealeScraper } from './mondorealeScraper';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -63,6 +75,18 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   culturalazio: { name: 'CulturaLazio', url: 'https://www.culturalazio.com/agenda/', fn: runCulturalazioScraper },
   latinaonline: { name: 'LatinaOnline', url: 'https://www.latinaonline.it/cosa-fare-a-latina/', fn: runLatinaonlineScraper },
   latinaquotidiano: { name: 'LatinaQuotidiano', url: 'https://www.latinaquotidiano.it/', fn: runLatinaquotidianoScraper },
+  eventiyoga: { name: 'EventiYoga.it', url: 'https://eventiyoga.it/eventi-yoga/', fn: runEventiYogaScraper },
+  lafilibusta: { name: 'La FiliBusta Pontina', url: 'https://lafilibustapontina.it/events/', fn: runLaFilibustaScraper },
+  parks: { name: 'Parks.it - Parco del Circeo', url: 'https://www.parks.it/parco.nazionale.circeo/', fn: runParksScraper },
+  orangogo: { name: 'OrangoGo', url: 'https://www.orangogo.it/', fn: runOrangogoScraper },
+  opeslatina: { name: 'Opes Latina', url: 'https://www.opeslatina.it/', fn: runOpesLatinaScraper },
+  atleticalatina: { name: 'Atletica Latina', url: 'https://www.atleticalatina.it/', fn: runAtleticaLatinaScraper },
+  tuttocampiestivi: { name: 'TuttoCampiEstivi', url: 'https://www.tuttocampiestivi.com/', fn: runTuttoCampiScraper },
+  agesci: { name: 'Agesci Lazio', url: 'https://www.agescilt3.it/calendario/', fn: runAgesciScraper },
+  trekkingroma: { name: 'TrekkingRoma', url: 'https://trekkingroma.it/eventi/', fn: runTrekkingRomaScraper },
+  escursionismo: { name: 'Escursionismo.it', url: 'https://www.escursionismo.it/escursioni/', fn: runEscursionismoScraper },
+  latiumvetus: { name: 'Latium Vetus', url: 'https://www.latiumvetus.it/visite/', fn: runLatiumVetusScraper },
+  mondoreale: { name: 'MondoReale.it', url: 'https://www.mondoreale.it/', fn: runMondorealeScraper },
 };
 
 async function getPrisma() {
@@ -202,15 +226,14 @@ async function runSingleSource(
       } catch (err: any) {
         console.error(`[Scraper] Insert error: ${err.message?.slice(0, 100)} for "${e.title.slice(0, 40)}"`);
       }
+    }
 
     console.log(`[Scraper] ${name}: ${inserted} new events inserted`);
     return { source: name, found: events.length, inserted };
-  }
-} catch (err: any) {
+  } catch (err: any) {
     console.error(`[Scraper] ${name} error: ${err.message?.slice(0, 100)}`);
     return { source: name, found: 0, inserted: 0 };
   }
-  return { source: name, found: 0, inserted: 0 };
 }
 
 export async function runScraper(sourceType?: string): Promise<ScraperResult[]> {
@@ -307,6 +330,18 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('CulturaLazio', runCulturalazioScraper);
   await collect('LatinaOnline', runLatinaonlineScraper);
   await collect('LatinaQuotidiano', runLatinaquotidianoScraper);
+  await collect('EventiYoga.it', runEventiYogaScraper);
+  await collect('La FiliBusta Pontina', runLaFilibustaScraper);
+  await collect('Parks.it - Parco del Circeo', runParksScraper);
+  await collect('OrangoGo', runOrangogoScraper);
+  await collect('Opes Latina', runOpesLatinaScraper);
+  await collect('Atletica Latina', runAtleticaLatinaScraper);
+  await collect('TuttoCampiEstivi', runTuttoCampiScraper);
+  await collect('Agesci Lazio', runAgesciScraper);
+  await collect('TrekkingRoma', runTrekkingRomaScraper);
+  await collect('Escursionismo.it', runEscursionismoScraper);
+  await collect('Latium Vetus', runLatiumVetusScraper);
+  await collect('MondoReale.it', runMondorealeScraper);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;
