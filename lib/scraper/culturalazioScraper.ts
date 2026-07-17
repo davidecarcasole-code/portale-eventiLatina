@@ -88,7 +88,11 @@ export async function runCulturalazioScraper(): Promise<ScrapedEvent[]> {
         const fullText = $el.text();
         const category = detectCategory(title + ' ' + fullText);
 
-        const key = title.toLowerCase().slice(0, 60) + date;
+        // Try to extract city from text
+        const cityMatch = fullText.match(/\((LT|RM|FR|VT|RI)\)/i) || fullText.match(/\b(Latina|Roma|Frosinone|Viterbo|Rieti|Aprilia|Cisterna|Terracina|Fondi|Formia|Gaeta|Sora|Frosinone|Viterbo|Rieti|Civitavecchia|Tivoli|Velletri)\b/i);
+        const city = cityMatch ? cityMatch[1] : 'Latina';
+
+        const key = title.toLowerCase().slice(0, 60) + date + city;
         if (seen.has(key)) return;
         seen.add(key);
         newCount++;
@@ -96,8 +100,7 @@ export async function runCulturalazioScraper(): Promise<ScrapedEvent[]> {
         all.push({
           title,
           date: date || new Date().toISOString().split('T')[0],
-          city: 'Latina',
-          province: 'LT',
+          city,
           category_id: category,
           image_url: imageUrl,
           source_url: sourceUrl,

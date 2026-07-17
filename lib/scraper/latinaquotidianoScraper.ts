@@ -99,7 +99,6 @@ export async function runLatinaquotidianoScraper(): Promise<ScrapedEvent[]> {
         title,
         date: date || new Date().toISOString().split('T')[0],
         city: 'Latina',
-        province: 'LT',
         category_id: category,
         image_url: imageUrl,
         source_url: sourceUrl,

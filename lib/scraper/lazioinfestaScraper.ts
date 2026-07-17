@@ -92,7 +92,6 @@ export async function runLazioinfestaScraper(): Promise<ScrapedEvent[]> {
           date: date || new Date().toISOString().split('T')[0],
           end_date: endDate,
           city,
-          province: 'LT',
           category_id: category,
           image_url: imageUrl,
           source_url: sourceUrl,

@@ -95,7 +95,6 @@ function parsePage(html: string): ScrapedEvent[] {
       time: time || undefined,
       location: anchorText || undefined,
       city: city || 'Latina',
-      province: 'LT',
       category_id: category,
       image_url: (imgSrc && (imgSrc.startsWith('http') || imgSrc.startsWith('//')))
         ? (imgSrc.startsWith('//') ? `https:${imgSrc}` : imgSrc)

@@ -98,7 +98,6 @@ export async function runFattivivoScraper(): Promise<ScrapedEvent[]> {
           title: decoded,
           date: date || '2026-07-08',
           city,
-          province: 'LT',
           category_id: category,
           image_url: imageUrl || undefined,
           source_url: sourceUrl,

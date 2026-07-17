@@ -87,7 +87,6 @@ export async function runMondorealeScraper(): Promise<ScrapedEvent[]> {
           description: description || undefined,
           date,
           city: 'Latina',
-          province: 'LT',
           category_id: category,
           image_url: imageUrl,
           source_url: sourceUrl,

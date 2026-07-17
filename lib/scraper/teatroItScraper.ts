@@ -161,7 +161,6 @@ export async function scrapeTeatroIt(): Promise<ScrapedEvent[]> {
         end_date: item.endDate ? parseDate(item.endDate) || undefined : undefined,
         location: venue || city || undefined,
         city,
-        province: "LT",
         category_id: category,
         image_url: image || undefined,
         source_url: sourceUrl,
