@@ -29,7 +29,7 @@ function EventsContent() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [category, setCategory] = useState(searchParams.get("category") || "");
-  const [province, setProvince] = useState(searchParams.get("province") || "");
+  const [province, setProvince] = useState(searchParams.get("province") || "LT");
   const [timePeriod, setTimePeriod] = useState(searchParams.get("time_period") || "");
   const [timeFilter, setTimeFilter] = useState<"upcoming" | "ongoing" | "past">("upcoming");
   const [page, setPage] = useState(1);
@@ -74,7 +74,7 @@ function EventsContent() {
   }, [search, category, province, timePeriod, page]);
 
   function clearFilters() {
-    setSearch(""); setCategory(""); setProvince(""); setTimePeriod(""); setPage(1);
+    setSearch(""); setCategory(""); setProvince("LT"); setTimePeriod(""); setPage(1);
   }
 
   const hasFilters = search || category || province || timePeriod;
@@ -154,7 +154,7 @@ function EventsContent() {
               : "bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-cyan-50 hover:text-cyan-600 hover:border-cyan-300"
           }`}>
           <MapPin size={14} className="inline mr-1" />
-          Solo Latina
+          {province === "LT" ? "Solo Latina" : "Tutte le province"}
         </button>
         <button
           onClick={() => { setProvince(province === "PROVINCIA" ? "" : "PROVINCIA"); setPage(1); }}
