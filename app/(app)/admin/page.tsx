@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, ChevronLeft, ChevronRight, Upload } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, ChevronLeft, ChevronRight, Upload, ExternalLink } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { CINEMAS_LATINA } from "@/lib/cinema/cinemas";
 
@@ -69,6 +69,7 @@ export default function AdminPage() {
 function EventsTab({ token }: { token: string }) {
   const [events, setEvents] = useState<any[]>([]);
   const [showCreate, setShowCreate] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [cleaning, setCleaning] = useState(false);
   const [cleaningMyMovies, setCleaningMyMovies] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" });
@@ -148,6 +149,57 @@ function EventsTab({ token }: { token: string }) {
     if (r.ok) loadEvents();
   }
 
+  async function handleUpdate(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!editingId) return;
+    const isCinemaCategory = categories.find((c: any) => c.id == form.category_id)?.name === "Cinema";
+    const { cinema, ...payload } = form;
+    if (isCinemaCategory && cinema) {
+      payload.location = cinema;
+      payload.address = CINEMAS_LATINA.find(c => c.name === cinema)?.address || payload.address;
+    }
+    const r = await fetch(`/api/events/${editingId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(payload),
+    });
+    const data = await r.json();
+    if (!r.ok) { setError(data.error || "Errore"); return; }
+    setEditingId(null);
+    setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" });
+    loadEvents();
+  }
+
+  function startEdit(event: any) {
+    setEditingId(event.id);
+    setShowCreate(true);
+    setForm({
+      title: event.title,
+      description: event.description || "",
+      date: event.date?.split("T")[0] || "",
+      end_date: event.endDate?.split("T")[0] || "",
+      time: event.time || "",
+      location: event.location || "",
+      address: event.address || "",
+      city: event.city || "Latina",
+      province: event.province || "LT",
+      category_id: String(event.categoryId || ""),
+      image_url: event.imageUrl || "",
+      source_url: event.sourceUrl || "",
+      source_name: event.sourceName || "",
+      cinema: "",
+    });
+    setError("");
+  }
+
+  function resetForm() {
+    setEditingId(null);
+    setShowCreate(false);
+    setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" });
+    setError("");
+  }
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -176,11 +228,11 @@ function EventsTab({ token }: { token: string }) {
             <Plus size={14} /> Nuovo Evento
           </button>
         </div>
-      {showCreate && (
-        <form onSubmit={handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
+      {(showCreate || editingId !== null) && (
+        <form onSubmit={editingId !== null ? handleUpdate : handleCreate} className="glass-card rounded-xl p-5 space-y-3 animate-slide-up">
           <div className="flex items-center justify-between">
-            <h4 className="font-semibold text-sm">Crea Nuovo Evento</h4>
-            <button type="button" onClick={() => setShowCreate(false)} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
+            <h4 className="font-semibold text-sm">{editingId !== null ? "Modifica Evento" : "Crea Nuovo Evento"}</h4>
+            <button type="button" onClick={resetForm} className="p-1 rounded-lg hover:bg-[var(--bg-secondary)]"><X size={16} /></button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Titolo *" className="input" required />
@@ -249,8 +301,8 @@ function EventsTab({ token }: { token: string }) {
           </div>
           {error && <p className="text-red-500 text-xs bg-red-50 dark:bg-red-900/20 rounded-lg p-2">{error}</p>}
           <div className="flex gap-2">
-            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">Crea Evento</button>
-            <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
+            <button type="submit" className="btn-primary flex-1 py-2 rounded-xl text-sm">{editingId !== null ? "Salva Modifiche" : "Crea Evento"}</button>
+            <button type="button" onClick={resetForm} className="px-4 py-2 rounded-xl border border-[var(--card-border)] text-sm">Annulla</button>
           </div>
         </form>
       )}
@@ -276,7 +328,8 @@ function EventsTab({ token }: { token: string }) {
               }`}>
                 {e.status === "pending" ? "In attesa" : e.status === "rejected" ? "Rifiutato" : "Approvato"}
               </span>
-              <a href={`/events/${e.id}`} className="btn-ghost p-2 rounded-lg"><Edit3 size={14} /></a>
+              <button onClick={() => startEdit(e)} className="btn-ghost p-2 rounded-lg hover:text-[var(--accent)]" title="Modifica"><Edit3 size={14} /></button>
+              <a href={`/events/${e.id}`} className="btn-ghost p-2 rounded-lg" title="Visualizza"><ExternalLink size={14} /></a>
               {e.status === "pending" && (
                 <>
                   <button onClick={() => updateEventStatus(e.id, "approved")} className="btn-ghost p-2 rounded-lg hover:text-green-500" title="Approva"><CheckCircle size={14} /></button>
