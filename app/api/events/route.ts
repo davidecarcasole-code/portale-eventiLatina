@@ -60,7 +60,15 @@ export async function GET(req: NextRequest) {
     if (province === "PROVINCIA") {
       where.province = { in: ["RM", "FR", "RI", "VT"] };
     } else if (province) {
-      where.province = province;
+      // Strict filter: only Latina city or LT province
+      if (province === "LT") {
+        where.OR = [
+          { province: "LT" },
+          { city: { equals: "Latina", mode: "insensitive" } }
+        ];
+      } else {
+        where.province = province;
+      }
     }
     if (city) where.city = { contains: city, mode: "insensitive" };
     if (time_period) where.timePeriod = time_period;
@@ -72,32 +80,12 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    // Priority: Latina events first (city=Latina or province=LT), then by date
-    const isLatinaPriority = (e: any) => {
-      const city = (e.city || '').toLowerCase();
-      const province = (e.province || '').toUpperCase();
-      return city === 'latina' || province === 'LT';
-    };
-
     let events = await prisma.event.findMany({
       where,
       include: { category: true },
       orderBy: [{ date: "asc" }, { time: "asc" }],
-      take: limit * 3, // fetch more to allow prioritization
+      take: limit,
     });
-
-    // Prioritize Latina events: city=Latina or province=LT first, then by date
-    events.sort((a: any, b: any) => {
-      const aPriority = (a.city?.toLowerCase() === 'latina' || (a.province || '').toUpperCase() === 'LT') ? 0 : 1;
-      const bPriority = (b.city?.toLowerCase() === 'latina' || (b.province || '').toUpperCase() === 'LT') ? 0 : 1;
-      if (aPriority !== bPriority) return aPriority - bPriority;
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-      return dateA - dateB;
-    });
-
-    // Apply pagination after prioritization
-    const paginatedEvents = events.slice((page - 1) * limit, page * limit);
 
     const total = await prisma.event.count({ where });
 
