@@ -7,8 +7,6 @@ import { Calendar, MapPin, Clock, Search, X, ChevronLeft, ChevronRight, SlidersH
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
-const PROVINCES = ["LT", "RM", "FR", "VT", "RI"];
-const PROVINCE_NAMES: Record<string, string> = { LT: "Latina", RM: "Roma", FR: "Frosinone", VT: "Viterbo", RI: "Rieti" };
 const TIME_PERIODS = ["mattina", "pomeriggio", "sera", "intera_giornata"];
 const TIME_LABELS: Record<string, string> = { mattina: "Mattina", pomeriggio: "Pomeriggio", sera: "Sera", intera_giornata: "Intera Giornata" };
 
@@ -100,14 +98,10 @@ function EventsContent() {
       </div>
 
       {showFilters && (
-        <div className="glass-card rounded-xl p-5 grid grid-cols-1 sm:grid-cols-3 gap-3 animate-slide-up">
+        <div className="glass-card rounded-xl p-5 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-slide-up">
           <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); }} className="select">
             <option value="">Tutte le categorie</option>
             {categories.map((c: any) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
-          </select>
-          <select value={province} onChange={(e) => { setProvince(e.target.value); setPage(1); }} className="select">
-            <option value="">Tutte le province</option>
-            {PROVINCES.map((p) => <option key={p} value={p}>{PROVINCE_NAMES[p]}</option>)}
           </select>
           <select value={timePeriod} onChange={(e) => { setTimePeriod(e.target.value); setPage(1); }} className="select">
             <option value="">Tutti i momenti</option>
@@ -123,7 +117,6 @@ function EventsContent() {
 {hasFilters && (
         <div className="flex items-center gap-2 flex-wrap">
           {category && <span className="badge">{categories.find((c: any) => c.slug === category)?.name || category}</span>}
-          {province && <span className="badge">{PROVINCE_NAMES[province]}</span>}
           {timePeriod && <span className="badge">{TIME_LABELS[timePeriod]}</span>}
           <button onClick={clearFilters} className="text-xs text-[var(--text-muted)] hover:text-[var(--accent)] flex items-center gap-1 ml-1 font-medium transition-colors">
             <X size={14} /> Cancella filtri
@@ -145,27 +138,6 @@ function EventsContent() {
             {t === "past" && "Passati"}
           </button>
         ))}
-        <div className="border-l border-[var(--card-border)] mx-1" />
-        <button
-          onClick={() => { setProvince(province === "LT" ? "" : "LT"); setPage(1); }}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-            province === "LT"
-              ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/25"
-              : "bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-cyan-50 hover:text-cyan-600 hover:border-cyan-300"
-          }`}>
-          <MapPin size={14} className="inline mr-1" />
-          {province === "LT" ? "Solo Latina" : "Tutte le province"}
-        </button>
-        <button
-          onClick={() => { setProvince(province === "PROVINCIA" ? "" : "PROVINCIA"); setPage(1); }}
-          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-            province === "PROVINCIA"
-              ? "bg-amber-500 text-white shadow-lg shadow-amber-500/25"
-              : "bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-amber-50 hover:text-amber-600 hover:border-amber-300"
-          }`}>
-          <MapPin size={14} className="inline mr-1" />
-          Provincia
-        </button>
       </div>
 
       <div className="flex justify-center">
