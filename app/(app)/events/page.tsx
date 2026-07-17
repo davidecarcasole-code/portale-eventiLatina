@@ -114,7 +114,7 @@ function EventsContent() {
         <AdBanner placement="inline" />
       </div>
 
-{hasFilters && (
+      {hasFilters && (
         <div className="flex items-center gap-2 flex-wrap">
           {category && <span className="badge">{categories.find((c: any) => c.slug === category)?.name || category}</span>}
           {timePeriod && <span className="badge">{TIME_LABELS[timePeriod]}</span>}
@@ -192,38 +192,6 @@ function EventsContent() {
               </Link>
             ))}
           </div>
-          {pagination.totalPages > 1 && (
-                          <div className="relative h-40 overflow-hidden">
-                            <img src={e.image_url || "/banner.png"} alt="" onError={(ev) => { (ev.target as HTMLImageElement).src = "/banner.png"; }} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-                            <div className="absolute top-3 left-3 flex gap-1.5">
-                              {e.category_color && (
-                                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/90 text-gray-800 shadow-sm backdrop-blur-sm">
-                                  {e.category_name}
-                                </span>
-                              )}
-                              {e.is_new && <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500 text-white shadow-sm">Nuovo</span>}
-                            </div>
-                            <div className="absolute bottom-3 left-3 right-3">
-                              <h3 className="font-semibold text-sm text-white drop-shadow-lg line-clamp-2">{e.title}</h3>
-                            </div>
-                          </div>
-                          <div className="px-4 pb-4 pt-3">
-                            <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-[var(--text-muted)]">
-                              <span className="flex items-center gap-1.5 whitespace-nowrap"><Calendar size={12} />{new Date(e.date).toLocaleDateString("it-IT")}</span>
-                              {e.time && <span className="flex items-center gap-1.5 whitespace-nowrap"><Clock size={12} />{e.time}</span>}
-                              {e.city && <span className="flex items-center gap-1.5 whitespace-nowrap"><MapPin size={12} />{e.city}</span>}
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
-            );
-          })()}
-          
           {pagination.totalPages > 1 && (
             <div className="flex items-center justify-center gap-3 mt-8">
               <button disabled={page <= 1} onClick={() => setPage(page - 1)}
