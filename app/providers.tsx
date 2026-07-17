@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useAuthStore } from "@/lib/store";
+import { CookieConsent } from "@/components/CookieConsent";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const token = useAuthStore((s) => s.token);
@@ -32,5 +33,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user?.theme, user?.accent_color]);
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <CookieConsent />
+    </>
+  );
 }
