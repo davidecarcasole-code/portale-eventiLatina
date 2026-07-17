@@ -7,7 +7,7 @@ export interface ScrapedEvent {
   time_period?: string;
   location?: string;
   city: string;
-  province: string;
+  province?: string;
   category_id: string;
   image_url?: string;
   source_url: string;
