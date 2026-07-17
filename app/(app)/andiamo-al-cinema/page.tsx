@@ -110,7 +110,7 @@ export default function CinemaPage() {
               <p className="text-purple-200 text-sm font-medium uppercase tracking-widest">
                 Sezione
               </p>
-              <h1 className="text-3xl sm:text-4xl font-bold drop-shadow-lg">
+              <h1 className="text-3xl sm:text-4xl font-bold drop-shadow-lg text-white">
                 Andiamo al Cinema
               </h1>
             </div>
