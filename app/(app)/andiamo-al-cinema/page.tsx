@@ -88,7 +88,7 @@ export default function CinemaPage() {
       {/* Hero */}
       <div className="relative mb-8 overflow-hidden rounded-3xl">
         <div className="absolute inset-0 bg-[url('/bannercinema.png')] bg-cover bg-center" />
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/70 via-indigo-900/60 to-indigo-950/80" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-purple-700/50 to-indigo-900/70" />
         <div
           className="absolute top-6 right-12 w-3 h-3 rounded-full bg-purple-300/40 animate-float-up"
           style={{ animationDelay: "0.2s" }}
@@ -101,6 +101,18 @@ export default function CinemaPage() {
           className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-purple-300/30 animate-float-up"
           style={{ animationDelay: "1.2s" }}
         />
+        {/* Subtle grid pattern like event cards */}
+        <div className="absolute inset-0 opacity-10">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="cinema-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <line x1="0" y1="0" x2="40" y2="0" stroke="#a855f7" strokeWidth="0.3" />
+                <line x1="0" y1="0" x2="0" y2="40" stroke="#6366f1" strokeWidth="0.3" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#cinema-grid)" />
+          </svg>
+        </div>
         <div className="relative p-4 sm:p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
