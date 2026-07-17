@@ -27,6 +27,7 @@ import { runTrekkingRomaScraper } from './trekkingromaScraper';
 import { runEscursionismoScraper } from './escursionismoScraper';
 import { runLatiumVetusScraper } from './latiumvetusScraper';
 import { runMondorealeScraper } from './mondorealeScraper';
+import { getProvinceFromCity } from './city-to-province';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -209,7 +210,7 @@ async function runSingleSource(
             timePeriod: e.time_period || null,
             location: e.location || null,
             city: e.city || 'Latina',
-            province: e.province || 'LT',
+            province: getProvinceFromCity(e.city || 'Latina'),
             region: 'Lazio',
             imageUrl: e.image_url || null,
             sourceUrl: e.source_url || null,
