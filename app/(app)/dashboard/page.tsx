@@ -206,22 +206,22 @@ export default function DashboardPage() {
             )}
             
             {/* Sezioni speciali */}
-            <Link href="/andiamo-al-cinema" className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-700 shadow-lg shadow-purple-500/30 hover:from-purple-500 hover:to-indigo-600 hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+            <Link href="/andiamo-al-cinema" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-700 shadow-lg shadow-purple-500/30 hover:from-purple-500 hover:to-indigo-600 hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
               <Film size={16} />
               <span className="relative z-10">Andiamo al Cinema</span>
               <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
             </Link>
-            <Link href="/tutti-al-mare" className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-teal-600 shadow-lg shadow-cyan-500/30 hover:from-cyan-400 hover:to-teal-500 hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+            <Link href="/tutti-al-mare" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-teal-600 shadow-lg shadow-cyan-500/30 hover:from-cyan-400 hover:to-teal-500 hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
               <Waves size={16} />
               <span className="relative z-10">Tutti al Mare</span>
               <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-teal-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
             </Link>
-            <Link href="/spazio-kids" className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-amber-600 shadow-lg shadow-orange-500/30 hover:from-orange-400 hover:to-amber-500 hover:shadow-orange-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+            <Link href="/spazio-kids" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-amber-600 shadow-lg shadow-orange-500/30 hover:from-orange-400 hover:to-amber-500 hover:shadow-orange-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
               <Rocket size={16} />
               <span className="relative z-10">Kid's</span>
               <span className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
             </Link>
-            <Link href="/spazio-venere" className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-rose-600 shadow-lg shadow-pink-500/30 hover:from-pink-400 hover:to-rose-500 hover:shadow-pink-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+            <Link href="/spazio-venere" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-rose-600 shadow-lg shadow-pink-500/30 hover:from-pink-400 hover:to-rose-500 hover:shadow-pink-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
               <Heart size={16} />
               <span className="relative z-10">Venere</span>
               <span className="absolute inset-0 bg-gradient-to-r from-pink-400 to-rose-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
