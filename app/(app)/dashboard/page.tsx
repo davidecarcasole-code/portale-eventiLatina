@@ -218,12 +218,12 @@ export default function DashboardPage() {
             </Link>
             <Link href="/spazio-kids" className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-amber-600 shadow-lg shadow-orange-500/30 hover:from-orange-400 hover:to-amber-500 hover:shadow-orange-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
               <Rocket size={16} />
-              <span className="relative z-10">Spazio Kids</span>
+              <span className="relative z-10">Kid's</span>
               <span className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
             </Link>
             <Link href="/spazio-venere" className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-rose-600 shadow-lg shadow-pink-500/30 hover:from-pink-400 hover:to-rose-500 hover:shadow-pink-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
               <Heart size={16} />
-              <span className="relative z-10">Spazio Venere</span>
+              <span className="relative z-10">Venere</span>
               <span className="absolute inset-0 bg-gradient-to-r from-pink-400 to-rose-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
             </Link>
           </div>
