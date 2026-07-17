@@ -232,11 +232,6 @@ function EventsContent() {
                                 </span>
                               )}
                               {e.is_new && <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500 text-white shadow-sm">Nuovo</span>}
-                              {e.province && e.province !== "LT" && (
-                                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-sm backdrop-blur-sm">
-                                  {PROVINCE_NAMES[e.province] || e.province}
-                                </span>
-                              )}
                             </div>
                             <div className="absolute bottom-3 left-3 right-3">
                               <h3 className="font-semibold text-sm text-white drop-shadow-lg line-clamp-2">{e.title}</h3>
