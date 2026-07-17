@@ -89,7 +89,7 @@ export async function GET(req: NextRequest) {
 
     const total = await prisma.event.count({ where });
 
-    const mapped = paginatedEvents.map((e: any) => ({
+    const mapped = events.map((e: any) => ({
       ...e,
       is_new: Math.abs(Date.now() - e.createdAt.getTime()) / 86400000 <= 7,
       category_name: e.category?.name,
