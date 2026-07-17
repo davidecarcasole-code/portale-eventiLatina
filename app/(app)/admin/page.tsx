@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, ChevronLeft, ChevronRight, Upload } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { CINEMAS_LATINA } from "@/lib/cinema/cinemas";
 
@@ -75,6 +75,28 @@ function EventsTab({ token }: { token: string }) {
   const [categories, setCategories] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [uploading, setUploading] = useState(false);
+
+  const uploadImage = async (file: File) => {
+    setUploading(true);
+    setError("");
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await fetch("/api/upload/event-image", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Errore upload");
+      setForm({ ...form, image_url: data.url });
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const loadEvents = useCallback(async () => {
     try {
@@ -191,7 +213,34 @@ function EventsTab({ token }: { token: string }) {
             )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="URL immagine copertina" className="input" />
+            <div className="space-y-2">
+              <label className="text-xs text-[var(--text-secondary)]">URL immagine copertina</label>
+              <input value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} placeholder="https://..." className="input" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs text-[var(--text-secondary)]">Oppure carica un file</label>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); }}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  disabled={uploading}
+                />
+                <div className={`input flex items-center justify-center gap-2 min-h-[48px] ${uploading ? "opacity-50" : ""}`}>
+                  <Upload size={18} className="text-[var(--text-muted)]" />
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    {uploading ? "Caricamento..." : "Scegli file immagine"}
+                  </span>
+                </div>
+              </div>
+              {form.image_url && (
+                <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                  <span>Anteprima:</span>
+                  <img src={form.image_url} alt="preview" className="w-12 h-12 object-cover rounded" />
+                </div>
+              )}
+            </div>
           </div>
           <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Descrizione" className="input min-h-[80px]" rows={3} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
