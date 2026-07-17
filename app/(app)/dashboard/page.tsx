@@ -110,7 +110,7 @@ export default function DashboardPage() {
       <div className="blur-sphere blur-sphere-2" />
       
       {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl mb-8 group">
+      <div className="relative overflow-hidden rounded-2xl mb-8">
         {/* Background layers */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-950 to-gray-900" />
         <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-5" />
@@ -222,13 +222,13 @@ export default function DashboardPage() {
           { label: "Prossimi Eventi", value: events.length, icon: TrendingUp, color: "from-green-500 to-green-600" },
           { label: "Categorie", value: categories.length, icon: Sparkles, color: "from-purple-500 to-purple-600" },
         ].map((s, i) => (
-          <div key={s.label} className={`glass-card rounded-xl p-5 stagger-${i + 1} group hover:shadow-[0_0_25px_var(--accent-glow)] transition-all duration-300`}>
+          <div key={s.label} className={`glass-card rounded-xl p-5 stagger-${i + 1} transition-all duration-300`}>
             <div className="flex items-center gap-4">
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                 <s.icon size={22} className="text-white" />
               </div>
               <div>
-                <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider font-medium">{s.label}</p>
+                <p className="text-xs text-[var(--text-secondary)] uppercase tracking-wider font-medium">{s.label}</p>
                 <p className="text-2xl font-bold mt-0.5">{s.value}</p>
               </div>
             </div>
@@ -239,7 +239,7 @@ export default function DashboardPage() {
       {categories.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Categorie</h3>
+            <h3 className="text-lg font-semibold text-[var(--text-primary)]">Categorie</h3>
             <Link href="/events" className="text-xs text-[var(--accent)] hover:underline font-medium">Vedi tutti</Link>
           </div>
           <CategoryCarousel categories={categories} />
@@ -251,7 +251,7 @@ export default function DashboardPage() {
           {todayEvents.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] flex items-center gap-2">
                   Eventi di Oggi
                   <span className="text-xs bg-gradient-to-r from-cyan-500 to-indigo-500 text-white px-2 py-0.5 rounded-full animate-pulse">Live</span>
                 </h3>
@@ -284,7 +284,7 @@ export default function DashboardPage() {
           {events.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white">Prossimi Eventi</h3>
+                <h3 className="text-lg font-semibold text-[var(--text-primary)]">Prossimi Eventi</h3>
                 <Link href="/events" className="inline-flex items-center gap-1 text-xs text-[var(--accent)] hover:underline font-medium">
                   Vedi tutti <ArrowRight size={12} />
                 </Link>
