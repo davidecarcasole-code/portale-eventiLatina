@@ -48,7 +48,7 @@ export default function MarePage() {
             </div>
             <div>
               <p className="text-cyan-200 text-sm font-medium uppercase tracking-widest">Sezione</p>
-              <h1 className="text-3xl sm:text-4xl font-bold drop-shadow-lg">Tutti al Mare</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold drop-shadow-lg text-white">Tutti al Mare</h1>
             </div>
           </div>
           <p className="text-white/90 max-w-xl text-sm sm:text-base leading-relaxed">
