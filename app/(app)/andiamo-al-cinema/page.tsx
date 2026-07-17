@@ -88,17 +88,17 @@ export default function CinemaPage() {
       {/* Hero */}
       <div className="relative mb-8 overflow-hidden rounded-3xl">
         <div className="absolute inset-0 bg-[url('/bannercinema.png')] bg-cover bg-center" />
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-purple-700/50 to-indigo-900/70" />
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-900/60 via-amber-700/50 to-orange-900/70" />
         <div
-          className="absolute top-6 right-12 w-3 h-3 rounded-full bg-purple-300/40 animate-float-up"
+          className="absolute top-6 right-12 w-3 h-3 rounded-full bg-amber-300/40 animate-float-up"
           style={{ animationDelay: "0.2s" }}
         />
         <div
-          className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-indigo-300/40 animate-float-up"
+          className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-orange-300/40 animate-float-up"
           style={{ animationDelay: "0.7s" }}
         />
         <div
-          className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-purple-300/30 animate-float-up"
+          className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-amber-300/30 animate-float-up"
           style={{ animationDelay: "1.2s" }}
         />
         {/* Subtle grid pattern like event cards */}
@@ -106,8 +106,8 @@ export default function CinemaPage() {
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="cinema-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                <line x1="0" y1="0" x2="40" y2="0" stroke="#a855f7" strokeWidth="0.3" />
-                <line x1="0" y1="0" x2="0" y2="40" stroke="#6366f1" strokeWidth="0.3" />
+                <line x1="0" y1="0" x2="40" y2="0" stroke="#f59e0b" strokeWidth="0.3" />
+                <line x1="0" y1="0" x2="0" y2="40" stroke="#ea580c" strokeWidth="0.3" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#cinema-grid)" />
@@ -119,7 +119,7 @@ export default function CinemaPage() {
               <Clapperboard size={28} className="text-white" fill="white" />
             </div>
             <div>
-              <p className="text-purple-200 text-sm font-medium uppercase tracking-widest">
+              <p className="text-amber-200 text-sm font-medium uppercase tracking-widest">
                 Sezione
               </p>
               <h1 className="text-3xl sm:text-4xl font-bold drop-shadow-lg text-white">
@@ -137,7 +137,7 @@ export default function CinemaPage() {
       {loading ? (
         <div className="flex justify-center py-24">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-8 h-8 rounded-full border-2 border-purple-500 border-t-transparent animate-spin" />
+            <div className="w-8 h-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
             <p className="text-sm text-[var(--text-muted)]">
               Caricamento cinema...
             </p>
@@ -145,8 +145,8 @@ export default function CinemaPage() {
         </div>
       ) : cinemas.length === 0 ? (
         <div className="text-center py-24">
-          <div className="w-16 h-16 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mx-auto mb-4">
-            <Clapperboard size={28} className="text-purple-500" />
+          <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto mb-4">
+            <Clapperboard size={28} className="text-amber-500" />
           </div>
           <p className="text-lg font-medium text-[var(--text-primary)]">
             Nessun cinema trovato
@@ -165,7 +165,7 @@ export default function CinemaPage() {
                 onClick={() => setActiveCinema(cinema.slug)}
                 className={`flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
                   activeCinema === cinema.slug
-                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/25 scale-105"
+                    ? "bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 scale-105"
                     : "bg-[var(--card-bg)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] border border-[var(--card-border)]"
                 }`}
               >
@@ -178,7 +178,7 @@ export default function CinemaPage() {
           {selected && (
             <div className="glass-card rounded-2xl p-4 sm:p-5 mb-6">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-sm">
                   <Film size={18} className="text-white" />
                 </div>
                 <div>
@@ -186,7 +186,7 @@ export default function CinemaPage() {
                     {selected.name}
                   </h2>
                   <div className="flex items-center gap-2 mt-1 text-sm text-[var(--text-secondary)]">
-                    <MapPin size={14} className="text-purple-500" />
+                    <MapPin size={14} className="text-amber-500" />
                     <span>
                       {selected.address}, {selected.city} ({selected.province})
                     </span>
@@ -196,7 +196,7 @@ export default function CinemaPage() {
                       href={selected.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 mt-2 text-xs text-purple-500 hover:text-purple-400 transition-colors"
+                      className="inline-flex items-center gap-1.5 mt-2 text-xs text-amber-500 hover:text-amber-400 transition-colors"
                     >
                       <ExternalLink size={12} />
                       Sito ufficiale
