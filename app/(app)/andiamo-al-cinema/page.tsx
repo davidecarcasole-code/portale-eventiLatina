@@ -215,6 +215,12 @@ export default function CinemaPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                    {/* Floating bubbles like hero banner */}
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-purple-300/40 animate-float-up" style={{ animationDelay: "0.2s" }} />
+                      <div className="absolute top-8 left-1/4 w-1.5 h-1.5 rounded-full bg-indigo-300/40 animate-float-up" style={{ animationDelay: "0.7s" }} />
+                      <div className="absolute bottom-4 right-1/3 w-3 h-3 rounded-full bg-purple-300/30 animate-float-up" style={{ animationDelay: "1.2s" }} />
+                    </div>
                     {film.isAdmin && (
                       <span className="absolute top-3 left-3 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-1 shadow-lg">
                         <Sparkles size={10} />

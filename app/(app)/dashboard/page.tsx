@@ -188,7 +188,7 @@ export default function DashboardPage() {
       {categories.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Categorie</h3>
+            <h3 className="text-lg font-semibold text-white">Categorie</h3>
             <Link href="/events" className="text-xs text-[var(--accent)] hover:underline font-medium">Vedi tutti</Link>
           </div>
           <CategoryCarousel categories={categories} />
@@ -200,7 +200,7 @@ export default function DashboardPage() {
           {todayEvents.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                   Eventi di Oggi
                   <span className="text-xs bg-gradient-to-r from-cyan-500 to-indigo-500 text-white px-2 py-0.5 rounded-full animate-pulse">Live</span>
                 </h3>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
           {events.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Prossimi Eventi</h3>
+                <h3 className="text-lg font-semibold text-white">Prossimi Eventi</h3>
                 <Link href="/events" className="inline-flex items-center gap-1 text-xs text-[var(--accent)] hover:underline font-medium">
                   Vedi tutti <ArrowRight size={12} />
                 </Link>
