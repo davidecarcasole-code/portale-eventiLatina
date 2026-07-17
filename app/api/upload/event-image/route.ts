@@ -30,7 +30,11 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = join(process.cwd(), "public", "uploads", "events");
+    // Use /tmp in production (Vercel), local public in development
+    const isProd = process.env.NODE_ENV === "production";
+    const baseDir = isProd ? "/tmp" : join(process.cwd(), "public");
+    const uploadDir = join(baseDir, "uploads", "events");
+    
     if (!existsSync(uploadDir)) {
       await mkdir(uploadDir, { recursive: true });
     }
@@ -42,11 +46,13 @@ export async function POST(req: NextRequest) {
 
     await writeFile(filePath, buffer);
 
-    const publicUrl = `/uploads/events/${fileName}`;
+    const publicUrl = isProd 
+      ? `/api/uploads/events/${fileName}` // Will need a separate route to serve from /tmp
+      : `/uploads/events/${fileName}`;
 
     return helpers.jsonResponse({ url: publicUrl });
   } catch (err: any) {
     console.error("Upload error:", err);
-    return Response.json({ error: "Errore durante l'upload" }, { status: 500 });
+    return Response.json({ error: err.message || "Errore durante l'upload" }, { status: 500 });
   }
 }
