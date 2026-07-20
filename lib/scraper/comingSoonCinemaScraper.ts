@@ -93,6 +93,9 @@ async function scrapeComingSoonCinema(): Promise<ScrapedEvent[]> {
 
             const description = $card.find('.description, .synopsis, .trama, .plot, .description, p').first().text().trim();
             
+            // Extract timeText
+            const timeText = $card.find('.orario, .time, .showtime, .orari, .ora, .schedule, .orari-spettacolo').first().text().trim();
+            
             // Better cinema extraction - try multiple selectors
             let cinemaName = $card.find('.cinema-name, .cinema-name a, .cinema a, .sala, .theater-name, .cinema-name, [class*="cinema"] a, .theater-name').first().text().trim();
             if (!cinemaName) {
