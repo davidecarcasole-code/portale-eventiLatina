@@ -79,15 +79,32 @@ async function scrapeComingSoonCinema(): Promise<ScrapedEvent[]> {
             const cardText = $card.text();
             let eventDate = parseDateFromText($card.text()) || getTodayISO();
             
-            // Only keep events for TODAY
-            if (eventDate !== getTodayISO()) {
-              console.log(`[ComingSoon] Skipping "${title}" - date is ${eventDate}, not today`);
+            // Keep events for today AND next 7 days (not just today)
+            const eventDateObj = new Date(eventDate);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const maxDate = new Date();
+            maxDate.setDate(maxDate.getDate() + 7);
+            maxDate.setHours(23,59,59,999);
+            
+            if (eventDateObj < today || eventDateObj > maxDate) {
               return;
             }
 
             const description = $card.find('.description, .synopsis, .trama, .plot, .description, p').first().text().trim();
-            const cinemaName = $card.find('.cinema, .sala, .theater, [class*="cinema"], [class*="sala"], .location, .luogo').first().text().trim() || 'Cinema Latina';
-            const timeText = $card.find('.orario, .time, .showtime, .orari, .ora, .schedule, .orari-spettacolo').first().text().trim();
+            
+            // Better cinema extraction - try multiple selectors
+            let cinemaName = $card.find('.cinema-name, .cinema-name a, .cinema a, .sala, .theater-name, .cinema-name, [class*="cinema"] a, .theater-name').first().text().trim();
+            if (!cinemaName) {
+              cinemaName = $card.find('.cinema, .sala, .theater, [class*="cinema"], [class*="sala"], .location, .luogo').first().text().trim();
+            }
+            if (!cinemaName || cinemaName === 'Cinema Latina') {
+              // Try to find cinema from link or parent elements
+              const linkText = $card.find('a').first().text().trim();
+              const cinemaMatch = linkText.match(/(Arena Corso|Multisala Andromeda|The Space|UCI|Cinema Moderno|Cinema Corso|Multisala)/i);
+              if (cinemaMatch) cinemaName = cinemaMatch[1];
+            }
+            if (!cinemaName) cinemaName = 'Cinema Latina';
             
             const imageUrl = $card.find('img').first().attr('src') || $card.find('img').first().attr('data-src') || $card.find('img').first().attr('data-lazy');
 
