@@ -26,7 +26,7 @@ import { runAgesciScraper } from './agesciScraper';
 import { runTrekkingRomaScraper } from './trekkingromaScraper';
 import { runEscursionismoScraper } from './escursionismoScraper';
 import { runLatiumVetusScraper } from './latiumvetusScraper';
-import { runMondorealeScraper } from './mondorealeScraper';
+
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -84,7 +84,6 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   trekkingroma: { name: 'TrekkingRoma', url: 'https://trekkingroma.it/eventi/', fn: runTrekkingRomaScraper },
   escursionismo: { name: 'Escursionismo.it', url: 'https://www.escursionismo.it/escursioni/', fn: runEscursionismoScraper },
   latiumvetus: { name: 'Latium Vetus', url: 'https://www.latiumvetus.it/visite/', fn: runLatiumVetusScraper },
-  mondoreale: { name: 'MondoReale.it', url: 'https://www.mondoreale.it/', fn: runMondorealeScraper },
 };
 
 async function getPrisma() {
@@ -339,7 +338,6 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('TrekkingRoma', runTrekkingRomaScraper);
   await collect('Escursionismo.it', runEscursionismoScraper);
   await collect('Latium Vetus', runLatiumVetusScraper);
-  await collect('MondoReale.it', runMondorealeScraper);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;
