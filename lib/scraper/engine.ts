@@ -249,8 +249,6 @@ export async function runScraper(sourceType?: string): Promise<ScraperResult[]> 
   console.log('[Scraper] Starting...');
   const prisma = await getPrisma();
 
-  await ensureDefaultSources();
-
   const [catMap, existingEvents] = await Promise.all([
     buildCategoryMap(),
     loadExistingEvents(),
