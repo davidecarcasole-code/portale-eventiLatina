@@ -187,7 +187,7 @@ export default function DashboardPage() {
                   <Link href="/tutti-al-mare" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-cyan-200 bg-gradient-to-r from-cyan-600/40 to-teal-600/40 border border-cyan-500/20 backdrop-blur-sm hover:from-cyan-500/50 hover:to-teal-500/50 hover:text-white transition-all duration-300">
                     <Waves size={14} /> Mare
                   </Link>
-                  <Link href="/spazio-kids" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-orange-200 bg-gradient-to-r from-orange-600/40 to-amber-600/40 border border-orange-500/20 backdrop-blur-sm hover:from-orange-500/50 hover:to-amber-500/50 hover:text-white transition-all duration-300">
+                  <Link href="/spazio-kids" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-yellow-200 bg-gradient-to-r from-yellow-600/40 to-amber-600/40 border border-yellow-500/20 backdrop-blur-sm hover:from-yellow-500/50 hover:to-amber-500/50 hover:text-white transition-all duration-300">
                     <Rocket size={14} /> Kid's
                   </Link>
                   <Link href="/spazio-venere" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-pink-200 bg-gradient-to-r from-pink-600/40 to-rose-600/40 border border-pink-500/20 backdrop-blur-sm hover:from-pink-500/50 hover:to-rose-500/50 hover:text-white transition-all duration-300">
@@ -413,7 +413,7 @@ function BannerButtons({ canManageEvents }: { canManageEvents: boolean }) {
         <Waves size={16} />
         <span className="relative z-10">Tutti al Mare</span>
       </Link>
-      <Link href="/spazio-kids" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-amber-600 shadow-lg shadow-orange-500/30 hover:from-orange-400 hover:to-amber-500 hover:shadow-orange-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+      <Link href="/spazio-kids" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-yellow-500 to-amber-600 shadow-lg shadow-yellow-500/30 hover:from-yellow-400 hover:to-amber-500 hover:shadow-yellow-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
         <Rocket size={16} />
         <span className="relative z-10">Kid's</span>
       </Link>
