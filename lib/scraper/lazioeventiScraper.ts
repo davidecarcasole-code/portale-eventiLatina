@@ -3,7 +3,11 @@ import * as cheerio from 'cheerio';
 import { ScrapedEvent } from './scraped-event';
 
 const BASE = 'https://lazioeventi.com';
-const LISTING = `${BASE}/oggi-nel-lazio`;
+const LISTINGS = [
+  `${BASE}/oggi-nel-lazio`,
+  `${BASE}/eventi`,
+  `${BASE}/eventi/futuri`,
+];
 
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
   musica: ['concerto', 'musica', 'live', 'dj set', 'band', 'cantante', 'orchestra', 'coro', 'musicista', 'festival musicale', 'note'],
@@ -99,7 +103,7 @@ function parsePage(html: string): ScrapedEvent[] {
       image_url: (imgSrc && (imgSrc.startsWith('http') || imgSrc.startsWith('//')))
         ? (imgSrc.startsWith('//') ? `https:${imgSrc}` : imgSrc)
         : undefined,
-      source_url: sourceUrl || LISTING,
+      source_url: sourceUrl || LISTINGS[0],
       source_name: 'LazioEventi.com',
     });
   });
@@ -108,7 +112,7 @@ function parsePage(html: string): ScrapedEvent[] {
 }
 
 export async function runLazioEventiScraper(): Promise<ScrapedEvent[]> {
-  console.log('[LazioEventi] Fetching listing...');
+  console.log('[LazioEventi] Fetching listings...');
   const all: ScrapedEvent[] = [];
   const seen = new Set<string>();
 
@@ -116,37 +120,38 @@ export async function runLazioEventiScraper(): Promise<ScrapedEvent[]> {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
   };
 
-  for (let page = 1; page <= 5; page++) {
-    const url = page === 1 ? LISTING : `${LISTING}?pno=${page}`;
-    try {
-      const res = await axios.get(url, { headers, timeout: 15000 });
-      const html = res.data;
+  for (const listing of LISTINGS) {
+    for (let page = 1; page <= 3; page++) {
+      const url = page === 1 ? listing : `${listing}?pno=${page}`;
+      try {
+        const res = await axios.get(url, { headers, timeout: 15000 });
+        const html = res.data;
 
-      if (typeof html !== 'string' || html.includes('Nessun evento trovato') || html.trim().length < 100) {
-        console.log(`[LazioEventi] Page ${page}: no more events`);
-        break;
-      }
-
-      const events = parsePage(html);
-      if (events.length === 0) {
-        // If page has content but zero events parsed, log it but don't break
-        console.log(`[LazioEventi] Page ${page}: 0 events parsed (html length: ${html.length})`);
-        break;
-      }
-
-      let newCount = 0;
-      for (const e of events) {
-        const key = e.title.toLowerCase().slice(0, 60) + e.date + e.city;
-        if (!seen.has(key)) {
-          seen.add(key);
-          all.push(e);
-          newCount++;
+        if (typeof html !== 'string' || html.includes('Nessun evento trovato') || html.trim().length < 100) {
+          console.log(`[LazioEventi] ${url}: no more events`);
+          break;
         }
+
+        const events = parsePage(html);
+        if (events.length === 0) {
+          console.log(`[LazioEventi] ${url}: 0 events parsed`);
+          break;
+        }
+
+        let newCount = 0;
+        for (const e of events) {
+          const key = e.title.toLowerCase().slice(0, 60) + e.date + e.city;
+          if (!seen.has(key)) {
+            seen.add(key);
+            all.push(e);
+            newCount++;
+          }
+        }
+        console.log(`[LazioEventi] ${url}: ${events.length} events, ${newCount} new`);
+      } catch (err: any) {
+        console.log(`[LazioEventi] ${url}: ${err.message?.slice(0, 100)}`);
+        break;
       }
-      console.log(`[LazioEventi] Page ${page}: ${events.length} events, ${newCount} new`);
-    } catch (err: any) {
-      console.error(`[LazioEventi] Page ${page} error: ${err.message?.slice(0, 200)}`);
-      break;
     }
   }
 

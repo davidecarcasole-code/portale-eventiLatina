@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import { ScrapedEvent } from './scraped-event';
 
 const BASE = 'https://www.mondoreale.it';
+const EVENTS_CATEGORY = '/category/cultura-eventi/';
 
 const MONTHS_IT: Record<string, string> = {
   gennaio: '01', febbraio: '02', marzo: '03', aprile: '04',
@@ -44,8 +45,8 @@ export async function runMondorealeScraper(): Promise<ScrapedEvent[]> {
   const seen = new Set<string>();
   const headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' };
 
-  for (let page = 1; page <= 5; page++) {
-    const url = page === 1 ? BASE : `${BASE}/page/${page}/`;
+  for (let page = 1; page <= 3; page++) {
+    const url = page === 1 ? `${BASE}${EVENTS_CATEGORY}` : `${BASE}${EVENTS_CATEGORY}page/${page}/`;
     try {
       const res = await axios.get(url, { headers, timeout: 15000 });
       const $ = cheerio.load(res.data);

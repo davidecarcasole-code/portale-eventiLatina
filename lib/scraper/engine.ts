@@ -27,6 +27,7 @@ import { runTrekkingRomaScraper } from './trekkingromaScraper';
 import { runEscursionismoScraper } from './escursionismoScraper';
 import { runLatiumVetusScraper } from './latiumvetusScraper';
 import { runMondorealeScraper } from './mondorealeScraper';
+import { runEventiesagreScraper } from './eventiesagreScraper';
 import { getProvinceFromCity } from './city-to-province';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
@@ -86,6 +87,7 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   escursionismo: { name: 'Escursionismo.it', url: 'https://www.escursionismo.it/escursioni/', fn: runEscursionismoScraper },
   latiumvetus: { name: 'Latium Vetus', url: 'https://www.latiumvetus.it/visite/', fn: runLatiumVetusScraper },
   mondoreale: { name: 'MondoReale.it', url: 'https://www.mondoreale.it/', fn: runMondorealeScraper },
+  eventiesagre: { name: 'EventieSagre', url: 'https://www.eventiesagre.it/Regione/Lazio/Provincia-di-Latina/', fn: runEventiesagreScraper },
 };
 
 async function getPrisma() {

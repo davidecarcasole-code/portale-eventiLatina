@@ -38,6 +38,7 @@ function decodeHtmlEntities(str: string): string {
 
 export async function runFattivivoScraper(): Promise<ScrapedEvent[]> {
   console.log('[Fattivivo] Starting...');
+  const today = new Date().toISOString().split('T')[0];
   const all: ScrapedEvent[] = [];
   const seen = new Set<string>();
 
@@ -96,7 +97,7 @@ export async function runFattivivoScraper(): Promise<ScrapedEvent[]> {
 
         all.push({
           title: decoded,
-          date: date || '2026-07-08',
+          date: date || today,
           city,
           category_id: category,
           image_url: imageUrl || undefined,
