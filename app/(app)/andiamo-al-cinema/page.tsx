@@ -113,7 +113,7 @@ export default function CinemaPage() {
             <rect width="100%" height="100%" fill="url(#cinema-grid)" />
           </svg>
         </div>
-        <div className="relative p-4 sm:p-6">
+        <div className="relative p-8 sm:p-12">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
               <Clapperboard size={28} className="text-white" fill="white" />

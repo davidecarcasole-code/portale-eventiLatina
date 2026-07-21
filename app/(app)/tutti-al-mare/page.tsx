@@ -41,7 +41,7 @@ export default function MarePage() {
         <div className="absolute top-6 right-12 w-3 h-3 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.2s" }} />
         <div className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.7s" }} />
         <div className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-cyan-300/30 animate-float-up" style={{ animationDelay: "1.2s" }} />
-        <div className="relative p-4 sm:p-6">
+        <div className="relative p-8 sm:p-12">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
               <Waves size={28} className="text-white" fill="white" />
