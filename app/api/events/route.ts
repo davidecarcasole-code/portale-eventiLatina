@@ -84,6 +84,7 @@ export async function GET(req: NextRequest) {
       where,
       include: { category: true },
       orderBy: [{ date: "asc" }, { time: "asc" }],
+      skip: (page - 1) * limit,
       take: limit,
     });
 

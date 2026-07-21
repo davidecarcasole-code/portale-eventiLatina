@@ -69,7 +69,7 @@ function EventsContent() {
       finally { setLoading(false); }
     }
     load();
-  }, [search, category, province, timePeriod, page]);
+  }, [search, category, province, timePeriod, timeFilter, page]);
 
   function clearFilters() {
     setSearch(""); setCategory(""); setProvince("LT"); setTimePeriod(""); setPage(1);
@@ -199,16 +199,33 @@ function EventsContent() {
                 <ChevronLeft size={16} />
               </button>
               <div className="flex items-center gap-1">
-                {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => {
-                  const pageNum = i + 1;
-                  return (
-                    <button key={pageNum} onClick={() => setPage(pageNum)}
-                      className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${page === pageNum ? "bg-gradient-to-r from-[var(--accent)] to-indigo-500 text-white shadow-md" : "text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)]"}`}>
-                      {pageNum}
-                    </button>
+                {(() => {
+                  const total = pagination.totalPages;
+                  const max = 5;
+                  let start = Math.max(1, page - Math.floor(max / 2));
+                  let end = Math.min(total, start + max - 1);
+                  if (end - start + 1 < max) start = Math.max(1, end - max + 1);
+                  const pages = [];
+                  if (start > 1) {
+                    pages.push(1);
+                    if (start > 2) pages.push(-1);
+                  }
+                  for (let i = start; i <= end; i++) pages.push(i);
+                  if (end < total) {
+                    if (end < total - 1) pages.push(-2);
+                    pages.push(total);
+                  }
+                  return pages.map((p, idx) =>
+                    p < 0 ? (
+                      <span key={`ellipsis-${idx}`} className="text-[var(--text-muted)] text-xs px-1">...</span>
+                    ) : (
+                      <button key={p} onClick={() => setPage(p)}
+                        className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${page === p ? "bg-gradient-to-r from-[var(--accent)] to-indigo-500 text-white shadow-md" : "text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)]"}`}>
+                        {p}
+                      </button>
+                    )
                   );
-                })}
-                {pagination.totalPages > 5 && <span className="text-[var(--text-muted)] text-xs">...</span>}
+                })()}
               </div>
               <button disabled={page >= pagination.totalPages} onClick={() => setPage(page + 1)}
                 className="p-2.5 rounded-xl border border-[var(--card-border)] disabled:opacity-30 hover:bg-[var(--accent-subtle)] transition-all">
