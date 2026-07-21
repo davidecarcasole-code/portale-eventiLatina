@@ -2,9 +2,8 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Rocket, ArrowRight, Plus, ChevronLeft, ChevronRight, ExternalLink, Mail, Film, Waves, Heart } from "lucide-react";
+import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Sparkles as SparklesIcon, Wine, Rocket, ArrowRight, Plus, ChevronLeft, ChevronRight, ExternalLink, Mail, Film, Waves, Heart, Sun, CloudSun, MountainSnow } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
-import { AdBanner } from "@/components/AdBanner";
 
 const categoryIcons: Record<string, any> = {
   musica: Music, teatro: Theater, cultura: Book, sport: Trophy, natura: Leaf,
@@ -61,6 +60,7 @@ export default function DashboardPage() {
   const [todayEvents, setTodayEvents] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [bannerVariant, setBannerVariant] = useState(0);
 
   useEffect(() => {
     async function load() {
@@ -109,126 +109,144 @@ export default function DashboardPage() {
       <div className="blur-sphere blur-sphere-1" />
       <div className="blur-sphere blur-sphere-2" />
       
-      {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl mb-8">
-        {/* Background layers */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-950 to-gray-900" />
-        <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-5" />
-        
-        {/* Animated mesh gradients */}
-        <div className="absolute inset-0">
-          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/20 via-transparent to-purple-500/20 rounded-full blur-[200px] animate-blob" style={{ animationDuration: "8s", animationDelay: "0s" }} />
-          <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-gradient-to-tr from-fuchsia-500/20 via-transparent to-lime-500/20 rounded-full blur-[200px] animate-blob" style={{ animationDuration: "10s", animationDelay: "2s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-gradient-to-r from-indigo-500/15 via-transparent to-cyan-500/15 rounded-full blur-[150px] animate-blob" style={{ animationDuration: "12s", animationDelay: "4s" }} />
+      {/* Banner Variant Selector */}
+      <div className="flex items-center gap-1.5 mb-2">
+        <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider font-medium mr-1">Banner:</span>
+        {[
+          { icon: Sparkles, label: "Dark Neon" },
+          { icon: Sun, label: "Estate" },
+          { icon: CloudSun, label: "Vetro" },
+          { icon: MountainSnow, label: "Minimal" },
+        ].map((v, i) => (
+          <button key={i} onClick={() => setBannerVariant(i)}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all ${bannerVariant === i ? "bg-[var(--accent)] text-white shadow-sm" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]"}`}>
+            <v.icon size={12} /> {v.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Variant 0: Dark Neon (original refined) */}
+      {bannerVariant === 0 && (
+        <div className="relative overflow-hidden rounded-2xl mb-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-950 to-gray-900" />
+          <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-5" />
+          <div className="absolute inset-0">
+            <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-gradient-to-br from-cyan-500/20 via-transparent to-purple-500/20 rounded-full blur-[200px] animate-blob" />
+            <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-gradient-to-tr from-fuchsia-500/20 via-transparent to-lime-500/20 rounded-full blur-[200px] animate-blob" style={{ animationDelay: "2s" }} />
+          </div>
+          <div className="absolute inset-0 opacity-15">
+            <svg className="w-full h-full">
+              <defs>
+                <pattern id="ng" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="0" x2="50" y2="0" stroke="#22d3ee" strokeWidth="0.2" />
+                  <line x1="0" y1="0" x2="0" y2="50" stroke="#d946ef" strokeWidth="0.2" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#ng)" />
+            </svg>
+          </div>
+          <NextEventCard todayEvents={todayEvents} />
         </div>
-        
-        {/* Floating particles */}
-        <div className="absolute inset-0 opacity-60" style={{ pointerEvents: 'none' }}>
-          <div className="absolute top-4 left-[8%] w-1.5 h-1.5 bg-cyan-400 rounded-full shadow-[0_0_10px_2px_#22d3ee] animate-float-up" style={{ animationDelay: "0s", animationDuration: "6s" }} />
-          <div className="absolute top-12 right-[12%] w-1 h-1 bg-fuchsia-400 rounded-full shadow-[0_0_8px_2px_#d946ef] animate-float-up" style={{ animationDelay: "0.5s", animationDuration: "5s" }} />
-          <div className="absolute bottom-12 left-[18%] w-1 h-1 bg-lime-400 rounded-full shadow-[0_0_8px_2px_#a3e635] animate-float-up" style={{ animationDelay: "1s", animationDuration: "7s" }} />
-          <div className="absolute top-8 left-[55%] w-1.5 h-1.5 bg-yellow-300 rounded-full shadow-[0_0_8px_2px_#fde047] animate-float-up" style={{ animationDelay: "1.5s", animationDuration: "6s" }} />
-          <div className="absolute bottom-8 right-[22%] w-1 h-1 bg-cyan-300 rounded-full shadow-[0_0_8px_2px_#67e8f9] animate-float-up" style={{ animationDelay: "2s", animationDuration: "5s" }} />
-          <div className="absolute top-16 left-[35%] w-1 h-1 bg-fuchsia-300 rounded-full shadow-[0_0_8px_2px_#f0abfc] animate-float-up" style={{ animationDelay: "2.5s", animationDuration: "8s" }} />
-          <div className="absolute bottom-16 right-[40%] w-2 h-2 bg-indigo-300/50 rounded-full shadow-[0_0_10px_2px_#a5b4fc] animate-float-up" style={{ animationDelay: "3s", animationDuration: "7s" }} />
-          <div className="absolute top-24 left-[70%] w-1 h-1 bg-pink-300/50 rounded-full shadow-[0_0_8px_2px_#f9a8d4] animate-float-up" style={{ animationDelay: "3.5s", animationDuration: "6s" }} />
-        </div>
-        
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-15">
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="neon-grid" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
-                <line x1="0" y1="0" x2="50" y2="0" stroke="#22d3ee" strokeWidth="0.2" />
-                <line x1="0" y1="0" x2="0" y2="50" stroke="#d946ef" strokeWidth="0.2" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#neon-grid)" />
-          </svg>
-        </div>
-        
-        {/* Animated border */}
-        <div className="absolute inset-0 border border-transparent rounded-2xl" style={{ 
-          borderImage: "linear-gradient(135deg, #22d3ee, #d946ef, #a3e635, #22d3ee) 1" 
-        }} />
-        
-        {/* Content */}
-        <div className="relative p-6 sm:p-8 lg:p-10 text-white">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <p className="text-cyan-300 text-sm font-medium uppercase tracking-wider drop-shadow-[0_0_10px_#22d3ee]">{today}</p>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mt-2 flex items-center gap-2">
-                <span className="bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-lime-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(217,70,239,0.6)]">
-                  Benvenuto{user?.name ? `, ${user.name}` : ""}
-                </span>
-                <Sparkles size={24} className="text-fuchsia-400 drop-shadow-[0_0_15px_#d946ef] animate-pulse" />
-              </h2>
+      )}
+
+      {/* Variant 1: Summer Estate */}
+      {bannerVariant === 1 && (
+        <div className="relative overflow-hidden rounded-2xl mb-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500 via-orange-600 to-rose-700" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjA4Ii8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPjwvbGluZWFyR3JhZGllbnQ+PHBhdHRlcm4gaWQ9InAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBvbHlsaW5lIHBvaW50cz0iMCwwIDQwLDAgNDAsNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIwLjMiIHN0cm9rZS1vcGFjaXR5PSIwLjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcCkiLz48L3N2Zz4=')] opacity-40" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-300/20 rounded-full blur-[150px]" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-300/20 rounded-full blur-[120px]" />
+          <div className="absolute -top-10 -left-10 w-20 h-20 bg-yellow-200/20 rounded-full animate-pulse" style={{ animationDuration: "4s" }} />
+          <div className="relative p-6 sm:p-8 lg:p-10 text-white">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div>
+                <p className="text-amber-200 text-sm font-medium uppercase tracking-wider">{today}</p>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mt-2">
+                  <span className="text-white drop-shadow-[0_2px_10px_rgba(251,191,36,0.3)]">
+                    Benvenuto{user?.name ? `, ${user.name}` : ""}
+                  </span>
+                </h2>
+                <p className="text-amber-100/80 mt-1 max-w-2xl text-base sm:text-lg leading-relaxed">
+                  Estate in provincia di Latina: eventi, concerti e serate sul litorale
+                </p>
+              </div>
+              <NextEventBadge todayEvents={todayEvents} light />
             </div>
-            <div className="hidden sm:block">
-              <div className="glass-card rounded-xl p-4 border border-white/10 backdrop-blur-sm">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
-                    <Calendar size={22} className="text-white" />
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[11px] text-white/60 uppercase tracking-wider">Prossimo evento</p>
-                    <p className="text-sm font-semibold text-white truncate max-w-xs">
-                      {todayEvents.length > 0 ? todayEvents[0].title : "Nessun evento oggi"}
-                    </p>
-                    {todayEvents.length > 0 && (
-                      <p className="text-[11px] text-white/50 flex items-center gap-1 mt-0.5">
-                        <Clock size={10} />
-                        {todayEvents[0].time || "Tutto il giorno"}
-                      </p>
-                    )}
-                  </div>
+            <BannerButtons canManageEvents={canManageEvents} />
+          </div>
+        </div>
+      )}
+
+      {/* Variant 2: Glassmorphism / Vetro */}
+      {bannerVariant === 2 && (
+        <div className="relative overflow-hidden rounded-2xl mb-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-800 dark:via-gray-900 dark:to-indigo-950" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiM2YjcyODEiIGZpbGwtb3BhY2l0eT0iMC4wNCI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')]" />
+          <div className="absolute -top-20 -right-20 w-72 h-72 bg-indigo-200/30 dark:bg-indigo-500/10 rounded-full blur-[150px]" />
+          <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-purple-200/30 dark:bg-purple-500/10 rounded-full blur-[150px]" />
+          <div className="relative p-6 sm:p-8 lg:p-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div>
+                <p className="text-indigo-500 dark:text-indigo-300 text-sm font-medium uppercase tracking-wider">{today}</p>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mt-2 text-gray-900 dark:text-white">
+                  Benvenuto{user?.name ? `, ${user.name}` : ""}
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-1 max-w-2xl text-base sm:text-lg leading-relaxed">
+                  Scopri tutti gli eventi, sagre, concerti e manifestazioni in provincia di Latina e nel Lazio
+                </p>
+              </div>
+              <NextEventBadge todayEvents={todayEvents} />
+            </div>
+            <BannerButtons canManageEvents={canManageEvents} />
+          </div>
+        </div>
+      )}
+
+      {/* Variant 3: Minimal Elegante */}
+      {bannerVariant === 3 && (
+        <div className="relative overflow-hidden rounded-2xl mb-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent-subtle)] via-[var(--bg-secondary)] to-[var(--accent-subtle)]" />
+          <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-[var(--accent)] to-indigo-500" />
+          <div className="relative p-6 sm:p-8 lg:p-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <p className="text-[var(--text-muted)] text-xs font-medium uppercase tracking-[0.2em]">{today}</p>
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mt-2 text-[var(--text-primary)]">
+                  Benvenuto{user?.name ? `, ${user.name}` : ""}
+                </h2>
+                <p className="text-[var(--text-secondary)] mt-1 max-w-xl text-sm sm:text-base">
+                  Eventi, sagre, concerti e manifestazioni in provincia di Latina
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">Prossimo evento</p>
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">
+                    {todayEvents.length > 0 ? todayEvents[0].title : "Nessun evento oggi"}
+                  </p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center">
+                  <Calendar size={18} className="text-white" />
                 </div>
               </div>
             </div>
-          </div>
-          
-          <p className="text-white/70 mt-2 max-w-2xl text-base sm:text-lg leading-relaxed">
-            Scopri tutti gli eventi, sagre, concerti e manifestazioni in provincia di Latina e nel Lazio
-          </p>
-          
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Link href="/events" className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-indigo-600 shadow-lg shadow-cyan-500/25 hover:from-cyan-400 hover:to-indigo-500 hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105 active:scale-95">
-              <span className="relative z-10">Esplora eventi</span>
-              <ArrowRight size={16} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-              <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-indigo-400 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity blur" />
-            </Link>
-            {canManageEvents && (
-              <Link href="/admin?new=1" className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-fuchsia-500 to-purple-600 shadow-lg shadow-fuchsia-500/25 hover:from-fuchsia-400 hover:to-purple-500 hover:shadow-fuchsia-500/40 transition-all duration-300 hover:scale-105 active:scale-95">
-                <Plus size={16} />
-                <span className="relative z-10">Nuovo Evento</span>
-                <span className="absolute inset-0 bg-gradient-to-r from-fuchsia-400 to-purple-400 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity blur" />
+            <div className="flex flex-wrap gap-2 mt-6">
+              <Link href="/events" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-[var(--accent)] text-white hover:opacity-90 transition-all">
+                Esplora eventi <ArrowRight size={14} />
               </Link>
-            )}
-            
-            {/* Sezioni speciali */}
-            <Link href="/andiamo-al-cinema" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-700 shadow-lg shadow-purple-500/30 hover:from-purple-500 hover:to-indigo-600 hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
-              <Film size={16} />
-              <span className="relative z-10">Andiamo al Cinema</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
-            </Link>
-            <Link href="/tutti-al-mare" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-teal-600 shadow-lg shadow-cyan-500/30 hover:from-cyan-400 hover:to-teal-500 hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
-              <Waves size={16} />
-              <span className="relative z-10">Tutti al Mare</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-teal-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
-            </Link>
-            <Link href="/spazio-kids" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-amber-600 shadow-lg shadow-orange-500/30 hover:from-orange-400 hover:to-amber-500 hover:shadow-orange-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
-              <Rocket size={16} />
-              <span className="relative z-10">Kid's</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
-            </Link>
-            <Link href="/spazio-venere" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-rose-600 shadow-lg shadow-pink-500/30 hover:from-pink-400 hover:to-rose-500 hover:shadow-pink-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
-              <Heart size={16} />
-              <span className="relative z-10">Venere</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-pink-400 to-rose-500 rounded-xl opacity-0 group-hover:opacity-20 transition-opacity blur" />
-            </Link>
+              <Link href="/tutti-al-mare" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--card-border)] transition-all">
+                <Waves size={14} /> Mare
+              </Link>
+              <Link href="/andiamo-al-cinema" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--card-border)] transition-all">
+                <Film size={14} /> Cinema
+              </Link>
+              <Link href="/spazio-kids" className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--card-border)] transition-all">
+                <Rocket size={14} /> Kids
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
@@ -338,6 +356,113 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+/* ── Hero Banner Sub‑Components ── */
+
+function NextEventCard({ todayEvents }: { todayEvents: any[] }) {
+  const { user } = useAuthStore();
+  const canManageEvents = user?.role === "admin" || user?.role === "super_admin" || user?.role === "publisher";
+  const today = new Date().toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  return (
+    <div className="relative p-6 sm:p-8 lg:p-10 text-white">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <p className="text-cyan-300 text-sm font-medium uppercase tracking-wider drop-shadow-[0_0_10px_#22d3ee]">{today}</p>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mt-2 flex items-center gap-2">
+            <span className="bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-lime-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(217,70,239,0.6)]">
+              Benvenuto{user?.name ? `, ${user.name}` : ""}
+            </span>
+            <Sparkles size={24} className="text-fuchsia-400 drop-shadow-[0_0_15px_#d946ef] animate-pulse" />
+          </h2>
+        </div>
+        <div className="hidden sm:block">
+          <div className="glass-card rounded-xl p-4 border border-white/10 backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/25">
+                <Calendar size={22} className="text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-[11px] text-white/60 uppercase tracking-wider">Prossimo evento</p>
+                <p className="text-sm font-semibold text-white truncate max-w-xs">
+                  {todayEvents.length > 0 ? todayEvents[0].title : "Nessun evento oggi"}
+                </p>
+                {todayEvents.length > 0 && (
+                  <p className="text-[11px] text-white/50 flex items-center gap-1 mt-0.5">
+                    <Clock size={10} />
+                    {todayEvents[0].time || "Tutto il giorno"}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="text-white/70 mt-2 max-w-2xl text-base sm:text-lg leading-relaxed">
+        Scopri tutti gli eventi, sagre, concerti e manifestazioni in provincia di Latina e nel Lazio
+      </p>
+      <BannerButtons canManageEvents={canManageEvents} />
+    </div>
+  );
+}
+
+function NextEventBadge({ todayEvents, light }: { todayEvents: any[]; light?: boolean }) {
+  return (
+    <div className={`rounded-xl p-4 border ${light ? "bg-white/10 border-white/10 backdrop-blur-sm" : "glass-card"}`}>
+      <div className="flex items-center gap-3">
+        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${light ? "from-amber-400 to-orange-500" : "from-cyan-500 to-indigo-600"} flex items-center justify-center shadow-lg`}>
+          <Calendar size={22} className="text-white" />
+        </div>
+        <div className="text-right">
+          <p className={`text-[11px] uppercase tracking-wider ${light ? "text-amber-100" : "text-white/60"}`}>Prossimo evento</p>
+          <p className={`text-sm font-semibold truncate max-w-xs ${light ? "text-white" : "text-white"}`}>
+            {todayEvents.length > 0 ? todayEvents[0].title : "Nessun evento oggi"}
+          </p>
+          {todayEvents.length > 0 && (
+            <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${light ? "text-amber-100/70" : "text-white/50"}`}>
+              <Clock size={10} />
+              {todayEvents[0].time || "Tutto il giorno"}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BannerButtons({ canManageEvents }: { canManageEvents: boolean }) {
+  return (
+    <div className="flex flex-wrap gap-3 mt-6">
+      <Link href="/events" className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-indigo-600 shadow-lg shadow-cyan-500/25 hover:from-cyan-400 hover:to-indigo-500 hover:shadow-cyan-500/40 transition-all duration-300 hover:scale-105 active:scale-95">
+        <span className="relative z-10">Esplora eventi</span>
+        <ArrowRight size={16} className="relative z-10 group-hover:translate-x-1 transition-transform" />
+      </Link>
+      {canManageEvents && (
+        <Link href="/admin?new=1" className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-fuchsia-500 to-purple-600 shadow-lg shadow-fuchsia-500/25 hover:from-fuchsia-400 hover:to-purple-500 hover:shadow-fuchsia-500/40 transition-all duration-300 hover:scale-105 active:scale-95">
+          <Plus size={16} />
+          <span className="relative z-10">Nuovo Evento</span>
+        </Link>
+      )}
+      <Link href="/andiamo-al-cinema" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-700 shadow-lg shadow-purple-500/30 hover:from-purple-500 hover:to-indigo-600 hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+        <Film size={16} />
+        <span className="relative z-10">Andiamo al Cinema</span>
+      </Link>
+      <Link href="/tutti-al-mare" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-teal-600 shadow-lg shadow-cyan-500/30 hover:from-cyan-400 hover:to-teal-500 hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+        <Waves size={16} />
+        <span className="relative z-10">Tutti al Mare</span>
+      </Link>
+      <Link href="/spazio-kids" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-amber-600 shadow-lg shadow-orange-500/30 hover:from-orange-400 hover:to-amber-500 hover:shadow-orange-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+        <Rocket size={16} />
+        <span className="relative z-10">Kid's</span>
+      </Link>
+      <Link href="/spazio-venere" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-rose-600 shadow-lg shadow-pink-500/30 hover:from-pink-400 hover:to-rose-500 hover:shadow-pink-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+        <Heart size={16} />
+        <span className="relative z-10">Venere</span>
+      </Link>
+    </div>
+  );
+}
+
+/* ── Sidebar Ads ── */
 
 function VerticalAdColumn() {
   const [ads, setAds] = useState<any[]>([]);
