@@ -188,7 +188,7 @@ export default function DashboardPage() {
                     <Waves size={14} /> Mare
                   </Link>
                   <Link href="/spazio-kids" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-white/70 bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-white transition-all duration-300">
-                    <Rocket size={14} /> Kids
+                    <Rocket size={14} /> Kid's
                   </Link>
                   <Link href="/spazio-venere" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-white/70 bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-white transition-all duration-300">
                     <Heart size={14} /> Venere
