@@ -169,42 +169,6 @@ export default function CinemaPage() {
         </div>
       ) : (
         <>
-          {/* Cinema info */}
-          {selected && (
-            <div className="glass-card rounded-2xl p-4 sm:p-5 mb-6">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <Film size={18} className="text-white" />
-                </div>
-                <div>
-                  <h2 className="font-semibold text-lg text-[var(--text-primary)]">
-                    {selected.name}
-                  </h2>
-                  <div className="flex items-center gap-2 mt-1 text-sm text-[var(--text-secondary)]">
-                    <MapPin size={14} className="text-amber-500" />
-                    <span>
-                      {selected.address}, {selected.city} ({selected.province})
-                    </span>
-                  </div>
-                  {selected.website && (
-                    <a
-                      href={selected.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 mt-2 text-xs text-amber-500 hover:text-amber-400 transition-colors"
-                    >
-                      <ExternalLink size={12} />
-                      Sito ufficiale
-                    </a>
-                  )}
-                </div>
-              </div>
-              <p className="text-xs text-[var(--text-muted)] mt-3">
-                {selected.films.length} film in programmazione
-              </p>
-            </div>
-          )}
-
           {/* Films grid */}
           {selected && selected.films.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -324,6 +288,42 @@ export default function CinemaPage() {
               </p>
             </div>
           ) : null}
+
+          {/* Cinema info */}
+          {selected && (
+            <div className="glass-card rounded-2xl p-4 sm:p-5 mt-6">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <Film size={18} className="text-white" />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-lg text-[var(--text-primary)]">
+                    {selected.name}
+                  </h2>
+                  <div className="flex items-center gap-2 mt-1 text-sm text-[var(--text-secondary)]">
+                    <MapPin size={14} className="text-amber-500" />
+                    <span>
+                      {selected.address}, {selected.city} ({selected.province})
+                    </span>
+                  </div>
+                  {selected.website && (
+                    <a
+                      href={selected.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 mt-2 text-xs text-amber-500 hover:text-amber-400 transition-colors"
+                    >
+                      <ExternalLink size={12} />
+                      Sito ufficiale
+                    </a>
+                  )}
+                </div>
+              </div>
+              <p className="text-xs text-[var(--text-muted)] mt-3">
+                {selected.films.length} film in programmazione
+              </p>
+            </div>
+          )}
         </>
       )}
     </div>
