@@ -5,27 +5,25 @@ const PROVINCE_FROM_CITY = {
   'sermoneta': 'LT', 'pontinia': 'LT', 'sabaudia': 'LT', 'san felice circeo': 'LT',
   'terracina': 'LT', 'fondi': 'LT', 'formia': 'LT', 'gaeta': 'LT', 'minturno': 'LT',
   'spigno saturnia': 'LT', 'monte san biagio': 'LT', 'sonnino': 'LT', 'prossedi': 'LT',
-  'castelforte': 'LT', 'itri': 'LT', 'sperlonga': 'LT', 'ventura': 'LT', 'lenola': 'LT',
-  'maenza': 'LT', 'roccasecca': 'LT', 'coreno ausonio': 'LT', 'esperia': 'LT',
-  'ponza': 'LT', 'ventotene': 'LT', 'sezze': 'LT', 'priverno': 'LT', 'roccagorga': 'LT',
-  'bassiano': 'LT', 'norma': 'LT', 'cori': 'LT',
+  'castelforte': 'LT', 'itri': 'LT', 'sperlonga': 'LT', 'lenola': 'LT',
+  'maenza': 'LT', 'ventotene': 'LT', 'sezze': 'LT', 'priverno': 'LT', 'roccagorga': 'LT',
+  'bassiano': 'LT', 'norma': 'LT', 'cori': 'LT', 'ponza': 'LT', 'ventura': 'LT',
 
   'roma': 'RM', 'rome': 'RM', 'frascati': 'RM', 'albano laziale': 'RM', 'castel gandolfo': 'RM',
-  'avezzano': 'RM', 'civitavecchia': 'RM', 'fiumicino': 'RM', 'guidonia montecelio': 'RM',
+  'civitavecchia': 'RM', 'fiumicino': 'RM', 'guidonia montecelio': 'RM',
   'marino': 'RM', 'mentana': 'RM', 'nemi': 'RM', 'pomezia': 'RM', 'san cesareo': 'RM',
-  'sora': 'RM', 'tivoli': 'RM', 'velletri': 'RM', 'bracciano': 'RM', 'anghuilla sabazia': 'RM',
-  'allumiere': 'RM', 'arzano': 'RM', 'bagnoregio': 'RM', 'baccano': 'RM', 'bracciano': 'RM',
-  'canepina': 'RM', 'canneto': 'RM', 'capena': 'RM', 'capranica': 'RM',
-  'castel san pietro romano': 'RM', 'cave': 'RM', 'cerveteri': 'RM', 'civitavecchia': 'RM',
+  'tivoli': 'RM', 'velletri': 'RM', 'bracciano': 'RM', 'anghuilla sabazia': 'RM',
+  'allumiere': 'RM', 'arzano': 'RM', 'baccano': 'RM',
+  'capena': 'RM', 'capranica': 'RM', 'cave': 'RM', 'cerveteri': 'RM',
   'civitella san paolo': 'RM', 'colonna': 'RM', 'formello': 'RM', 'fonte nuova': 'RM',
   'galeria': 'RM', 'genazzano': 'RM', 'grottaferrata': 'RM', 'ladispoli': 'RM', 'lanuvio': 'RM',
-  'magliano romano': 'RM', 'manciano': 'RM', 'mazzano romano': 'RM', 'monte compatri': 'RM',
+  'mazzano romano': 'RM', 'monte compatri': 'RM',
   'monte porzio catone': 'RM', 'montelibretti': 'RM', 'montelanico': 'RM', 'morlupo': 'RM',
-  'nazzano': 'RM', 'nepi': 'RM', 'nerola': 'RM', 'nettuno': 'RM', 'orvinio': 'RM',
-  'paganico sabino': 'RM', 'palombara sabina': 'RM', 'pisoniano': 'RM', 'poli': 'RM',
-  'rizzo': 'RM', 'roccagiovine': 'RM', 'rocca priora': 'RM', 'rocca di papa': 'RM',
-  'san cesareo': 'RM', 'san gregorio da sassola': 'RM', 'san polo': 'RM', 'san vito romano': 'RM',
-  'sant\'angelo romano': 'RM', 'sant\'orsola': 'RM', 'santa maria della mole': 'RM',
+  'nazzano': 'RM', 'nerola': 'RM', 'nettuno': 'RM',
+  'palombara sabina': 'RM', 'pisoniano': 'RM', 'poli': 'RM',
+  'roccagiovine': 'RM', 'rocca priora': 'RM', 'rocca di papa': 'RM',
+  'san gregorio da sassola': 'RM', 'san polo': 'RM', 'san vito romano': 'RM',
+  'sant\'angelo romano': 'RM',
   'santa marinella': 'RM', 'torrita tiberina': 'RM', 'trevignano romano': 'RM',
   'valmontone': 'RM', 'vicovaro': 'RM', 'zagarolo': 'RM',
 
@@ -33,17 +31,18 @@ const PROVINCE_FROM_CITY = {
   'arce': 'FR', 'arnara': 'FR', 'boville ernica': 'FR', 'broccostella': 'FR',
   'campoli appennino': 'FR', 'castrocielo': 'FR', 'castro dei volsci': 'FR',
   'cervaro': 'FR', 'colfelice': 'FR', 'colle san magno': 'FR', 'collepardo': 'FR',
-  'coreno ausonio': 'FR', 'esperia': 'FR', 'falvaterra': 'FR', 'filettino': 'FR',
+  'falvaterra': 'FR', 'filettino': 'FR',
   'fiuggi': 'FR', 'fontana lira': 'FR', 'fumone': 'FR', 'gallinaro': 'FR',
   'giuliano di roma': 'FR', 'guarcino': 'FR', 'isola del liri': 'FR',
   'monte san giovanni campano': 'FR', 'morolo': 'FR', 'paliano': 'FR', 'pastena': 'FR',
   'pico': 'FR', 'piedimonte san germano': 'FR', 'piglio': 'FR', 'pignataro interamna': 'FR',
-  'posta fibreno': 'FR', 'ripoli': 'FR', 'san biagio saracinisco': 'FR',
+  'posta fibreno': 'FR', 'ripoli': 'FR', 'roccasecca': 'FR',
+  'san biagio saracinisco': 'FR',
   'san donato val di comino': 'FR', 'san giorgio a liri': 'FR', 'sant\'apollinare': 'FR',
   'sant\'elia fiumerapido': 'FR', 'sora': 'FR', 'strangolagalli': 'FR', 'supino': 'FR',
   'terelle': 'FR', 'torrice': 'FR', 'torre cajetani': 'FR', 'trivigliano': 'FR',
   'vallecorsa': 'FR', 'veroli': 'FR', 'vicalvi': 'FR', 'villa latina': 'FR',
-  'villa santo stefano': 'FR', 'viticuso': 'FR',
+  'villa santo stefano': 'FR', 'viticuso': 'FR', 'coreno ausonio': 'FR', 'esperia': 'FR',
 
   'viterbo': 'VT', 'acquapendente': 'VT', 'bagnaia': 'VT', 'bagnoregio': 'VT',
   'bassano in teverina': 'VT', 'bomarzo': 'VT', 'celleno': 'VT', 'cellere': 'VT',
@@ -73,7 +72,7 @@ const PROVINCE_FROM_CITY = {
 
 function getProvince(city) {
   const normalized = city.trim().toLowerCase();
-  return PROVINCE_FROM_CITY[normalized] || 'LT';
+  return PROVINCE_FROM_CITY[normalized] || null;
 }
 
 async function fixEventProvinces() {

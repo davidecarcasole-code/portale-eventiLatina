@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { jsonResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 import type { ScrapedEvent } from "@/lib/scraper/scraped-event";
+import { getProvinceFromCity } from "@/lib/scraper/city-to-province";
 
 async function getPrisma() {
   const mod = await import("@/lib/prisma");
@@ -119,7 +120,7 @@ let inserted = 0;
             timePeriod: e.time_period || null,
             location: e.location || null,
             city: e.city || 'Latina',
-            province: e.province || 'LT',
+            province: e.province || getProvinceFromCity(e.city || '') || null,
             region: 'Lazio',
             imageUrl: e.image_url || null,
             sourceUrl: e.source_url || null,

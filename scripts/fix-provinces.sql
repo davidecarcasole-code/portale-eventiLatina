@@ -6,25 +6,25 @@ UPDATE events SET province = 'LT' WHERE LOWER(city) IN (
   'latina', 'aprilia', 'cisterna di latina', 'cisterna', 'sermoneta', 'pontinia',
   'sabaudia', 'san felice circeo', 'terracina', 'fondi', 'formia', 'gaeta',
   'minturno', 'spigno saturnia', 'monte san biagio', 'sonnino', 'prossedi',
-  'castelforte', 'itri', 'sperlonga', 'ventura', 'lenola', 'maenza', 'roccasecca',
-  'coreno ausonio', 'esperia', 'ponza', 'ventotene', 'sezze', 'priverno', 'roccagorga',
-  'bassiano', 'norma', 'cori'
+  'castelforte', 'itri', 'sperlonga', 'lenola', 'maenza',
+  'ponza', 'ventotene', 'sezze', 'priverno', 'roccagorga',
+  'bassiano', 'norma', 'cori', 'ventura'
 );
 
 UPDATE events SET province = 'RM' WHERE LOWER(city) IN (
-  'roma', 'rome', 'frascati', 'albano laziale', 'castel gandolfo', 'avezzano',
+  'roma', 'rome', 'frascati', 'albano laziale', 'castel gandolfo',
   'civitavecchia', 'fiumicino', 'guidonia montecelio', 'marino', 'mentana',
-  'nemi', 'pomezia', 'san cesareo', 'sora', 'tivoli', 'velletri', 'bracciano',
-  'anghuilla sabazia', 'allumiere', 'arzano', 'bagnoregio', 'baccano', 'bracciano',
-  'canepina', 'canneto', 'capena', 'capranica', 'castel san pietro romano', 'cave',
-  'cerveteri', 'civitavecchia', 'civitella san paolo', 'colonna', 'formello',
-  'fonte nuova', 'galeria', 'genazzano', 'grottaferrata', 'ladispoli', 'lanuvio',
-  'magliano romano', 'manciano', 'mazzano romano', 'monte compatri', 'monte porzio catone',
-  'montelibretti', 'montelanico', 'morlupo', 'nazzano', 'nepi', 'nerola', 'nettuno',
-  'orvinio', 'paganico sabino', 'palombara sabina', 'pisoniano', 'poli', 'pomezia',
-  'rizzo', 'roccagiovine', 'rocca priora', 'rocca di papa', 'roccasecca', 'rome',
+  'nemi', 'pomezia', 'san cesareo', 'tivoli', 'velletri', 'bracciano',
+  'anghuilla sabazia', 'allumiere', 'arzano', 'baccano',
+  'capena', 'capranica', 'castel san pietro romano', 'cave', 'cerveteri',
+  'civitella san paolo', 'colonna', 'formello', 'fonte nuova',
+  'galeria', 'genazzano', 'grottaferrata', 'ladispoli', 'lanuvio',
+  'mazzano romano', 'monte compatri', 'monte porzio catone',
+  'montelibretti', 'montelanico', 'morlupo', 'nazzano', 'nerola', 'nettuno',
+  'palombara sabina', 'pisoniano', 'poli', 'pomezia',
+  'roccagiovine', 'rocca priora', 'rocca di papa',
   'san cesareo', 'san gregorio da sassola', 'san polo', 'san vito romano',
-  'sant''angelo romano', 'sant''orsola', 'santa maria della mole', 'santa marinella',
+  'sant''angelo romano', 'santa marinella',
   'torrita tiberina', 'trevignano romano', 'valmontone', 'vicovaro', 'zagarolo'
 );
 
@@ -38,14 +38,15 @@ UPDATE events SET province = 'FR' WHERE LOWER(city) IN (
   'piglio', 'pignataro interamna', 'posta fibreno', 'ripoli', 'san biagio saracinisco',
   'san donato val di comino', 'san giorgio a liri', 'sant''apollinare', 'sant''elia fiumerapido',
   'sora', 'strangolagalli', 'supino', 'terelle', 'torrice', 'torre cajetani', 'trivigliano',
-  'vallecorsa', 'veroli', 'vicalvi', 'villa latina', 'villa santo stefano', 'viticuso'
+  'vallecorsa', 'veroli', 'vicalvi', 'villa latina', 'villa santo stefano',
+  'viticuso', 'roccasecca'
 );
 
 UPDATE events SET province = 'VT' WHERE LOWER(city) IN (
   'viterbo', 'acquapendente', 'bagnaia', 'bagnoregio', 'bassano in teverina', 'bomarzo',
   'celleno', 'cellere', 'civita castellana', 'civitella d''agliano', 'corchiano',
   'fabrica di roma', 'faleria', 'farnese', 'gallese', 'gradoli', 'grotte di castro',
-  'lunano', 'marta', 'montalto di castro', 'monte romano', 'monterosi', 'nepi',
+  'marta', 'montalto di castro', 'monte romano', 'monterosi', 'nepi',
   'onorato', 'orvieto', 'poggio nativo', 'proceno', 'ronciglione', 'san lorenzo nuovo',
   'san venanzo', 'soriano nel cimino', 'sutri', 'tarquinia', 'tessennano',
   'trevignano romano', 'vallerano', 'vetralla', 'vitorchiano'
