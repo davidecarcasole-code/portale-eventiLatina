@@ -87,6 +87,16 @@ export async function GET(req: NextRequest) {
       take: limit,
     });
 
+    // Prioritize Latina province (LT) events over other provinces
+    events.sort((a, b) => {
+      const aIsLT = a.province === "LT" ? 0 : 1;
+      const bIsLT = b.province === "LT" ? 0 : 1;
+      if (aIsLT !== bIsLT) return aIsLT - bIsLT;
+      const aTime = a.date?.getTime() ?? 0;
+      const bTime = b.date?.getTime() ?? 0;
+      return aTime - bTime;
+    });
+
     const total = await prisma.event.count({ where });
 
     const mapped = events.map((e: any) => ({
