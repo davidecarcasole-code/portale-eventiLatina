@@ -51,7 +51,7 @@ export default function SpazioVenerePage() {
     <div className="min-h-screen animate-fade-in">
       {/* HERO */}
       <div className="relative overflow-hidden rounded-3xl mb-8">
-        <div className="absolute inset-0 bg-[url('/bannerspaziovenere.png')] bg-contain bg-center bg-no-repeat" />
+        <div className="absolute inset-0 bg-[url('/bannerspaziovenere.png')] bg-contain bg-right bg-no-repeat opacity-20" />
         <div className="absolute inset-0 bg-gradient-to-br from-pink-900/60 via-rose-900/50 to-purple-900/60" />
         <div className="relative p-8 sm:p-12 text-white">
           <div className="flex items-center gap-3 mb-4">
