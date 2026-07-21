@@ -40,7 +40,13 @@ export async function GET(req: NextRequest) {
     const where: any = { isPublished: true };
     if (status !== "all") where.status = status;
 
-    if (timeFilter === "upcoming") {
+    if (timeFilter === "all") {
+      if (dateFrom || dateTo) {
+        where.date = {};
+        if (dateFrom) where.date.gte = new Date(dateFrom);
+        if (dateTo) where.date.lte = new Date(dateTo);
+      }
+    } else if (timeFilter === "upcoming") {
       where.date = { gte: dateFrom ? new Date(dateFrom) : today };
       if (dateTo) where.date.lte = new Date(dateTo);
     } else if (timeFilter === "ongoing") {

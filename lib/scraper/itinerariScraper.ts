@@ -101,7 +101,7 @@ function parseEvents(html: string): ScrapedEvent[] {
     events.push({
       title: h3,
       description: desc || undefined,
-      date: startDate || '2026-01-01',
+      date: startDate || new Date().toISOString().split('T')[0],
       end_date: endDate || undefined,
       city: location || 'Latina',
       province: 'LT',

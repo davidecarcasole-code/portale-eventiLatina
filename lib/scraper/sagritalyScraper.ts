@@ -29,7 +29,7 @@ export async function runSagritalyScraper(): Promise<ScrapedEvent[]> {
   const events: ScrapedEvent[] = [];
   const seen = new Set<string>();
 
-  const pages = [URL, `${URL}page/2/`, `${URL}page/3/`];
+  const pages = [URL];
 
   for (const pageUrl of pages) {
     try {
@@ -49,7 +49,7 @@ export async function runSagritalyScraper(): Promise<ScrapedEvent[]> {
 
         const startRaw = $(el).find('.w-post-elm.post_custom_field.data_inizio .w-post-elm-value').first().text().trim();
         const endRaw = $(el).find('.w-post-elm.post_custom_field.data_fine .w-post-elm-value').first().text().trim();
-        const date = toDateStr(startRaw) || '2026-01-01';
+        const date = toDateStr(startRaw) || new Date().toISOString().split('T')[0];
         const endDate = toDateStr(endRaw) || undefined;
 
         const location = $(el).find('.w-post-elm.post_custom_field.luogo_evento .w-post-elm-value').first().text().trim();
@@ -71,8 +71,8 @@ export async function runSagritalyScraper(): Promise<ScrapedEvent[]> {
 
         const category = detectCategory(title);
 
-        const catBadge = $(el).find('.w-btn-label').first().text().trim();
-        const isPassed = catBadge.includes('Passati');
+        const fullText = $(el).text();
+        const isPassed = fullText.includes('Passati');
 
         if (isPassed) return;
 

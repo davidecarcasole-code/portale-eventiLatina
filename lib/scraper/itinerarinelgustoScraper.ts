@@ -106,7 +106,7 @@ export async function runItinerarinelgustoScraper(): Promise<ScrapedEvent[]> {
         events.push({
           title: title.slice(0, 200),
           description: desc.slice(0, 2000) || undefined,
-          date: date || '2026-01-01',
+          date: date || new Date().toISOString().split('T')[0],
           end_date,
           city,
           province: 'LT',

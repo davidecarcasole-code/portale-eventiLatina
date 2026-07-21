@@ -29,7 +29,7 @@ function EventsContent() {
   const [category, setCategory] = useState(searchParams.get("category") || "");
   const [province, setProvince] = useState(searchParams.get("province") || "LT");
   const [timePeriod, setTimePeriod] = useState(searchParams.get("time_period") || "");
-  const [timeFilter, setTimeFilter] = useState<"upcoming" | "ongoing" | "past">("upcoming");
+  const [timeFilter, setTimeFilter] = useState<"upcoming" | "ongoing" | "past" | "all">("upcoming");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
@@ -125,7 +125,7 @@ function EventsContent() {
       )}
 
       <div className="flex gap-2 mb-4 flex-wrap">
-        {["upcoming", "ongoing", "past"].map((t) => (
+        {["upcoming", "ongoing", "past", "all"].map((t) => (
           <button key={t}
             onClick={() => { setTimeFilter(t as any); setPage(1); }}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
@@ -136,6 +136,7 @@ function EventsContent() {
             {t === "upcoming" && "Prossimi"}
             {t === "ongoing" && "In corso"}
             {t === "past" && "Passati"}
+            {t === "all" && "Tutti"}
           </button>
         ))}
       </div>

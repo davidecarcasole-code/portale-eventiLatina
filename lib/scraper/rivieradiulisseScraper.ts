@@ -107,7 +107,7 @@ export async function runRivieraDiUlisseScraper(): Promise<ScrapedEvent[]> {
         events.push({
           title: item.title.slice(0, 200),
           description: detail.description || undefined,
-          date: item.date || '2026-01-01',
+          date: item.date || new Date().toISOString().split('T')[0],
           city,
           province: 'LT',
           category_id: category,
