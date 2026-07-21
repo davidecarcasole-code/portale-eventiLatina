@@ -36,7 +36,6 @@ export default function SpazioKidsPage() {
     <div className="min-h-screen animate-fade-in">
       {/* HERO */}
       <div className="relative overflow-hidden rounded-3xl mb-8">
-        <div className="absolute inset-0 bg-amber-950" />
         <div className="absolute inset-0 bg-[url('/bannerkids.png')] bg-contain bg-right bg-no-repeat opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/60 via-orange-900/50 to-pink-900/60" />
         <div className="relative p-8 sm:p-12 text-white">
