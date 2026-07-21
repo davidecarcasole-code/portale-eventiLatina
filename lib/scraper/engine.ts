@@ -29,6 +29,9 @@ import { runLatiumVetusScraper } from './latiumvetusScraper';
 import { runMondorealeScraper } from './mondorealeScraper';
 import { runEventiesagreScraper } from './eventiesagreScraper';
 import { runTicketoneScraper } from './ticketoneScraper';
+import { runItinerarinelgustoScraper } from './itinerarinelgustoScraper';
+import { runRivieraDiUlisseScraper } from './rivieradiulisseScraper';
+import { runSagritalyScraper } from './sagritalyScraper';
 import { getProvinceFromCity } from './city-to-province';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
@@ -90,6 +93,9 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   mondoreale: { name: 'MondoReale.it', url: 'https://www.mondoreale.it/', fn: runMondorealeScraper },
   eventiesagre: { name: 'EventieSagre', url: 'https://www.eventiesagre.it/Regione/Lazio/Provincia-di-Latina/', fn: runEventiesagreScraper },
   ticketone: { name: 'TicketOne', url: 'https://www.ticketone.it/cityd/latina-1347/', fn: runTicketoneScraper },
+  itinerarinelgusto: { name: 'Itinerari nel Gusto', url: 'https://www.itinerarinelgusto.it/sagre-e-feste/latina/', fn: runItinerarinelgustoScraper },
+  rivieradiulisse: { name: 'Parco Riviera di Ulisse', url: 'https://www.parchilazio.it/parcorivieradiulisse-ricerca_news', fn: runRivieraDiUlisseScraper },
+  sagritaly: { name: 'Sagritaly', url: 'https://sagritaly.com/province-sagre/latina/', fn: runSagritalyScraper },
 };
 
 async function getPrisma() {
@@ -346,6 +352,9 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('Latium Vetus', runLatiumVetusScraper);
   await collect('MondoReale.it', runMondorealeScraper);
   await collect('TicketOne', runTicketoneScraper);
+  await collect('Itinerari nel Gusto', runItinerarinelgustoScraper);
+  await collect('Parco Riviera di Ulisse', runRivieraDiUlisseScraper);
+  await collect('Sagritaly', runSagritalyScraper);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;
