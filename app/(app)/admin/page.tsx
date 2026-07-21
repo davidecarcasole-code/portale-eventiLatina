@@ -35,13 +35,29 @@ export default function AdminPage() {
 
   return (
     <div className="page-container space-y-6 animate-fade-in">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center shadow-lg animate-pulse-neon">
-          <Shield size={20} className="text-white" />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold">{isPublisher ? "Pannello Publisher" : "Pannello Admin"}</h1>
-          <p className="text-sm text-[var(--text-muted)]">{isPublisher ? "Gestisci i tuoi eventi" : "Gestisci eventi, scraper e utenti"}</p>
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--accent)] via-indigo-600 to-indigo-800 p-6 sm:p-8">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
+        <div className="absolute -top-6 -right-6 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
+        <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
+        <div className="relative flex items-center gap-4 sm:gap-5">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center shadow-xl ring-1 ring-white/20">
+            <Shield size={24} className="text-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-white drop-shadow-sm">{isPublisher ? "Pannello Publisher" : "Pannello Admin"}</h1>
+            <p className="text-sm text-white/70 mt-0.5">{isPublisher ? "Gestisci i tuoi eventi" : "Gestisci eventi, scraper e utenti"}</p>
+          </div>
+          {user && (
+            <div className="hidden sm:flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-sm flex items-center justify-center ring-2 ring-white/30 text-white text-sm font-bold">
+                {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || "U"}
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-white truncate max-w-[120px]">{user.name || user.email}</p>
+                <p className="text-[10px] text-white/60 uppercase tracking-wider">{user.role?.replace("_", " ") || "user"}</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -71,7 +87,6 @@ function EventsTab({ token }: { token: string }) {
   const [showCreate, setShowCreate] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [cleaning, setCleaning] = useState(false);
-  const [cleaningMyMovies, setCleaningMyMovies] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" });
   const [categories, setCategories] = useState<any[]>([]);
   const [error, setError] = useState("");
@@ -219,10 +234,7 @@ function EventsTab({ token }: { token: string }) {
             className="btn-ghost px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 text-red-500 hover:bg-red-50" disabled={cleaning}>
             <Trash2 size={14} /> {cleaning ? "Pulendo..." : "Pulisci date errate"}
           </button>
-          <button onClick={async () => { if (!confirm("Eliminare tutti gli eventi Cinema derivati da MyMovies?")) return; setCleaningMyMovies(true); try { const r = await fetch("/api/scraper/cleanup-mymovies", { method: "POST", headers: { Authorization: `Bearer ${token}` } }); const d = await r.json(); alert(`Eliminati ${d.deleted} eventi MyMovies`); loadEvents(); } catch {} finally { setCleaningMyMovies(false) } }}
-            className="btn-ghost px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 text-orange-500 hover:bg-orange-50" disabled={cleaningMyMovies}>
-            <Trash2 size={14} /> {cleaningMyMovies ? "Pulendo..." : "Pulisci MyMovies"}
-          </button>
+
           <button onClick={() => { setShowCreate(true); setError(""); setForm({ title: "", description: "", date: "", end_date: "", time: "", location: "", address: "", city: "Latina", province: "LT", category_id: "", image_url: "", source_url: "", source_name: "", cinema: "" }); }}
             className="btn-primary px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
             <Plus size={14} /> Nuovo Evento
