@@ -181,7 +181,7 @@ export default function DashboardPage() {
                       <Plus size={16} /> Nuovo Evento
                     </Link>
                   )}
-                  <Link href="/andiamo-al-cinema" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-white/70 bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-white transition-all duration-300">
+                  <Link href="/andiamo-al-cinema" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-amber-200 bg-gradient-to-r from-amber-600/40 to-orange-600/40 border border-amber-500/20 backdrop-blur-sm hover:from-amber-500/50 hover:to-orange-500/50 hover:text-white transition-all duration-300">
                     <Film size={14} /> Cinema
                   </Link>
                   <Link href="/tutti-al-mare" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-white/70 bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-white transition-all duration-300">
@@ -405,7 +405,7 @@ function BannerButtons({ canManageEvents }: { canManageEvents: boolean }) {
           <span className="relative z-10">Nuovo Evento</span>
         </Link>
       )}
-      <Link href="/andiamo-al-cinema" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-700 shadow-lg shadow-purple-500/30 hover:from-purple-500 hover:to-indigo-600 hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
+      <Link href="/andiamo-al-cinema" className="group relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-amber-600 to-orange-700 shadow-lg shadow-amber-500/30 hover:from-amber-500 hover:to-orange-600 hover:shadow-amber-500/50 transition-all duration-300 hover:scale-105 active:scale-95">
         <Film size={16} />
         <span className="relative z-10">Andiamo al Cinema</span>
       </Link>
