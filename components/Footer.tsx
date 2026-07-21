@@ -51,7 +51,6 @@ export function Footer() {
             <nav className="flex flex-col gap-2">
               <Link href="/spazio-venere" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Spazio Venere</Link>
               <Link href="/spazio-kids" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Spazio Kids</Link>
-              <Link href="/radio" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Web Radio</Link>
               <Link href="/video" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Video</Link>
               <Link href="/saved" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">I miei salvati</Link>
             </nav>

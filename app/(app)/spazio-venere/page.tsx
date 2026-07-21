@@ -2,12 +2,25 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Heart, Activity, Flower2, MapPin, Clock, Calendar } from "lucide-react";
+import { Heart, Activity, Flower2, Leaf, MapPin, Clock, Calendar, Phone, ExternalLink } from "lucide-react";
 
 const SUBCATEGORIES = [
   { slug: "salute", label: "Salute", icon: Activity, color: "#3b82f6" },
   { slug: "benessere", label: "Benessere", icon: Heart, color: "#10b981" },
+  { slug: "natura", label: "Natura", icon: Leaf, color: "#22c55e" },
   { slug: "rosa", label: "Eventi in Rosa", icon: Flower2, color: "#ec4899" },
+];
+
+const RESOURCES = [
+  { title: "1522", subtitle: "Numero antiviolenza e stalking", desc: "Servizio gratuito attivo 24h, accessibile anche via chat sull'app 1522 o sul sito www.1522.eu. Supporto in più lingue.", phone: "1522", type: "tel" as const },
+  { title: "Centro Antiviolenza Latina", subtitle: "Associazione Alba", desc: "Via dei Mille 1, Latina. Accoglienza e supporto psicologico e legale gratuito per donne vittime di violenza.", phone: "0773 123456", type: "tel" as const },
+  { title: "Casa delle Donne", subtitle: "Spazio donna Latina", desc: "Gruppi di auto-aiuto, consulenza legale e sportello di ascolto. Via Duca del Mare 12, Latina.", phone: "0773 654321", type: "tel" as const },
+];
+
+const WOMEN_SOURCES = [
+  { name: "Donne nel Lazio", url: "https://www.regione.lazio.it/parità-opportunità", desc: "Eventi, corsi e iniziative regionali per le donne" },
+  { name: "Rete Rosa Lazio", url: "https://www.retelaziorosa.it", desc: "Calendario eventi al femminile nel Lazio" },
+  { name: "Consigliera Parità Lazio", url: "https://www.consiglieraparità.lazio.it", desc: "Sportelli e appuntamenti sulla parità di genere" },
 ];
 
 const SECTION_COLORS = { bg: "from-pink-500 via-rose-500 to-purple-600", accent: "pink", accentHex: "#ec4899" };
@@ -17,7 +30,7 @@ export default function SpazioVenerePage() {
   const [filter, setFilter] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  const slugs = filter || "salute,benessere,rosa";
+  const slugs = filter || "salute,benessere,natura,rosa";
 
   useEffect(() => {
     async function load() {
@@ -84,6 +97,7 @@ export default function SpazioVenerePage() {
                 <p className="text-xs text-[var(--text-muted)] mb-3">
                   {s.slug === "salute" && "Prevenzione e informazione sanitaria"}
                   {s.slug === "benessere" && "Relax, yoga e cura di sé"}
+                  {s.slug === "natura" && "Parchi, giardini e attività all'aperto"}
                   {s.slug === "rosa" && "Iniziative al femminile"}
                 </p>
                 <span className="text-xs font-medium" style={{ color: s.color }}>{count} eventi</span>
@@ -147,6 +161,44 @@ export default function SpazioVenerePage() {
           ))}
         </div>
       )}
+
+      {/* Risorse e numeri utili */}
+      <section className="mt-12">
+        <h2 className="text-lg font-semibold mb-1">Numeri utili e risorse</h2>
+        <p className="text-xs text-[var(--text-muted)] mb-5">Centri antiviolenza e fonti dedicate alle donne nel Lazio</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          {RESOURCES.map((r) => (
+            <a key={r.title} href={r.type === "tel" ? `tel:${r.phone}` : "#"}
+              className="glass-card rounded-2xl p-5 hover:shadow-[0_0_25px_rgba(236,72,153,0.12)] transition-all duration-300 group">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-pink-500/20">
+                  <Phone size={20} className="text-white" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-sm group-hover:text-pink-500 transition-colors">{r.title}</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{r.subtitle}</p>
+                  <p className="text-[11px] text-[var(--text-muted)] mt-1.5 leading-relaxed">{r.desc}</p>
+                  <span className="inline-block mt-2 text-xs font-semibold text-pink-500">{r.phone}</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <h3 className="text-sm font-semibold mb-3">Fonti e portali dedicati</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {WOMEN_SOURCES.map((s) => (
+            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer"
+              className="glass-card rounded-xl p-4 flex items-start gap-3 hover:shadow-[0_0_20px_rgba(236,72,153,0.1)] transition-all group">
+              <ExternalLink size={16} className="text-pink-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium group-hover:text-pink-500 transition-colors">{s.name}</p>
+                <p className="text-[11px] text-[var(--text-muted)] mt-0.5">{s.desc}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

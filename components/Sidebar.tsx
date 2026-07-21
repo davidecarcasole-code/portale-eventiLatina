@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Home, Radio, Bookmark, User, Shield, LogOut, Menu, X, Heart, Rocket, Bell, Film, ExternalLink, Waves, Clapperboard } from "lucide-react";
+import { Calendar, Home, Bookmark, User, Shield, LogOut, Menu, X, Heart, Rocket, Bell, Film, ExternalLink, Waves, Clapperboard } from "lucide-react";
 import { InstagramIcon, FacebookIcon, YoutubeIcon, TikTokIcon } from "./SocialIcons";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store";
@@ -34,7 +34,6 @@ export function Sidebar() {
     { href: "/tutti-al-mare", label: "Tutti al Mare", icon: Waves },
     { href: "/spazio-venere", label: "Spazio Venere", icon: Heart },
     { href: "/spazio-kids", label: "Spazio Kid's", icon: Rocket },
-    { href: "/radio", label: "Web Radio", icon: Radio },
     { href: "/saved", label: "Salvati", icon: Bookmark },
     { href: "/profile", label: "Profilo", icon: User },
     ...(user?.role === "admin" || user?.role === "super_admin" ? [{ href: "/admin", label: "Admin", icon: Shield }] : []),
