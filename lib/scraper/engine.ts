@@ -28,6 +28,7 @@ import { runEscursionismoScraper } from './escursionismoScraper';
 import { runLatiumVetusScraper } from './latiumvetusScraper';
 import { runMondorealeScraper } from './mondorealeScraper';
 import { runEventiesagreScraper } from './eventiesagreScraper';
+import { runTicketoneScraper } from './ticketoneScraper';
 import { getProvinceFromCity } from './city-to-province';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
@@ -88,6 +89,7 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   latiumvetus: { name: 'Latium Vetus', url: 'https://www.latiumvetus.it/visite/', fn: runLatiumVetusScraper },
   mondoreale: { name: 'MondoReale.it', url: 'https://www.mondoreale.it/', fn: runMondorealeScraper },
   eventiesagre: { name: 'EventieSagre', url: 'https://www.eventiesagre.it/Regione/Lazio/Provincia-di-Latina/', fn: runEventiesagreScraper },
+  ticketone: { name: 'TicketOne', url: 'https://www.ticketone.it/cityd/latina-1347/', fn: runTicketoneScraper },
 };
 
 async function getPrisma() {
@@ -343,6 +345,7 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('Escursionismo.it', runEscursionismoScraper);
   await collect('Latium Vetus', runLatiumVetusScraper);
   await collect('MondoReale.it', runMondorealeScraper);
+  await collect('TicketOne', runTicketoneScraper);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;
