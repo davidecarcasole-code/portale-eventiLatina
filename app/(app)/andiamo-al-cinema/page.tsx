@@ -87,7 +87,7 @@ export default function CinemaPage() {
     <div className="animate-fade-in">
       {/* Hero */}
       <div className="relative mb-8 overflow-hidden rounded-3xl">
-        <div className="absolute inset-0 bg-[url('/bannercinema.png')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-[url('/bannercinema.png')] bg-contain bg-center bg-no-repeat" />
         <div className="absolute inset-0 bg-gradient-to-br from-amber-900/60 via-amber-700/50 to-orange-900/70" />
         <div
           className="absolute top-6 right-12 w-3 h-3 rounded-full bg-amber-300/40 animate-float-up"
@@ -131,6 +131,24 @@ export default function CinemaPage() {
             Scopri tutti i cinema di Latina, gli orari delle proiezioni e le
             ultime uscite. Programmi aggiornati in tempo reale.
           </p>
+          {/* Cinema tabs inside banner */}
+          {cinemas.length > 0 && (
+            <div className="flex gap-2 mt-6 flex-wrap">
+              {cinemas.map((cinema) => (
+                <button
+                  key={cinema.slug}
+                  onClick={() => setActiveCinema(cinema.slug)}
+                  className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    activeCinema === cinema.slug
+                      ? "bg-white text-amber-600 shadow-xl scale-105"
+                      : "bg-white/15 text-white hover:bg-white/25"
+                  }`}
+                >
+                  {cinema.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -138,9 +156,7 @@ export default function CinemaPage() {
         <div className="flex justify-center py-24">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
-            <p className="text-sm text-[var(--text-muted)]">
-              Caricamento cinema...
-            </p>
+            <p className="text-sm text-[var(--text-muted)]">Caricamento cinema...</p>
           </div>
         </div>
       ) : cinemas.length === 0 ? (
@@ -148,32 +164,11 @@ export default function CinemaPage() {
           <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto mb-4">
             <Clapperboard size={28} className="text-amber-500" />
           </div>
-          <p className="text-lg font-medium text-[var(--text-primary)]">
-            Nessun cinema trovato
-          </p>
-          <p className="text-sm text-[var(--text-muted)] mt-1">
-            Prova a ricaricare più tardi
-          </p>
+          <p className="text-lg font-medium text-[var(--text-primary)]">Nessun cinema trovato</p>
+          <p className="text-sm text-[var(--text-muted)] mt-1">Prova a ricaricare più tardi</p>
         </div>
       ) : (
         <>
-          {/* Cinema tabs */}
-          <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
-            {cinemas.map((cinema) => (
-              <button
-                key={cinema.slug}
-                onClick={() => setActiveCinema(cinema.slug)}
-                className={`flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  activeCinema === cinema.slug
-                    ? "bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg shadow-amber-500/25 scale-105"
-                    : "bg-[var(--card-bg)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] border border-[var(--card-border)]"
-                }`}
-              >
-                {cinema.name}
-              </button>
-            ))}
-          </div>
-
           {/* Cinema info */}
           {selected && (
             <div className="glass-card rounded-2xl p-4 sm:p-5 mb-6">
