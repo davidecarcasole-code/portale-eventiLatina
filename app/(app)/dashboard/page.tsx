@@ -196,36 +196,9 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* Right: next event glass card */}
+              {/* Right: rotating next event */}
               <div className="flex-shrink-0 w-full lg:w-72">
-                <div className="rounded-2xl p-5 bg-white/[0.04] border border-white/[0.08] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-                  <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 flex-shrink-0">
-                      <Calendar size={24} className="text-white" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[10px] text-white/40 uppercase tracking-widest font-medium">Prossimo evento</p>
-                      <p className="text-sm font-semibold text-white/90 mt-1 line-clamp-2 leading-snug">
-                        {todayEvents.length > 0 ? todayEvents[0].title : "Nessun evento oggi"}
-                      </p>
-                      {todayEvents.length > 0 && (
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="text-[10px] text-white/40 flex items-center gap-1">
-                            <Clock size={10} /> {todayEvents[0].time || "Tutto il giorno"}
-                          </span>
-                          {todayEvents[0].city && (
-                            <span className="text-[10px] text-white/40 flex items-center gap-1">
-                              <MapPin size={10} /> {todayEvents[0].city}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      <div className="mt-3 pt-3 border-t border-white/[0.06]">
-                        <span className="text-[10px] text-indigo-300/60 font-medium">{todayEvents.length} evento{todayEvents.length !== 1 ? "i" : ""} oggi</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <RotatingEventCard events={todayEvents} variant="dark" />
               </div>
             </div>
           </div>
@@ -250,7 +223,7 @@ export default function DashboardPage() {
                   Scopri tutti gli eventi, sagre, concerti e manifestazioni in provincia di Latina e nel Lazio
                 </p>
               </div>
-              <NextEventBadge todayEvents={todayEvents} />
+              <RotatingEventCard events={todayEvents} variant="light" />
             </div>
             <BannerButtons canManageEvents={canManageEvents} />
           </div>
@@ -366,32 +339,6 @@ export default function DashboardPage() {
   );
 }
 
-/* ── Hero Banner Sub‑Components ── */
-
-function NextEventBadge({ todayEvents, light }: { todayEvents: any[]; light?: boolean }) {
-  return (
-    <div className={`rounded-xl p-4 border ${light ? "bg-white/10 border-white/10 backdrop-blur-sm" : "glass-card"}`}>
-      <div className="flex items-center gap-3">
-        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${light ? "from-amber-400 to-orange-500" : "from-cyan-500 to-indigo-600"} flex items-center justify-center shadow-lg`}>
-          <Calendar size={22} className="text-white" />
-        </div>
-        <div className="text-right">
-          <p className={`text-[11px] uppercase tracking-wider ${light ? "text-amber-100" : "text-white/60"}`}>Prossimo evento</p>
-          <p className={`text-sm font-semibold truncate max-w-xs ${light ? "text-white" : "text-white"}`}>
-            {todayEvents.length > 0 ? todayEvents[0].title : "Nessun evento oggi"}
-          </p>
-          {todayEvents.length > 0 && (
-            <p className={`text-[11px] flex items-center gap-1 mt-0.5 ${light ? "text-amber-100/70" : "text-white/50"}`}>
-              <Clock size={10} />
-              {todayEvents[0].time || "Tutto il giorno"}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function BannerButtons({ canManageEvents }: { canManageEvents: boolean }) {
   return (
     <div className="flex flex-wrap gap-3 mt-6">
@@ -423,6 +370,75 @@ function BannerButtons({ canManageEvents }: { canManageEvents: boolean }) {
       </Link>
     </div>
   );
+}
+
+/* ── Rotating Next Event Card ── */
+
+function RotatingEventCard({ events, variant }: { events: any[]; variant: "dark" | "light" }) {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (events.length <= 1) return;
+    const timer = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        let next;
+        do { next = Math.floor(Math.random() * events.length); }
+        while (next === index && events.length > 1);
+        setIndex(next);
+        setVisible(true);
+      }, 350);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [events.length, index]);
+
+  const e = events[index] || null;
+
+  if (!e) {
+    return (
+      <div className={`rounded-2xl p-5 ${variant === "dark" ? "bg-white/[0.04] border border-white/[0.08] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]" : "glass-card rounded-xl"}`}>
+        <p className="text-sm text-white/50">Nessun evento oggi</p>
+      </div>
+    );
+  }
+
+  const content = (
+    <div className={`${variant === "dark" ? "rounded-2xl p-5 bg-white/[0.04] border border-white/[0.08] backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.3)] cursor-pointer hover:bg-white/[0.07] hover:border-white/[0.12] transition-all" : "glass-card rounded-xl p-4 border cursor-pointer hover:shadow-lg transition-all"}`}>
+      <div className="flex items-start gap-4">
+        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg flex-shrink-0 ${variant === "dark" ? "from-indigo-500 to-purple-600 shadow-indigo-500/20" : "from-cyan-500 to-indigo-600"}`}>
+          <Calendar size={24} className="text-white" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className={`text-[10px] uppercase tracking-widest font-medium ${variant === "dark" ? "text-white/40" : "text-white/60"}`}>Prossimo evento</p>
+          <div className="relative mt-1" style={{ minHeight: '2.5rem' }}>
+            <div className={`transition-all duration-300 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
+              <p className={`text-sm font-semibold line-clamp-2 leading-snug ${variant === "dark" ? "text-white/90" : "text-white"}`}>
+                {e.title}
+              </p>
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className={`text-[10px] flex items-center gap-1 ${variant === "dark" ? "text-white/40" : "text-white/50"}`}>
+                  <Clock size={10} /> {e.time || "Tutto il giorno"}
+                </span>
+                {e.city && (
+                  <span className={`text-[10px] flex items-center gap-1 ${variant === "dark" ? "text-white/40" : "text-white/50"}`}>
+                    <MapPin size={10} /> {e.city}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className={`mt-3 pt-3 border-t ${variant === "dark" ? "border-white/[0.06]" : "border-white/10"}`}>
+            <span className={`text-[10px] font-medium ${variant === "dark" ? "text-indigo-300/60" : "text-white/40"}`}>
+              {events.length} evento{events.length !== 1 ? "i" : ""} oggi
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return e ? <Link href={`/events/${e.id}`}>{content}</Link> : content;
 }
 
 /* ── Sidebar Ads ── */
