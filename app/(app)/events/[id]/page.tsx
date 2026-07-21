@@ -16,6 +16,7 @@ export default function EventDetailPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [editing, setEditing] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [showImage, setShowImage] = useState(false);
   const [loading, setLoading] = useState(true);
   const [related, setRelated] = useState<any[]>([]);
 
@@ -90,7 +91,7 @@ export default function EventDetailPage() {
       </button>
 
       {event.image_url && (
-        <div className="relative rounded-2xl overflow-hidden mb-6 h-56 sm:h-72 lg:h-80">
+        <div className="relative rounded-2xl overflow-hidden mb-6 h-56 sm:h-72 lg:h-80 cursor-pointer" onClick={() => setShowImage(true)}>
           <img src={event.image_url} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute top-4 left-4">
@@ -174,6 +175,16 @@ export default function EventDetailPage() {
             <div className="divider" />
             <p className="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap text-sm sm:text-base">{event.description}</p>
           </>
+        )}
+        {event.image_url && (
+          <div className="mt-4">
+            <img
+              src={event.image_url}
+              alt=""
+              className="w-full rounded-xl cursor-pointer object-cover max-h-96 border border-[var(--card-border)]"
+              onClick={() => setShowImage(true)}
+            />
+          </div>
         )}
 
         {event.price && (
@@ -264,6 +275,15 @@ export default function EventDetailPage() {
 
       {isAdmin && editing && (
         <EditForm event={event} onClose={() => setEditing(false)} onSaved={(e) => { setEvent(e); setEditing(false); }} token={token!} />
+      )}
+
+      {showImage && event.image_url && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setShowImage(false)}>
+          <button onClick={() => setShowImage(false)} className="absolute top-4 right-4 p-2.5 rounded-full bg-white/10 text-white hover:bg-white/25 transition-colors z-10">
+            <X size={24} />
+          </button>
+          <img src={event.image_url} alt="" className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl" onClick={(e) => e.stopPropagation()} />
+        </div>
       )}
     </div>
   );
