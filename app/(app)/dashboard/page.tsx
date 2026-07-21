@@ -184,13 +184,13 @@ export default function DashboardPage() {
                   <Link href="/andiamo-al-cinema" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-amber-200 bg-gradient-to-r from-amber-600/40 to-orange-600/40 border border-amber-500/20 backdrop-blur-sm hover:from-amber-500/50 hover:to-orange-500/50 hover:text-white transition-all duration-300">
                     <Film size={14} /> Cinema
                   </Link>
-                  <Link href="/tutti-al-mare" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-white/70 bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-white transition-all duration-300">
+                  <Link href="/tutti-al-mare" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-cyan-200 bg-gradient-to-r from-cyan-600/40 to-teal-600/40 border border-cyan-500/20 backdrop-blur-sm hover:from-cyan-500/50 hover:to-teal-500/50 hover:text-white transition-all duration-300">
                     <Waves size={14} /> Mare
                   </Link>
-                  <Link href="/spazio-kids" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-white/70 bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-white transition-all duration-300">
+                  <Link href="/spazio-kids" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-orange-200 bg-gradient-to-r from-orange-600/40 to-amber-600/40 border border-orange-500/20 backdrop-blur-sm hover:from-orange-500/50 hover:to-amber-500/50 hover:text-white transition-all duration-300">
                     <Rocket size={14} /> Kid's
                   </Link>
-                  <Link href="/spazio-venere" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-white/70 bg-white/5 border border-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-white transition-all duration-300">
+                  <Link href="/spazio-venere" className="inline-flex items-center gap-1.5 px-4 py-3 rounded-xl text-sm font-medium text-pink-200 bg-gradient-to-r from-pink-600/40 to-rose-600/40 border border-pink-500/20 backdrop-blur-sm hover:from-pink-500/50 hover:to-rose-500/50 hover:text-white transition-all duration-300">
                     <Heart size={14} /> Venere
                   </Link>
                 </div>
