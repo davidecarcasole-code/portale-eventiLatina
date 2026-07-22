@@ -343,7 +343,7 @@ function EventsTab({ token }: { token: string }) {
                 {e.status === "pending" ? "In attesa" : e.status === "rejected" ? "Rifiutato" : "Approvato"}
               </span>
               <button onClick={() => startEdit(e)} className="btn-ghost p-2 rounded-lg hover:text-[var(--accent)]" title="Modifica"><Edit3 size={14} /></button>
-              <a href={`/events/${e.id}`} className="btn-ghost p-2 rounded-lg" title="Visualizza"><ExternalLink size={14} /></a>
+              <a href={`/events/${e.slug || e.id}`} className="btn-ghost p-2 rounded-lg" title="Visualizza"><ExternalLink size={14} /></a>
               {e.status === "pending" && (
                 <>
                   <button onClick={() => updateEventStatus(e.id, "approved")} className="btn-ghost p-2 rounded-lg hover:text-green-500" title="Approva"><CheckCircle size={14} /></button>

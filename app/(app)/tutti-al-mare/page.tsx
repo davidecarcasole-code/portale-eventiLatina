@@ -88,7 +88,7 @@ export default function MarePage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {events.map((e: any) => (
-            <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-2xl p-4 hover:shadow-[0_0_20px_rgba(0,255,255,0.2)] transition-all duration-300 group">
+            <Link key={e.id} href={`/events/${e.slug || e.id}`} className="glass-card rounded-2xl p-4 hover:shadow-[0_0_20px_rgba(0,255,255,0.2)] transition-all duration-300 group">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300">
                   <Waves size={18} className="text-white" />

@@ -138,7 +138,7 @@ export default function SpazioVenerePage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {events.map((e: any) => (
-            <Link key={e.id} href={`/events/${e.id}`}
+            <Link key={e.id} href={`/events/${e.slug || e.id}`}
               className="glass-card rounded-2xl overflow-hidden group hover:shadow-[0_0_25px_rgba(236,72,153,0.15)] transition-all duration-300 hover:-translate-y-0.5">
               <div className="px-5 pt-5">
                 <div className="flex items-center gap-2 mb-2">

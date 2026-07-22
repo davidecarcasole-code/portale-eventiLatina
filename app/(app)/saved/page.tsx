@@ -42,7 +42,7 @@ export default function SavedEventsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {events.map((e: any) => (
             <div key={e.id} className="gradient-card rounded-xl p-4 group">
-              <Link href={`/events/${e.id}`}>
+              <Link href={`/events/${e.slug || e.id}`}>
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: (e.category_color || "#0891b2") + "20", color: e.category_color || "#0891b2" }}>
                     <Calendar size={18} />

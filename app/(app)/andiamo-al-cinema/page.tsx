@@ -29,6 +29,7 @@ interface Showtime {
   scrapedAt?: string;
   isAdmin?: boolean;
   eventId?: number;
+  eventSlug?: string;
 }
 
 interface Cinema {
@@ -73,6 +74,7 @@ export default function CinemaPage() {
               sourceUrl: event.source_url,
               isAdmin: true,
               eventId: event.id,
+              eventSlug: event.slug,
             });
           }
         }
@@ -284,7 +286,7 @@ export default function CinemaPage() {
                   </div>
                 );
                 if (film.isAdmin && film.eventId) {
-                  return <Link key={film.id} href={`/events/${film.eventId}`}>{card}</Link>;
+                  return <Link key={film.id} href={`/events/${film.eventSlug || film.eventId}`}>{card}</Link>;
                 }
                 return card;
               })}

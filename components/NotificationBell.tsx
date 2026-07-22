@@ -12,7 +12,7 @@ interface Notification {
   body?: string;
   isRead: boolean;
   createdAt: string;
-  event?: { id: number; title: string; date: string; imageUrl?: string } | null;
+  event?: { id: number; title: string; date: string; imageUrl?: string; slug?: string } | null;
 }
 
 export function NotificationBell({ dropUp = false }: { dropUp?: boolean }) {
@@ -142,7 +142,7 @@ export function NotificationBell({ dropUp = false }: { dropUp?: boolean }) {
                         <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2">{n.body}</p>
                       )}
                       {n.event && (
-                        <Link href={`/events/${n.event.id}`} onClick={() => setOpen(false)}
+                        <Link href={`/events/${n.event.slug || n.event.id}`} onClick={() => setOpen(false)}
                           className="text-xs text-[var(--accent)] hover:underline mt-1 inline-block">
                           Vedi evento →
                         </Link>

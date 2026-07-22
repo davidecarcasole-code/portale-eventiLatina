@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { generateSlug, ensureUniqueSlug } from "@/lib/slug";
 
 async function ensureSchema() {
   const { prisma } = await import("@/lib/prisma");
@@ -10,8 +11,33 @@ async function ensureSchema() {
       ALTER TABLE events ADD COLUMN IF NOT EXISTS view_count INTEGER NOT NULL DEFAULT 0
     `);
     await prisma.$executeRawUnsafe(`
+      ALTER TABLE events ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE
+    `);
+    await prisma.$executeRawUnsafe(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS publisher_status TEXT
     `);
+
+    const { generateSlug: gs, ensureUniqueSlug: eus } = await import("@/lib/slug");
+    const missingSlug = await prisma.$queryRawUnsafe<{id: number, title: string}[]>(
+      `SELECT id, title FROM events WHERE slug IS NULL OR slug = ''`
+    );
+    if (missingSlug.length > 0) {
+      const existingSlugs = new Set(
+        ((await prisma.$queryRawUnsafe<{slug: string}[]>(
+          `SELECT slug FROM events WHERE slug IS NOT NULL AND slug != ''`
+        )).map((r: any) => r.slug))
+      );
+      for (const row of missingSlug) {
+        const base = gs(row.title);
+        const slug = eus(base, existingSlugs);
+        existingSlugs.add(slug);
+        await prisma.$executeRawUnsafe(
+          `UPDATE events SET slug = $1 WHERE id = $2`,
+          slug, row.id
+        );
+      }
+      console.log(`[Events] Backfilled slugs for ${missingSlug.length} events`);
+    }
   } catch (err) {
     console.error('[Events] Schema ensure failed:', err);
   }
@@ -111,6 +137,7 @@ export async function GET(req: NextRequest) {
 
     const mapped = events.map((e: any) => ({
       ...e,
+      slug: e.slug,
       is_new: Math.abs(Date.now() - e.createdAt.getTime()) / 86400000 <= 7,
       category_name: e.category?.name,
       category_slug: e.category?.slug,
@@ -147,9 +174,20 @@ export async function POST(req: NextRequest) {
     }
     const isAdmin = user.role === "admin" || user.role === "super_admin";
     const eventStatus = isAdmin ? "approved" : "pending";
+
+    const { generateSlug: gs, ensureUniqueSlug: eus } = await import("@/lib/slug");
+    const baseSlug = gs(body.title);
+    const existingSlugs = new Set(
+      ((await prisma.$queryRawUnsafe<{slug: string}[]>(
+        `SELECT slug FROM events WHERE slug IS NOT NULL AND slug != ''`
+      )).map((r: any) => r.slug))
+    );
+    const slug = eus(baseSlug, existingSlugs);
+
     const event = await prisma.event.create({
       data: {
         title: body.title,
+        slug,
         description: body.description,
         categoryId: parseInt(body.category_id),
         date: new Date(body.date),

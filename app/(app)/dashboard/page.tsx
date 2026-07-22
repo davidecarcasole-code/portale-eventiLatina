@@ -273,7 +273,7 @@ export default function DashboardPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {todayEvents.slice(0, 6).map((e: any) => (
-                  <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
+                  <Link key={e.id} href={`/events/${e.slug || e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
                         {React.createElement(categoryIcons[e.category_slug] || Calendar, { size: 18 })}
@@ -305,7 +305,7 @@ export default function DashboardPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {events.slice(0, 9).map((e: any) => (
-                  <Link key={e.id} href={`/events/${e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
+                  <Link key={e.id} href={`/events/${e.slug || e.id}`} className="glass-card rounded-xl p-4 hover:shadow-[0_0_20px_var(--accent-glow)] transition-all duration-300 group">
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300" style={{ backgroundColor: e.category_color + "20", color: e.category_color }}>
                         {React.createElement(categoryIcons[e.category_slug] || Calendar, { size: 18 })}
@@ -438,7 +438,7 @@ function RotatingEventCard({ events, variant }: { events: any[]; variant: "dark"
     </div>
   );
 
-  return e ? <Link href={`/events/${e.id}`}>{content}</Link> : content;
+  return e ? <Link href={`/events/${e.slug || e.id}`}>{content}</Link> : content;
 }
 
 /* ── Sidebar Ads ── */
