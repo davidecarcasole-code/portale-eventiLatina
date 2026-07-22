@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
-import { jsonResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
   try {
+    const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { prisma } = await import("@/lib/prisma");
 
@@ -37,11 +37,12 @@ export async function GET(req: NextRequest) {
     }));
 
     return jsonResponse({ sources, totalEvents, autoEvents, eventCountBySource });
-  } catch (err) { return handleApiError(err); }
+  } catch (err) { const { handleApiError } = await import("@/lib/api-helpers"); return handleApiError(err); }
 }
 
 export async function PUT(req: NextRequest) {
   try {
+    const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const { prisma } = await import("@/lib/prisma");
     const { ensureScrapedSourcesTable } = await import("@/lib/scraper/engine");
@@ -75,11 +76,12 @@ export async function PUT(req: NextRequest) {
       },
     });
     return jsonResponse(updated);
-  } catch (err) { return handleApiError(err); }
+  } catch (err) { const { handleApiError } = await import("@/lib/api-helpers"); return handleApiError(err); }
 }
 
 export async function DELETE(req: NextRequest) {
   try {
+    const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
     await requireAdmin(req);
     const body = await req.json().catch(() => ({}));
     const { id } = body;
@@ -90,5 +92,5 @@ export async function DELETE(req: NextRequest) {
     await ensureScrapedSourcesTable();
     await prisma.scrapedSource.delete({ where: { id } });
     return jsonResponse({ success: true });
-  } catch (err) { return handleApiError(err); }
+  } catch (err) { const { handleApiError } = await import("@/lib/api-helpers"); return handleApiError(err); }
 }

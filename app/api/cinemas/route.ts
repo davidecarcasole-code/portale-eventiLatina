@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { jsonResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 import { CINEMAS_LATINA } from "@/lib/cinema/cinemas";
 
 const CREATE_TABLE = `
@@ -21,6 +20,7 @@ CREATE TABLE IF NOT EXISTS cinema_showtimes (
 )`;
 
 export async function GET() {
+  const { jsonResponse, handleApiError } = await import("@/lib/api-helpers");
   try {
     const { prisma } = await import("@/lib/prisma");
     await prisma.$executeRawUnsafe(CREATE_TABLE);
@@ -102,6 +102,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
   try {
     await requireAdmin(req);
 

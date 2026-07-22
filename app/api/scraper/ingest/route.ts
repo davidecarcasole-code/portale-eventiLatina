@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { jsonResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 import type { ScrapedEvent } from "@/lib/scraper/scraped-event";
 import { getProvinceFromCity } from "@/lib/scraper/city-to-province";
 
@@ -47,6 +46,7 @@ function dedupKey(e: ScrapedEvent): string {
 }
 
 export async function POST(req: NextRequest) {
+  const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
   try {
     await requireAdmin(req);
     const { events, sourceName } = await req.json();

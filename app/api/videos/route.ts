@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
-import { jsonResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
+  const { jsonResponse, handleApiError } = await import("@/lib/api-helpers");
   try {
     const { listVideos, listAllVideos, ensureVideosTable } = await import("@/lib/videos/engine");
     await ensureVideosTable();
@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
   try {
     await requireAdmin(req);
     const { createVideo, ensureVideosTable } = await import("@/lib/videos/engine");

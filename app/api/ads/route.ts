@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
-import { jsonResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 
 export async function GET(req: NextRequest) {
+  const { jsonResponse, handleApiError } = await import("@/lib/api-helpers");
   try {
     const { listAds, listAllAds, ensureAdsTable } = await import("@/lib/ads/engine");
     await ensureAdsTable();
@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
   try {
     await requireAdmin(req);
     const { createAd, ensureAdsTable } = await import("@/lib/ads/engine");

@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
-import { jsonResponse, handleApiError, requireAdmin } from "@/lib/api-helpers";
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { jsonResponse, handleApiError, requireAdmin } = await import("@/lib/api-helpers");
   try {
     await requireAdmin(req);
     const { id } = await params;
