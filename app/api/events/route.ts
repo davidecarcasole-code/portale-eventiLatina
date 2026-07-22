@@ -7,6 +7,9 @@ async function ensureSchema() {
       ALTER TABLE events ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'approved'
     `);
     await prisma.$executeRawUnsafe(`
+      ALTER TABLE events ADD COLUMN IF NOT EXISTS view_count INTEGER NOT NULL DEFAULT 0
+    `);
+    await prisma.$executeRawUnsafe(`
       ALTER TABLE users ADD COLUMN IF NOT EXISTS publisher_status TEXT
     `);
   } catch (err) {

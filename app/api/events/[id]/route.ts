@@ -5,6 +5,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const { prisma } = await import("@/lib/prisma");
     const { jsonResponse, errorResponse, authenticateRequest } = await import("@/lib/api-helpers");
     const { id } = await params;
+    await prisma.$executeRawUnsafe(`ALTER TABLE events ADD COLUMN IF NOT EXISTS view_count INTEGER NOT NULL DEFAULT 0`);
     const event = await prisma.event.findUnique({
       where: { id: parseInt(id) },
       include: { category: true },
