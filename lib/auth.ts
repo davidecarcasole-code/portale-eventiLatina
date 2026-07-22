@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { prisma } from "./prisma";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret";
 
@@ -36,6 +35,7 @@ export function verifyToken(token: string): { userId: string; email: string; rol
 export async function getAuthUser(token: string): Promise<AuthUser | null> {
   const decoded = verifyToken(token);
   if (!decoded) return null;
+  const { prisma } = await import("./prisma");
   const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
   if (!user) return null;
   return { id: user.id, email: user.email, name: user.name || "", role: user.role, avatar: user.avatar, publisherStatus: user.publisherStatus };
@@ -48,6 +48,7 @@ export function extractToken(req: Request): string | null {
 }
 
 export async function seedSuperAdmin() {
+  const { prisma } = await import("./prisma");
   const email = process.env.SUPER_ADMIN_EMAIL || "admin@eventinlatina.it";
   const password = process.env.SUPER_ADMIN_PASSWORD || "Admin123!";
   const existing = await prisma.user.findUnique({ where: { email } });
