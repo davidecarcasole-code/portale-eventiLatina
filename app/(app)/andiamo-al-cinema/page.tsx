@@ -11,6 +11,7 @@ import {
   PlayCircle,
   Sparkles,
 } from "lucide-react";
+import Link from "next/link";
 import { CINEMAS_LATINA } from "@/lib/cinema/cinemas";
 
 interface Showtime {
@@ -27,6 +28,7 @@ interface Showtime {
   sourceUrl?: string;
   scrapedAt?: string;
   isAdmin?: boolean;
+  eventId?: number;
 }
 
 interface Cinema {
@@ -70,6 +72,7 @@ export default function CinemaPage() {
               showtimes: event.time ? [event.time] : [],
               sourceUrl: event.source_url,
               isAdmin: true,
+              eventId: event.id,
             });
           }
         }
@@ -172,11 +175,12 @@ export default function CinemaPage() {
           {/* Films grid */}
           {selected && selected.films.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {selected.films.map((film) => (
-                <div
-                  key={film.id}
-                  className="glass-card rounded-2xl overflow-hidden hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 group"
-                >
+              {selected.films.map((film) => {
+                const card = (
+                  <div
+                    key={film.id}
+                    className={`glass-card rounded-2xl overflow-hidden hover:shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300 group ${film.isAdmin ? "ring-2 ring-amber-400/40 hover:ring-amber-400/70 cursor-pointer" : ""}`}
+                  >
                   {/* Poster */}
                   <div className="relative h-48 overflow-hidden">
                     <img
@@ -271,9 +275,19 @@ export default function CinemaPage() {
                         <ExternalLink size={10} />
                       </a>
                     )}
+                    {film.isAdmin && (
+                      <p className="text-[10px] font-semibold text-amber-500 mt-2 flex items-center gap-1">
+                        <ExternalLink size={10} /> Scopri di più
+                      </p>
+                    )}
                   </div>
-                </div>
-              ))}
+                  </div>
+                );
+                if (film.isAdmin && film.eventId) {
+                  return <Link key={film.id} href={`/events/${film.eventId}`}>{card}</Link>;
+                }
+                return card;
+              })}
             </div>
           ) : selected ? (
             <div className="text-center py-16">
