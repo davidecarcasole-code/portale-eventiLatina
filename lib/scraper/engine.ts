@@ -32,7 +32,6 @@ import { runTicketoneScraper } from './ticketoneScraper';
 import { runItinerarinelgustoScraper } from './itinerarinelgustoScraper';
 import { runRivieraDiUlisseScraper } from './rivieradiulisseScraper';
 import { runSagritalyScraper } from './sagritalyScraper';
-import { runIlTaccoDiBaccoScraper } from './iltaccodibaccoScraper';
 import { runLuogoArteScraper } from './luogoarteScraper';
 import { getProvinceFromCity } from './city-to-province';
 
@@ -98,7 +97,6 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   itinerarinelgusto: { name: 'Itinerari nel Gusto', url: 'https://www.itinerarinelgusto.it/sagre-e-feste/latina/', fn: runItinerarinelgustoScraper },
   rivieradiulisse: { name: 'Parco Riviera di Ulisse', url: 'https://www.parchilazio.it/parcorivieradiulisse-ricerca_news', fn: runRivieraDiUlisseScraper },
   sagritaly: { name: 'Sagritaly', url: 'https://sagritaly.com/province-sagre/latina/', fn: runSagritalyScraper },
-  iltaccodibacco: { name: 'Il Tacco di Bacco', url: 'https://iltaccodibacco.it/latina/forkids/', fn: runIlTaccoDiBaccoScraper },
   luogoarte: { name: 'LuogoArte - Immersioni Sonore', url: 'https://www.luogoarte.it/immersioni-sonore.html', fn: runLuogoArteScraper },
 };
 

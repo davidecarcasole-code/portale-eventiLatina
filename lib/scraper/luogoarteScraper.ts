@@ -10,32 +10,6 @@ const MONTHS_IT: Record<string, string> = {
   settembre: '09', ottobre: '10', novembre: '11', dicembre: '12',
 };
 
-function parseItalianDate(dateStr: string): { date: string; time?: string } {
-  const year = new Date().getFullYear();
-  const lower = dateStr.toLowerCase();
-
-  let time: string | undefined;
-  const timeMatch = lower.match(/ore\s*(\d{1,2})[.:](\d{2})/);
-  if (timeMatch) {
-    time = `${timeMatch[1].padStart(2, '0')}:${timeMatch[2]}`;
-  }
-
-  for (const [monthName, monthNum] of Object.entries(MONTHS_IT)) {
-    if (lower.includes(monthName)) {
-      const dayMatch = lower.match(/(\d{1,2})/);
-      const day = dayMatch ? dayMatch[1].padStart(2, '0') : '01';
-      const yearMatch = lower.match(/(\d{4})/);
-      const yr = yearMatch ? yearMatch[1] : year;
-      return { date: `${yr}-${monthNum}-${day}`, time };
-    }
-  }
-
-  const isoMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
-  if (isoMatch) return { date: isoMatch[0], time };
-
-  return { date: '' };
-}
-
 export async function runLuogoArteScraper(): Promise<ScrapedEvent[]> {
   console.log('[LuogoArte] Starting...');
   const all: ScrapedEvent[] = [];
@@ -45,47 +19,49 @@ export async function runLuogoArteScraper(): Promise<ScrapedEvent[]> {
   try {
     const res = await axios.get(BASE_URL, { headers, timeout: 15000 });
     const $ = cheerio.load(res.data);
+    const fullText = $('body').text();
+    const currentYear = new Date().getFullYear();
 
-    $('article, .event, [class*="event"], .concert, section').each((_, el) => {
-      const $el = $(el);
-      const title = $el.find('h2, h3, h4, .title, strong, b').first().text().trim();
-      if (!title || title.length < 5) return;
+    const concertRegex = /CONCERTO\s+DEL\s+(\d{1,2})\s+(\w+)\s+(\d{4})\s*(?:ORE\s*(\d{1,2})[.:](\d{2}))?/gi;
+    let match;
 
-      const fullText = $el.text();
-      const dateMatch = fullText.match(/CONCERTO DEL (\d{1,2})\s+(\w+)\s+(\d{4})/i);
-      if (!dateMatch) return;
-
-      const day = dateMatch[1].padStart(2, '0');
-      const monthName = dateMatch[2].toLowerCase();
-      const yr = dateMatch[3];
+    while ((match = concertRegex.exec(fullText)) !== null) {
+      const day = match[1].padStart(2, '0');
+      const monthName = match[2].toLowerCase();
+      const yr = parseInt(match[3]);
       const monthNum = MONTHS_IT[monthName];
-      if (!monthNum) return;
+      if (!monthNum) continue;
+      if (yr < currentYear) continue;
 
-      const timeMatch = fullText.match(/ORE\s*(\d{1,2})[.:](\d{2})/i);
-      const time = timeMatch ? `${timeMatch[1].padStart(2, '0')}:${timeMatch[2]}` : undefined;
-
+      const time = match[4] ? `${match[4].padStart(2, '0')}:${match[5]}` : undefined;
       const date = `${yr}-${monthNum}-${day}`;
 
-      const description = $el.find('p').first().text().trim().substring(0, 500) || title;
-      const location = 'Lungomare di Latina';
+      const timeMs = new Date(date).getTime();
+      if (timeMs < Date.now()) continue;
+
+      const surrounding = fullText.substring(Math.max(0, match.index - 500), match.index + 500);
+      const titleMatch = surrounding.match(/CONCERTO\s+DEL.*?(?:ORE\s*\d{1,2}[.:]\d{2})?\s*([\s\S]*?)(?=CONCERTO\s+DEL|RASSEGNA\s+STAMPA|CATALOGO|$)/i);
+      const rawTitle = titleMatch ? titleMatch[1].replace(/\s+/g, ' ').trim().substring(0, 200) : `Concerto Immersioni Sonore ${day}/${monthNum}/${yr}`;
+      const title = rawTitle.length > 5 ? rawTitle : `Concerto Immersioni Sonore ${day}/${monthNum}/${yr}`;
 
       const key = title.toLowerCase().slice(0, 60) + date;
-      if (seen.has(key)) return;
+      if (seen.has(key)) continue;
       seen.add(key);
 
       all.push({
         title: title.substring(0, 200),
-        description: description || undefined,
+        description: surrounding.trim().substring(0, 500) || title,
         date,
         time,
-        location,
+        location: 'Quarto Chiosco da Umberto, Lungomare di Latina',
         city: 'Latina',
         province: 'LT',
         category_id: 'mare',
+        image_url: undefined,
         source_url: BASE_URL,
         source_name: 'LuogoArte - Immersioni Sonore',
       });
-    });
+    }
 
     console.log(`[LuogoArte] Scraped ${BASE_URL}`);
   } catch (err: any) {
