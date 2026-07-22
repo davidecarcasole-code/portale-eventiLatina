@@ -12,6 +12,7 @@ export default function EventDetailClient({ initialEvent, slug }: { initialEvent
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
   const [event, setEvent] = useState<any>(initialEvent);
+  const [loading, setLoading] = useState(!initialEvent);
   const [isSaved, setIsSaved] = useState(initialEvent?.is_saved || false);
   const [editing, setEditing] = useState(false);
   const [showShare, setShowShare] = useState(false);
@@ -19,17 +20,38 @@ export default function EventDetailClient({ initialEvent, slug }: { initialEvent
   const [related, setRelated] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!initialEvent) return;
-    fetch(`/api/events/${slug}/view`, { method: "POST" }).catch(() => {});
-    if (initialEvent.category_slug) {
-      const today = new Date().toISOString().split('T')[0];
-      const to = new Date(initialEvent.date);
-      to.setDate(to.getDate() + 14);
-      fetch(`/api/events?category=${initialEvent.category_slug}&dateFrom=${today}&dateTo=${to.toISOString().split('T')[0]}&limit=6`)
-        .then(r => r.json())
-        .then(d => setRelated((d.events || []).filter((e: any) => e.id !== initialEvent.id)))
-        .catch(() => {});
+    if (initialEvent) {
+      setLoading(false);
+      fetch(`/api/events/${slug}/view`, { method: "POST" }).catch(() => {});
+      if (initialEvent.category_slug) {
+        const today = new Date().toISOString().split('T')[0];
+        const to = new Date(initialEvent.date);
+        to.setDate(to.getDate() + 14);
+        fetch(`/api/events?category=${initialEvent.category_slug}&dateFrom=${today}&dateTo=${to.toISOString().split('T')[0]}&limit=6`)
+          .then(r => r.json())
+          .then(d => setRelated((d.events || []).filter((e: any) => e.id !== initialEvent.id)))
+          .catch(() => {});
+      }
+      return;
     }
+    fetch(`/api/events/${slug}`)
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(data => {
+        setEvent(data);
+        setIsSaved(data.is_saved || false);
+        setLoading(false);
+        fetch(`/api/events/${slug}/view`, { method: "POST" }).catch(() => {});
+        if (data.category_slug) {
+          const today = new Date().toISOString().split('T')[0];
+          const to = new Date(data.date);
+          to.setDate(to.getDate() + 14);
+          fetch(`/api/events?category=${data.category_slug}&dateFrom=${today}&dateTo=${to.toISOString().split('T')[0]}&limit=6`)
+            .then(r => r.json())
+            .then(d => setRelated((d.events || []).filter((e: any) => e.id !== data.id)))
+            .catch(() => {});
+        }
+      })
+      .catch(() => setLoading(false));
   }, [initialEvent, slug]);
 
   async function toggleSave() {
@@ -58,6 +80,15 @@ export default function EventDetailClient({ initialEvent, slug }: { initialEvent
     if (platform === "instagram") { navigator.clipboard.writeText(url); alert("Link copiato! Incollalo su Instagram."); return; }
     window.open(shareUrls[platform], "_blank", "noopener,noreferrer,width=600,height=600");
   }
+
+  if (loading) return (
+    <div className="flex justify-center py-24">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
+        <p className="text-sm text-[var(--text-muted)]">Caricamento evento...</p>
+      </div>
+    </div>
+  );
 
   if (!event) return (
     <div className="text-center py-24">
