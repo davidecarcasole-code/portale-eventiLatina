@@ -6,8 +6,9 @@ export async function GET(req: NextRequest) {
     await requireAdmin(req);
     const { prisma } = await import("@/lib/prisma");
 
-    const { ensureScrapedSourcesTable } = await import("@/lib/scraper/engine");
+    const { ensureScrapedSourcesTable, ensureDefaultSources } = await import("@/lib/scraper/engine");
     await ensureScrapedSourcesTable();
+    await ensureDefaultSources();
 
     const [scrapedSources, totalEvents, autoEvents, bySource] = await Promise.all([
       prisma.scrapedSource.findMany({
