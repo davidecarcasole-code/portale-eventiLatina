@@ -140,8 +140,13 @@ export async function runCentroItaliaScraper(): Promise<ScrapedEvent[]> {
       return all;
     })();
   }));
+
+  const extraResults = await Promise.allSettled([
+    scrapeProvincePage('https://www.centroitaliaevents.it/lazio/latina'),
+  ]);
+
   const all: ScrapedEvent[] = [];
-  for (const r of results) {
+  for (const r of [...results, ...extraResults]) {
     if (r.status === 'fulfilled') all.push(...r.value);
   }
 
