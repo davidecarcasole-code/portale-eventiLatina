@@ -92,6 +92,17 @@ export async function GET(req: NextRequest) {
       if (slugs.length === 1) where.category = { slug: slugs[0] };
       else if (slugs.length > 1) where.category = { slug: { in: slugs } };
     }
+    const excludeCategory = searchParams.get("excludeCategory");
+    if (excludeCategory) {
+      const excludeSlugs = excludeCategory.split(',').map(s => s.trim()).filter(Boolean);
+      if (excludeSlugs.length > 0) {
+        if (category) {
+          where.category = { slug: { in: category.split(',').map(s => s.trim()).filter(Boolean), notIn: excludeSlugs } };
+        } else {
+          where.category = { slug: { notIn: excludeSlugs } };
+        }
+      }
+    }
     if (province === "PROVINCIA") {
       where.province = { in: ["RM", "FR", "RI", "VT"] };
     } else if (province) {
