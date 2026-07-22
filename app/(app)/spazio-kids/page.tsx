@@ -21,7 +21,7 @@ export default function SpazioKidsPage() {
     async function load() {
       setLoading(true);
       try {
-        const res = await fetch(`/api/events?limit=50&page=1&category=${slugs}&dateFrom=2020-01-01`);
+        const res = await fetch(`/api/events?limit=50&page=1&category=${slugs}`);
         const data = await res.json();
         setEvents(data.events || []);
       } catch { /* ignore */ }
