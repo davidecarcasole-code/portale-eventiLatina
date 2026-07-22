@@ -5,24 +5,13 @@ const DEFAULT_IMAGE = `${SITE_URL}/logo.png`;
 
 async function getEvent(slug: string) {
   try {
-    const { PrismaClient } = await import("@/src/generated/prisma/client");
-    const { PrismaPg } = await import("@prisma/adapter-pg");
-    const { Pool } = await import("pg");
-
-    const pool = new Pool({
-      connectionString: process.env.DATABASE_URL!,
-      ssl: { rejectUnauthorized: false },
-    });
-    const adapter = new PrismaPg(pool);
-    const prisma = new PrismaClient({ adapter });
-
+    const { prisma } = await import("@/lib/prisma");
     await prisma.$executeRawUnsafe(`ALTER TABLE events ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE`);
     const isNumeric = /^\d+$/.test(slug);
     const event = await prisma.event.findUnique({
       where: isNumeric ? { id: parseInt(slug) } : { slug },
       include: { category: true },
     });
-    await prisma.$disconnect();
     return event;
   } catch (err) {
     console.error("[EventPage] Failed to fetch event:", err);
