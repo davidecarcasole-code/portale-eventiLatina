@@ -156,6 +156,9 @@ export async function ensureScrapedSourcesTable() {
   } catch (err) {
     console.error('[Scraper] Failed to ensure scraped_sources table:', err);
   }
+  try {
+    await prisma.$executeRawUnsafe(`ALTER TABLE events ADD COLUMN IF NOT EXISTS view_count INTEGER NOT NULL DEFAULT 0`);
+  } catch {}
 }
 
 export async function ensureDefaultSources() {

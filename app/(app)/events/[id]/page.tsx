@@ -26,6 +26,7 @@ export default function EventDetailPage() {
       .then((data) => {
         setEvent(data);
         setIsSaved(data.is_saved || false);
+        fetch(`/api/events/${id}/view`, { method: "POST" }).catch(() => {});
         if (data.category_slug) {
           const today = new Date().toISOString().split('T')[0];
           const to = new Date(data.date);

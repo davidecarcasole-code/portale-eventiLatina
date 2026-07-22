@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, ChevronLeft, ChevronRight, Upload, ExternalLink } from "lucide-react";
+import { Shield, Globe, Search, Users, Brain, RefreshCw, Plus, Trash2, Edit3, X, Sparkles, Radio, Power, PowerOff, Play, Film, Megaphone, Briefcase, CheckCircle, XCircle, ChevronLeft, ChevronRight, Upload, ExternalLink, BarChart3 } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { CINEMAS_LATINA } from "@/lib/cinema/cinemas";
 
 const TABS = [
+  { key: "stats", label: "Statistiche", icon: BarChart3 },
   { key: "events", label: "Eventi", icon: Globe },
   { key: "videos", label: "Video", icon: Film },
   { key: "ads", label: "Pubblicità", icon: Megaphone },
@@ -70,6 +71,7 @@ export default function AdminPage() {
         ))}
       </div>
 
+      {tab === "stats" && <StatsTab token={token!} />}
       {tab === "events" && <EventsTab token={token!} />}
       {tab === "videos" && <VideosTab token={token!} />}
       {tab === "ads" && <AdsTab token={token!} />}
@@ -1102,7 +1104,181 @@ function PublishersTab({ token }: { token: string }) {
               </div>
             </div>
           ))}
-          {publishers.length === 0 && <p className="text-center text-[var(--text-muted)] py-8">Nessun publisher registrato</p>}
+           {publishers.length === 0 && <p className="text-center text-[var(--text-muted)] py-8">Nessun publisher registrato</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatsTab({ token }: { token: string }) {
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/stats", { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => { setStats(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [token]);
+
+  if (loading) return (
+    <div className="flex justify-center py-12">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
+        <p className="text-sm text-[var(--text-muted)]">Caricamento statistiche...</p>
+      </div>
+    </div>
+  );
+
+  if (!stats) return <p className="text-center text-[var(--text-muted)] py-8">Impossibile caricare le statistiche</p>;
+
+  const o = stats.overview;
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        {[
+          { label: "Eventi Totali", value: o.totalEvents, color: "from-blue-500 to-indigo-500" },
+          { label: "Visualizzazioni", value: o.totalViews, color: "from-purple-500 to-pink-500" },
+          { label: "Utenti", value: o.totalUsers, color: "from-emerald-500 to-teal-500" },
+          { label: "Publisher", value: o.publishers, color: "from-amber-500 to-orange-500" },
+          { label: "Eventi Salvati", value: o.totalSaved, color: "from-rose-500 to-red-500" },
+          { label: "Click Pubblicità", value: o.totalAdClicks, color: "from-cyan-500 to-blue-500" },
+          { label: "In Attesa", value: o.pendingEvents, color: "from-yellow-500 to-amber-500" },
+          { label: "Auto-generati", value: o.autoEvents, color: "from-violet-500 to-purple-500" },
+        ].map((card) => (
+          <div key={card.label} className="glass-card rounded-xl p-4">
+            <p className="text-xs text-[var(--text-muted)] mb-1">{card.label}</p>
+            <p className="text-2xl font-bold bg-gradient-to-r bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(to right, var(--accent), var(--accent))` }}>{card.value.toLocaleString("it-IT")}</p>
+          </div>
+        ))}
+      </div>
+
+      {stats.eventsByDay.length > 0 && (
+        <div className="glass-card rounded-xl p-5">
+          <h3 className="text-sm font-semibold mb-4">Eventi Creati (Ultimi 30gg)</h3>
+          <div className="flex items-end gap-1 h-32">
+            {stats.eventsByDay.map((d: any, i: number) => {
+              const max = Math.max(...stats.eventsByDay.map((x: any) => x.count), 1);
+              const h = Math.max((d.count / max) * 100, d.count > 0 ? 8 : 2);
+              return (
+                <div key={d.day} className="flex-1 flex flex-col items-center gap-1 group relative">
+                  <div
+                    className="w-full rounded-t-md bg-gradient-to-t from-[var(--accent)] to-[var(--accent)] opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
+                    style={{ height: `${h}%` }}
+                    title={`${d.day}: ${d.count}`}
+                  />
+                  {i % 7 === 0 && (
+                    <span className="text-[8px] text-[var(--text-muted)] truncate w-full text-center">{d.day.slice(5)}</span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {stats.eventsByCategory.length > 0 && (
+          <div className="glass-card rounded-xl p-5">
+            <h3 className="text-sm font-semibold mb-4">Per Categoria</h3>
+            <div className="space-y-2">
+              {stats.eventsByCategory.map((c: any) => {
+                const max = stats.eventsByCategory[0]?.count || 1;
+                return (
+                  <div key={c.name} className="flex items-center gap-2">
+                    <span className="text-xs text-[var(--text-secondary)] w-24 truncate">{c.name}</span>
+                    <div className="flex-1 h-5 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                      <div className="h-full rounded-full transition-all" style={{ width: `${(c.count / max) * 100}%`, backgroundColor: c.color || "var(--accent)" }} />
+                    </div>
+                    <span className="text-xs font-medium text-[var(--text-muted)] w-8 text-right">{c.count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {stats.eventsBySource.length > 0 && (
+          <div className="glass-card rounded-xl p-5">
+            <h3 className="text-sm font-semibold mb-4">Per Fonte (Scraper)</h3>
+            <div className="space-y-2">
+              {stats.eventsBySource.map((s: any) => {
+                const max = stats.eventsBySource[0]?.count || 1;
+                return (
+                  <div key={s.name} className="flex items-center gap-2">
+                    <span className="text-xs text-[var(--text-secondary)] w-28 truncate">{s.name}</span>
+                    <div className="flex-1 h-5 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all" style={{ width: `${(s.count / max) * 100}%` }} />
+                    </div>
+                    <span className="text-xs font-medium text-[var(--text-muted)] w-8 text-right">{s.count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {stats.eventsByCity.length > 0 && (
+          <div className="glass-card rounded-xl p-5">
+            <h3 className="text-sm font-semibold mb-4">Per Città</h3>
+            <div className="space-y-2">
+              {stats.eventsByCity.map((c: any) => {
+                const max = stats.eventsByCity[0]?.count || 1;
+                return (
+                  <div key={c.city} className="flex items-center gap-2">
+                    <span className="text-xs text-[var(--text-secondary)] w-24 truncate">{c.city}</span>
+                    <div className="flex-1 h-5 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all" style={{ width: `${(c.count / max) * 100}%` }} />
+                    </div>
+                    <span className="text-xs font-medium text-[var(--text-muted)] w-8 text-right">{c.count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {stats.eventsByPublisher.length > 0 && (
+          <div className="glass-card rounded-xl p-5">
+            <h3 className="text-sm font-semibold mb-4">Per Publisher</h3>
+            <div className="space-y-2">
+              {stats.eventsByPublisher.map((p: any) => {
+                const max = stats.eventsByPublisher[0]?.count || 1;
+                return (
+                  <div key={p.name} className="flex items-center gap-2">
+                    <span className="text-xs text-[var(--text-secondary)] w-24 truncate">{p.name}</span>
+                    <div className="flex-1 h-5 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all" style={{ width: `${(p.count / max) * 100}%` }} />
+                    </div>
+                    <span className="text-xs font-medium text-[var(--text-muted)] w-8 text-right">{p.count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {stats.topEvents.length > 0 && (
+        <div className="glass-card rounded-xl p-5">
+          <h3 className="text-sm font-semibold mb-4">Top 10 Eventi per Visualizzazioni</h3>
+          <div className="space-y-2">
+            {stats.topEvents.map((e: any, i: number) => (
+              <div key={e.id} className="flex items-center gap-3 py-2 border-b border-[var(--card-border)] last:border-0">
+                <span className="text-xs font-bold text-[var(--text-muted)] w-5">#{i + 1}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{e.title}</p>
+                  <p className="text-xs text-[var(--text-muted)]">{e.city || "N/A"} · {e.date ? new Date(e.date).toLocaleDateString("it-IT", { day: "numeric", month: "short" }) : "N/A"}</p>
+                </div>
+                <span className="text-sm font-bold text-[var(--accent)]">{e.views.toLocaleString("it-IT")}</span>
+                <span className="text-xs text-[var(--text-muted)]">views</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
