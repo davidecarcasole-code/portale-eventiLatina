@@ -217,7 +217,7 @@ function AdSlide({ ad }: { ad: any }) {
 
   return (
     <div className="relative">
-      <div className="relative aspect-video">
+      <div className="relative aspect-square">
         <img
           src={ad.imageUrl}
           alt={ad.title}

@@ -322,17 +322,12 @@ function VerticalAdColumn() {
 
   if (ads.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-[var(--card-border)] bg-[var(--accent-subtle)]/20 p-6 flex flex-col items-center justify-center text-center gap-3 min-h-[200px]">
-        <div className="w-12 h-12 rounded-2xl bg-[var(--accent-subtle)] flex items-center justify-center">
-          <Mail size={20} className="text-[var(--accent)]" />
-        </div>
-        <div>
-          <p className="text-xs font-medium text-[var(--text-primary)]">Spazio Pubblicitario</p>
-          <p className="text-[11px] text-[var(--text-muted)] mt-1 leading-relaxed">
-            Contattaci per avere<br />il tuo spazio qui
-          </p>
-        </div>
-        <a href="mailto:info@eventinlatina.it" className="text-[11px] text-[var(--accent)] hover:underline font-medium">
+      <div className="rounded-xl border border-dashed border-[var(--card-border)] bg-[var(--accent-subtle)]/20 p-4 flex flex-col items-center justify-center text-center gap-2 aspect-square">
+        <Mail size={16} className="text-[var(--accent)]" />
+        <p className="text-[10px] text-[var(--text-muted)] leading-relaxed">
+          Spazio pubblicitario<br />disponibile
+        </p>
+        <a href="mailto:info@eventinlatina.it" className="text-[9px] text-[var(--accent)] hover:underline font-medium">
           info@eventinlatina.it
         </a>
       </div>
@@ -340,36 +335,34 @@ function VerticalAdColumn() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-2 gap-3">
       {ads.map((a: any) => (
         <a key={a.id}
           href={a.linkUrl || "#"}
           target="_blank"
           rel="noopener noreferrer nofollow"
           onClick={async () => { try { await fetch(`/api/ads/${a.id}/click`, { method: "POST" }); } catch {} }}
-          className="relative group overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] transition-all hover:shadow-[0_0_20px_var(--accent-glow)] block"
+          className="relative group overflow-hidden rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] transition-all hover:shadow-[0_0_20px_var(--accent-glow)] block aspect-square"
         >
-          <div className="relative min-h-[200px]">
-            <img
-              src={a.imageUrl}
-              alt={a.title}
-              className="w-full h-full absolute inset-0 object-cover"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-[9px] text-white/70 px-1.5 py-0.5 rounded-lg font-medium uppercase tracking-wider">
-              Ad
+          <img
+            src={a.imageUrl}
+            alt={a.title}
+            className="w-full h-full object-cover"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute top-1.5 right-1.5 bg-black/50 backdrop-blur-sm text-[8px] text-white/70 px-1 py-0.5 rounded font-medium uppercase tracking-wider">
+            Ad
+          </div>
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2">
+            <p className="text-[9px] text-white/80 truncate font-medium">{a.title}</p>
+          </div>
+          {a.linkUrl && (
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center">
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-[10px] bg-black/40 px-2 py-1 rounded-lg backdrop-blur-sm flex items-center gap-1">
+                Apri <ExternalLink size={8} />
+              </span>
             </div>
-            {a.linkUrl && (
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center">
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs bg-black/40 px-2.5 py-1 rounded-lg backdrop-blur-sm flex items-center gap-1">
-                  Apri <ExternalLink size={10} />
-                </span>
-              </div>
-            )}
-          </div>
-          <div className="px-3 py-2 border-t border-[var(--card-border)]">
-            <p className="text-[10px] text-[var(--text-muted)] truncate">{a.title}</p>
-          </div>
+          )}
         </a>
       ))}
     </div>
