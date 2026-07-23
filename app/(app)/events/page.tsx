@@ -40,7 +40,7 @@ function EventsContent() {
       .then((data) => {
         const cats = new Map<string, any>();
         for (const e of data.events || []) {
-          if (e.category_slug && e.category_slug !== "bambini" && !cats.has(e.category_slug)) {
+          if (e.category_slug && !["bambini","cinema","sport"].includes(e.category_slug) && !cats.has(e.category_slug)) {
             cats.set(e.category_slug, { name: e.category_name, slug: e.category_slug, color: e.category_color });
           }
         }
@@ -55,7 +55,7 @@ function EventsContent() {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
       if (category) params.set("category", category);
-      else params.set("excludeCategory", "bambini");
+      if (!category) params.set("excludeCategory", "bambini,cinema,sport");
       if (province) params.set("province", province);
       if (timePeriod) params.set("time_period", timePeriod);
       if (timeFilter !== "upcoming") params.set("timeFilter", timeFilter);
