@@ -111,10 +111,6 @@ function EventsContent() {
         </div>
       )}
 
-      <div className="flex justify-center">
-        <AdBanner placement="inline" />
-      </div>
-
       {hasFilters && (
         <div className="flex items-center gap-2 flex-wrap">
           {category && <span className="badge">{categories.find((c: any) => c.slug === category)?.name || category}</span>}

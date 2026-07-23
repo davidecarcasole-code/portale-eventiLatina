@@ -247,10 +247,6 @@ export default function EventDetailClient({ initialEvent, slug }: { initialEvent
         )}
       </div>
 
-      <div className="flex justify-center mt-6">
-        <AdBanner placement="inline" />
-      </div>
-
       {related.length > 0 && (
         <div className="mt-10">
           <div className="flex items-center justify-between mb-4">
