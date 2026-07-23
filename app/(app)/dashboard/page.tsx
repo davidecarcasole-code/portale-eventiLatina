@@ -112,55 +112,56 @@ export default function DashboardPage() {
 
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl group/banner">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0c0c1d] via-[#111133] to-[#1a0a2e]" />
-        <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-[0.06] mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0e2a4a] via-[#1a1050] to-[#2d1050]" />
+        <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-[0.12] mix-blend-overlay" />
 
         {/* Glowing orbs */}
-        <div className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-gradient-to-br from-[var(--accent)]/20 via-indigo-500/10 to-transparent rounded-full blur-[200px] animate-blob" />
-        <div className="absolute -bottom-24 -right-24 w-[500px] h-[500px] bg-gradient-to-tl from-fuchsia-500/15 via-cyan-500/10 to-transparent rounded-full blur-[200px] animate-blob" style={{ animationDelay: "3s" }} />
-        <div className="absolute top-1/3 right-[20%] w-24 h-24 bg-cyan-400/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: "6s" }} />
+        <div className="absolute -top-20 -left-20 w-[450px] h-[450px] bg-gradient-to-br from-cyan-400/25 via-blue-500/15 to-transparent rounded-full blur-[160px] animate-blob" />
+        <div className="absolute -bottom-20 -right-20 w-[450px] h-[450px] bg-gradient-to-tl from-fuchsia-400/20 via-purple-500/15 to-transparent rounded-full blur-[160px] animate-blob" style={{ animationDelay: "3s" }} />
+        <div className="absolute top-[30%] right-[25%] w-32 h-32 bg-cyan-300/15 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: "5s" }} />
+        <div className="absolute bottom-[20%] left-[15%] w-28 h-28 bg-amber-300/10 rounded-full blur-[90px] animate-pulse" style={{ animationDuration: "7s", animationDelay: "1s" }} />
 
         {/* Gradient border */}
         <div className="absolute inset-0 rounded-3xl p-[1px] pointer-events-none">
-          <div className="w-full h-full rounded-3xl border border-white/[0.08]" />
+          <div className="w-full h-full rounded-3xl border border-white/[0.1]" />
         </div>
 
         {/* Content */}
         <div className="relative px-8 py-10 sm:px-10 sm:py-12 lg:px-14 lg:py-14 text-white">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
             <div className="flex-1 min-w-0">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.06] border border-white/[0.08] backdrop-blur-sm mb-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.1] border border-white/[0.12] backdrop-blur-sm mb-5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse" />
-                <span className="text-[11px] text-white/50 font-medium capitalize">{today}</span>
+                <span className="text-[11px] text-white/60 font-medium capitalize">{today}</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight">
-                <span className="bg-gradient-to-r from-white via-white/90 to-white/60 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-cyan-100 via-white to-fuchsia-100 bg-clip-text text-transparent">
                   {greeting}{user?.name ? `, ${user.name}` : ""}
                 </span>
               </h1>
 
-              <p className="text-white/40 mt-4 max-w-lg text-base sm:text-lg leading-relaxed">
+              <p className="text-white/50 mt-4 max-w-lg text-base sm:text-lg leading-relaxed">
                 Eventi, sagre, concerti e manifestazioni in provincia di Latina e nel Lazio
               </p>
 
               <div className="flex flex-wrap gap-3 mt-8">
-                <Link href="/events" className="group/btn inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-[var(--accent)] to-indigo-500 shadow-lg shadow-[var(--accent)]/25 hover:shadow-[var(--accent)]/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300">
+                <Link href="/events" className="group/btn inline-flex items-center gap-2.5 px-7 py-3.5 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-indigo-500 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300">
                   Esplora eventi
                   <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
                 </Link>
                 {canManageEvents && (
-                  <Link href="/admin?new=1" className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl text-sm font-medium text-white/70 bg-white/[0.06] border border-white/[0.08] backdrop-blur-sm hover:bg-white/[0.1] hover:text-white hover:border-white/[0.15] transition-all duration-300">
+                  <Link href="/admin?new=1" className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl text-sm font-medium text-white/70 bg-white/[0.1] border border-white/[0.12] backdrop-blur-sm hover:bg-white/[0.15] hover:text-white hover:border-white/[0.2] transition-all duration-300">
                     <Plus size={16} /> Nuovo Evento
                   </Link>
                 )}
               </div>
             </div>
 
-            {/* Right: Quick links + rotating card */}
+            {/* Right: Quick links */}
             <div className="flex-shrink-0 w-full lg:w-80 space-y-3">
-              <QuickLink href="/andiamo-al-cinema" icon={Film} label="Cinema" gradient="from-amber-500 to-orange-500" />
-              <QuickLink href="/tutti-al-mare" icon={Waves} label="Tutti al Mare" gradient="from-cyan-500 to-teal-500" />
+              <QuickLink href="/andiamo-al-cinema" icon={Film} label="Cinema" gradient="from-amber-400 to-orange-500" />
+              <QuickLink href="/tutti-al-mare" icon={Waves} label="Tutti al Mare" gradient="from-cyan-400 to-teal-500" />
               <QuickLink href="/spazio-kids" icon={Rocket} label="Spazio Kids" gradient="from-yellow-400 to-amber-500" />
               <QuickLink href="/spazio-venere" icon={Heart} label="Spazio Venere" gradient="from-pink-400 to-rose-500" />
             </div>
