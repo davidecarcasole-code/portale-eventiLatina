@@ -301,9 +301,14 @@ export default function EventDetailClient({ initialEvent, slug }: { initialEvent
 }
 
 function EditForm({ event, onClose, onSaved, token }: { event: any; onClose: () => void; onSaved: (e: any) => void; token: string }) {
-  const [form, setForm] = useState({ title: event.title, description: event.description || "", category_id: event.category_id || "", date: event.date?.split("T")[0] || "", time: event.time || "", location: event.location || "", city: event.city || "", province: event.province || "", image_url: event.image_url || "" });
+  const [form, setForm] = useState({ title: event.title, description: event.description || "", category_id: String(event.categoryId || event.category_id || ""), date: event.date?.split("T")[0] || "", time: event.time || "", location: event.location || "", city: event.city || "", province: event.province || "", image_url: event.image_url || event.imageUrl || "" });
+  const [categories, setCategories] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/categories").then(r => r.ok && r.json()).then(d => { if (Array.isArray(d)) setCategories(d); }).catch(() => {});
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -326,6 +331,10 @@ function EditForm({ event, onClose, onSaved, token }: { event: any; onClose: () 
       </div>
       <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Titolo" className="input" required />
       <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Descrizione" rows={4} className="input resize-none" />
+      <select value={form.category_id} onChange={(e) => setForm({ ...form, category_id: e.target.value })} className="select" required>
+        <option value="">Seleziona categoria *</option>
+        {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+      </select>
       <div className="grid grid-cols-2 gap-3">
         <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} className="input" />
         <input type="time" value={form.time} onChange={(e) => setForm({ ...form, time: e.target.value })} className="input" />
