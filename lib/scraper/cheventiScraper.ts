@@ -4,16 +4,10 @@ import { ScrapedEvent } from './scraped-event';
 
 const BASE = 'https://www.cheventi.it';
 
-const MONTHS_IT: Record<string, string> = {
-  gennaio: '01', febbraio: '02', marzo: '03', aprile: '04',
-  maggio: '05', giugno: '06', luglio: '07', agosto: '08',
-  settembre: '09', ottobre: '10', novembre: '11', dicembre: '12',
-};
-
 const CATEGORY_MAP: Record<string, string> = {
   concerti: 'musica', musica: 'musica', live: 'musica',
   teatro: 'teatro', spettacoli: 'teatro',
-  sagre: 'enogastronomia', enogastronomia: 'enogastronomia', cibo: 'enogastronomia',
+  sagre: 'enogastronomia', sagra: 'enogastronomia', enogastronomia: 'enogastronomia', cibo: 'enogastronomia',
   cinema: 'cinema', film: 'cinema',
   mostra: 'cultura', arte: 'cultura', museo: 'cultura',
   sport: 'sport', gara: 'sport',
@@ -30,17 +24,9 @@ function detectCategory(text: string): string {
   return 'spettacolo';
 }
 
-function parseDateFromText(text: string, year: number): string {
-  const lower = text.toLowerCase();
-  for (const [monthName, monthNum] of Object.entries(MONTHS_IT)) {
-    if (lower.includes(monthName)) {
-      const dayMatch = lower.match(/(\d{1,2})/);
-      const day = dayMatch ? dayMatch[1].padStart(2, '0') : '01';
-      return `${year}-${monthNum}-${day}`;
-    }
-  }
-  const isoMatch = text.match(/(\d{4})-(\d{2})-(\d{2})/);
-  if (isoMatch) return isoMatch[0];
+function parseDateFromISO(iso: string): string {
+  const match = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) return `${match[1]}-${match[2]}-${match[3]}`;
   return '';
 }
 
@@ -48,7 +34,6 @@ export async function runCheventiScraper(): Promise<ScrapedEvent[]> {
   console.log('[Cheventi] Starting...');
   const all: ScrapedEvent[] = [];
   const seen = new Set<string>();
-  const year = new Date().getFullYear();
 
   const url = `${BASE}/regioni/lazio/latina/`;
   try {
@@ -57,32 +42,42 @@ export async function runCheventiScraper(): Promise<ScrapedEvent[]> {
       timeout: 15000,
     });
     const $ = cheerio.load(res.data);
-    const cards = $('.tmpl-event');
+    const cards = $('.events-list-container__list__single');
     if (cards.length === 0) {
-      console.log('[Cheventi] No .tmpl-event cards found');
+      console.log('[Cheventi] No .events-list-container__list__single cards found');
     }
 
     let newCount = 0;
     cards.each((_, el) => {
       const $el = $(el);
-      const title = $el.find('.tmpl-event__title').text().trim();
+
+      const title = $el.find('.events-list-container__list__single__title-text').text().trim()
+        || $el.find('h3[itemprop="name"]').text().trim();
       if (!title) return;
 
-      const href = $el.find('.tmpl-event__link').attr('href') ||
-        $el.find('a').first().attr('href') || '';
+      const href = $el.find('.events-list-container__list__single__title').attr('href')
+        || $el.find('.events-list-container__list__single__img').attr('href')
+        || '';
       const sourceUrl = href.startsWith('http') ? href : `${BASE}${href}`;
 
-      const dateText = $el.find('.tmpl-event__date').text().trim()
-        || $el.find('span[class*="date"]').text().trim();
-      const date = dateText ? parseDateFromText(dateText, year) : '';
+      const startDateISO = $el.find('[itemprop="startDate"]').attr('content') || '';
+      const date = startDateISO ? parseDateFromISO(startDateISO) : '';
 
-      const city = $el.find('.tmpl-event__city').text().trim() || 'Latina';
-      if (!/latina/i.test(city)) return;
+      const placeText = $el.find('.events-list-container__list__single__place').text().trim();
+      const cityMatch = placeText.match(/^([^(]+?)(?:\s*\(([^)]+)\))?$/);
+      const city = cityMatch ? cityMatch[1].trim() : (placeText || 'Latina');
+      const region = cityMatch ? cityMatch[2] : '';
 
-      const categoryText = $el.find('.tmpl-event__category').text().trim() || title;
-      const category = detectCategory(categoryText);
+      const categoryLinks = $el.find('.label-category');
+      let category = 'spettacolo';
+      if (categoryLinks.length > 0) {
+        const catHref = categoryLinks.attr('href') || '';
+        const catMatch = catHref.match(/cats=([^&]+)/);
+        if (catMatch) category = detectCategory(catMatch[1]);
+      }
+      if (category === 'spettacolo') category = detectCategory(title);
 
-      const imgSrc = $el.find('img').first().attr('src') || '';
+      const imgSrc = $el.find('.events-list-container__list__single__img img').attr('src') || '';
       const imageUrl = imgSrc.startsWith('http') ? imgSrc : (imgSrc ? `${BASE}${imgSrc}` : undefined);
 
       const key = title.toLowerCase().slice(0, 60) + date + city;
@@ -94,7 +89,7 @@ export async function runCheventiScraper(): Promise<ScrapedEvent[]> {
         title,
         date: date || new Date().toISOString().split('T')[0],
         city,
-        province: 'LT',
+        province: region || 'LT',
         category_id: category,
         image_url: imageUrl,
         source_url: sourceUrl,
