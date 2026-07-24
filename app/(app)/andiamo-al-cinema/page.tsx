@@ -93,7 +93,7 @@ export default function CinemaPage() {
       {/* Hero */}
       <div className="relative mb-8 overflow-hidden rounded-3xl">
         <div className="absolute inset-0 bg-[url('/bannercinema.png')] bg-contain bg-right bg-no-repeat opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-700/80 via-amber-600/70 to-orange-700/80" />
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/90 via-amber-400/80 to-orange-500/90" />
         <div
           className="absolute top-6 right-12 w-3 h-3 rounded-full bg-amber-300/40 animate-float-up"
           style={{ animationDelay: "0.2s" }}

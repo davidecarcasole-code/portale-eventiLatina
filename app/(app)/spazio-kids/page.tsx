@@ -37,7 +37,7 @@ export default function SpazioKidsPage() {
       {/* HERO */}
       <div className="relative overflow-hidden rounded-3xl mb-8">
         <div className="absolute inset-0 bg-[url('/bannerkids.png')] bg-contain bg-right bg-no-repeat opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-br from-yellow-700/80 via-orange-700/70 to-pink-700/80" />
+        <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/90 via-orange-500/80 to-pink-500/90" />
         <div className="relative p-8 sm:p-12 text-white">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">

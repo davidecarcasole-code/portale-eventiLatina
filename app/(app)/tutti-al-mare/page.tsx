@@ -37,7 +37,7 @@ export default function MarePage() {
     <div className="animate-fade-in">
       <div className="relative mb-8 overflow-hidden rounded-3xl">
         <div className="absolute inset-0 bg-[url('/bannertuttialmare.png')] bg-contain bg-right bg-no-repeat opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-700/80 via-cyan-600/70 to-cyan-800/90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/90 via-cyan-400/80 to-cyan-600/90" />
         <div className="absolute top-6 right-12 w-3 h-3 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.2s" }} />
         <div className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.7s" }} />
         <div className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-cyan-300/30 animate-float-up" style={{ animationDelay: "1.2s" }} />
