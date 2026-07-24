@@ -52,7 +52,7 @@ export default function SpazioVenerePage() {
       {/* HERO */}
       <div className="relative overflow-hidden rounded-3xl mb-8">
         <div className="absolute inset-0 bg-[url('/bannerspaziovenere.png')] bg-contain bg-right bg-no-repeat opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-900/60 via-rose-900/50 to-purple-900/60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-700/80 via-rose-700/70 to-purple-700/80" />
         <div className="relative p-8 sm:p-12 text-white">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
