@@ -207,7 +207,10 @@ async function runSingleSource(
     console.log(`[Scraper] ${name}: ${events.length} unique events scraped`);
 
     let inserted = 0;
+    const today = new Date(); today.setHours(0,0,0,0);
     for (const e of events) {
+      const eventDate = parseDateStr(e.date);
+      if (!eventDate || eventDate < today) continue;
       if (e.source_url && existingEvents.bySourceUrl.has(e.source_url)) continue;
       const key = dedupKey(e);
       if (existingEvents.byDedup.has(key)) continue;
