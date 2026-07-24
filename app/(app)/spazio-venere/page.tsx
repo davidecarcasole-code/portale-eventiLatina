@@ -53,6 +53,24 @@ export default function SpazioVenerePage() {
       <div className="relative overflow-hidden rounded-3xl mb-8">
         <div className="absolute inset-0 bg-[url('/bannerspaziovenere.png')] bg-contain bg-right bg-no-repeat opacity-20" />
         <div className="absolute inset-0 bg-gradient-to-br from-pink-500/90 via-rose-500/80 to-purple-500/90" />
+        {/* Venus / romance animations */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Floating hearts */}
+          <div className="absolute bottom-[10%] left-[10%] text-2xl animate-heart-float opacity-50" style={{ animationDuration: "4s", animationDelay: "0s" }}>💖</div>
+          <div className="absolute bottom-[5%] left-[30%] text-lg animate-heart-float opacity-40" style={{ animationDuration: "5s", animationDelay: "1s" }}>💕</div>
+          <div className="absolute bottom-[15%] right-[25%] text-xl animate-heart-float opacity-45" style={{ animationDuration: "4.5s", animationDelay: "2s" }}>💗</div>
+          <div className="absolute bottom-[8%] left-[55%] text-base animate-heart-float opacity-35" style={{ animationDuration: "5.5s", animationDelay: "0.5s" }}>💖</div>
+          <div className="absolute bottom-[12%] right-[10%] text-sm animate-heart-float opacity-30" style={{ animationDuration: "6s", animationDelay: "3s" }}>💕</div>
+          {/* Stars / sparkles */}
+          <div className="absolute top-[15%] left-[20%] text-lg animate-star opacity-40" style={{ animationDelay: "0s" }}>✨</div>
+          <div className="absolute top-[35%] right-[15%] text-sm animate-star opacity-35" style={{ animationDelay: "0.7s" }}>⭐</div>
+          <div className="absolute top-[60%] left-[45%] text-base animate-star opacity-40" style={{ animationDelay: "1.4s" }}>✨</div>
+          <div className="absolute top-[25%] right-[35%] text-xs animate-star opacity-30" style={{ animationDelay: "2.1s" }}>💫</div>
+          {/* Flower petals */}
+          <div className="absolute top-[20%] left-[8%] text-2xl animate-wave opacity-40" style={{ animationDuration: "3.5s" }}>🌸</div>
+          <div className="absolute top-[55%] right-[8%] text-xl animate-wave opacity-35" style={{ animationDuration: "4s", animationDelay: "1.5s" }}>🌷</div>
+          <div className="absolute top-[40%] left-[70%] text-base animate-wave opacity-30" style={{ animationDuration: "3s", animationDelay: "0.8s" }}>🌺</div>
+        </div>
         <div className="relative p-8 sm:p-12 text-white">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">

@@ -94,18 +94,37 @@ export default function CinemaPage() {
       <div className="relative mb-8 overflow-hidden rounded-3xl">
         <div className="absolute inset-0 bg-[url('/bannercinema.png')] bg-contain bg-right bg-no-repeat opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-br from-amber-500/90 via-amber-400/80 to-orange-500/90" />
-        <div
-          className="absolute top-6 right-12 w-3 h-3 rounded-full bg-amber-300/40 animate-float-up"
-          style={{ animationDelay: "0.2s" }}
-        />
-        <div
-          className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-orange-300/40 animate-float-up"
-          style={{ animationDelay: "0.7s" }}
-        />
-        <div
-          className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-amber-300/30 animate-float-up"
-          style={{ animationDelay: "1.2s" }}
-        />
+        {/* Cinema animations */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Film reel */}
+          <div className="absolute top-[15%] right-[10%] w-16 h-16 border-4 border-white/20 rounded-full animate-film-spin">
+            <div className="absolute inset-2 border-2 border-dashed border-white/15 rounded-full" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white/20 rounded-full" />
+          </div>
+          {/* Film strip scrolling */}
+          <div className="absolute bottom-[10%] left-0 w-[200%] flex animate-film-strip opacity-20">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div key={i} className="flex-shrink-0 w-12 h-8 border border-white/30 bg-white/5 mx-1 rounded-sm">
+                <div className="w-full h-full grid grid-cols-3 gap-px p-px">
+                  {Array.from({ length: 6 }).map((_, j) => (
+                    <div key={j} className="bg-white/10 rounded-[1px]" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Popcorn */}
+          <div className="absolute top-[25%] left-[5%] text-3xl animate-bounce-ball opacity-50" style={{ animationDelay: "0s" }}>🍿</div>
+          <div className="absolute top-[60%] right-[20%] text-2xl animate-bounce-ball opacity-40" style={{ animationDelay: "0.5s" }}>🎬</div>
+          {/* Sparkles / stars */}
+          <div className="absolute top-[20%] left-[40%] text-lg animate-star opacity-50" style={{ animationDelay: "0s" }}>✨</div>
+          <div className="absolute top-[70%] left-[65%] text-sm animate-star opacity-40" style={{ animationDelay: "0.8s" }}>⭐</div>
+          <div className="absolute top-[40%] right-[30%] text-base animate-star opacity-45" style={{ animationDelay: "1.5s" }}>✨</div>
+          {/* Old bubbles */}
+          <div className="absolute top-6 right-12 w-3 h-3 rounded-full bg-amber-300/40 animate-float-up" style={{ animationDelay: "0.2s" }} />
+          <div className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-orange-300/40 animate-float-up" style={{ animationDelay: "0.7s" }} />
+          <div className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-amber-300/30 animate-float-up" style={{ animationDelay: "1.2s" }} />
+        </div>
         {/* Subtle grid pattern like event cards */}
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">

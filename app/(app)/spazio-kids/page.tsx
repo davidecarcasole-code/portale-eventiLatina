@@ -38,6 +38,25 @@ export default function SpazioKidsPage() {
       <div className="relative overflow-hidden rounded-3xl mb-8">
         <div className="absolute inset-0 bg-[url('/bannerkids.png')] bg-contain bg-right bg-no-repeat opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/90 via-orange-500/80 to-pink-500/90" />
+        {/* Kids animations */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Confetti */}
+          <div className="absolute top-[5%] left-[15%] text-xl animate-confetti-fall opacity-60" style={{ animationDuration: "3.5s", animationDelay: "0s" }}>🎈</div>
+          <div className="absolute top-[10%] left-[50%] text-lg animate-confetti-fall opacity-50" style={{ animationDuration: "4s", animationDelay: "0.5s" }}>🎉</div>
+          <div className="absolute top-[0%] right-[20%] text-base animate-confetti-fall opacity-55" style={{ animationDuration: "3s", animationDelay: "1s" }}>🎊</div>
+          <div className="absolute top-[8%] left-[75%] text-sm animate-confetti-fall opacity-40" style={{ animationDuration: "4.5s", animationDelay: "1.5s" }}>⭐</div>
+          {/* Bouncing balls */}
+          <div className="absolute bottom-[15%] left-[10%] text-2xl animate-bounce-ball opacity-50" style={{ animationDelay: "0s" }}>⚽</div>
+          <div className="absolute bottom-[20%] right-[15%] text-xl animate-bounce-ball opacity-40" style={{ animationDelay: "0.3s" }}>🏀</div>
+          <div className="absolute bottom-[10%] left-[45%] text-lg animate-bounce-ball opacity-45" style={{ animationDelay: "0.6s" }}>🧸</div>
+          {/* Sparkles */}
+          <div className="absolute top-[20%] left-[30%] text-base animate-star opacity-45" style={{ animationDelay: "0s" }}>✨</div>
+          <div className="absolute top-[50%] right-[25%] text-sm animate-star opacity-40" style={{ animationDelay: "0.8s" }}>⭐</div>
+          <div className="absolute top-[35%] left-[65%] text-xs animate-star opacity-35" style={{ animationDelay: "1.6s" }}>💫</div>
+          {/* Rockets */}
+          <div className="absolute top-[30%] right-[5%] text-2xl animate-float-up opacity-40" style={{ animationDuration: "5s", animationDelay: "0s" }}>🚀</div>
+          <div className="absolute top-[60%] left-[5%] text-xl animate-float-up opacity-35" style={{ animationDuration: "6s", animationDelay: "2s" }}>🎨</div>
+        </div>
         <div className="relative p-8 sm:p-12 text-white">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">

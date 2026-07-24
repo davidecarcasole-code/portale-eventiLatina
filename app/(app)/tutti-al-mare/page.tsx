@@ -38,9 +38,30 @@ export default function MarePage() {
       <div className="relative mb-8 overflow-hidden rounded-3xl">
         <div className="absolute inset-0 bg-[url('/bannertuttialmare.png')] bg-contain bg-right bg-no-repeat opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/90 via-cyan-400/80 to-cyan-600/90" />
-        <div className="absolute top-6 right-12 w-3 h-3 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.2s" }} />
-        <div className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.7s" }} />
-        <div className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-cyan-300/30 animate-float-up" style={{ animationDelay: "1.2s" }} />
+        {/* Aquarium animations */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Bubbles */}
+          <div className="absolute bottom-4 left-[15%] w-3 h-3 rounded-full border border-white/40 bg-white/10 animate-bubble" style={{ animationDelay: "0s", animationDuration: "3.5s" }} />
+          <div className="absolute bottom-8 left-[45%] w-2 h-2 rounded-full border border-white/30 bg-white/10 animate-bubble" style={{ animationDelay: "1.2s", animationDuration: "4s" }} />
+          <div className="absolute bottom-2 left-[75%] w-4 h-4 rounded-full border border-white/30 bg-white/10 animate-bubble" style={{ animationDelay: "2.5s", animationDuration: "3s" }} />
+          <div className="absolute bottom-10 left-[30%] w-2.5 h-2.5 rounded-full border border-white/30 bg-white/10 animate-bubble" style={{ animationDelay: "0.8s", animationDuration: "4.5s" }} />
+          <div className="absolute bottom-6 left-[60%] w-2 h-2 rounded-full border border-white/30 bg-white/10 animate-bubble" style={{ animationDelay: "1.8s", animationDuration: "3.2s" }} />
+          {/* Seahorses */}
+          <div className="absolute top-[20%] left-[8%] text-4xl animate-seahorse opacity-60" style={{ animationDelay: "0s" }}>🐴</div>
+          <div className="absolute top-[50%] right-[12%] text-3xl animate-seahorse opacity-50" style={{ animationDelay: "1.5s" }}>🐠</div>
+          {/* Swimming fish */}
+          <div className="absolute top-[30%] text-2xl animate-swim-right opacity-50" style={{ animationDuration: "12s", animationDelay: "0s" }}>🐟</div>
+          <div className="absolute top-[60%] text-xl animate-swim-left opacity-40" style={{ animationDuration: "15s", animationDelay: "3s" }}>🐡</div>
+          <div className="absolute top-[45%] text-lg animate-swim-right opacity-45" style={{ animationDuration: "18s", animationDelay: "6s" }}>🐟</div>
+          <div className="absolute top-[75%] text-sm animate-swim-left opacity-35" style={{ animationDuration: "10s", animationDelay: "2s" }}>🦐</div>
+          {/* Starfish */}
+          <div className="absolute bottom-[15%] left-[20%] text-2xl animate-wave opacity-40">⭐</div>
+          <div className="absolute top-[15%] right-[25%] text-xl animate-wave opacity-35" style={{ animationDelay: "1s" }}>⭐</div>
+          {/* Old bubbles (keep some) */}
+          <div className="absolute top-6 right-12 w-3 h-3 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.2s" }} />
+          <div className="absolute top-10 left-1/4 w-2 h-2 rounded-full bg-cyan-300/40 animate-float-up" style={{ animationDelay: "0.7s" }} />
+          <div className="absolute bottom-12 right-1/3 w-4 h-4 rounded-full bg-cyan-300/30 animate-float-up" style={{ animationDelay: "1.2s" }} />
+        </div>
         <div className="relative p-8 sm:p-12">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg ring-1 ring-white/20">
