@@ -1113,12 +1113,15 @@ function PublishersTab({ token }: { token: string }) {
 
 function StatsTab({ token }: { token: string }) {
   const [stats, setStats] = useState<any>(null);
+  const [visits, setVisits] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/stats", { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then(d => { setStats(d); setLoading(false); })
+    Promise.all([
+      fetch("/api/stats", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+      fetch("/api/stats/visits", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+    ])
+      .then(([s, v]) => { setStats(s); setVisits(v); setLoading(false); })
       .catch(() => setLoading(false));
   }, [token]);
 
@@ -1154,6 +1157,92 @@ function StatsTab({ token }: { token: string }) {
           </div>
         ))}
       </div>
+
+      {visits && (
+        <div className="glass-card rounded-xl p-5">
+          <h3 className="text-sm font-semibold mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            Visitatori del Portale
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {[
+              { label: "Oggi", value: visits.overview.today },
+              { label: "Ieri", value: visits.overview.yesterday },
+              { label: "Questa Settimana", value: visits.overview.thisWeek },
+              { label: "Questo Mese", value: visits.overview.thisMonth },
+              { label: "Visitatori Unici (30gg)", value: visits.overview.uniqueVisitors },
+              { label: "Totale", value: visits.overview.total },
+            ].map((c) => (
+              <div key={c.label} className="bg-[var(--bg-secondary)] rounded-lg p-3 text-center">
+                <p className="text-lg font-bold text-[var(--accent)]">{c.value.toLocaleString("it-IT")}</p>
+                <p className="text-[10px] text-[var(--text-muted)] mt-0.5">{c.label}</p>
+              </div>
+            ))}
+          </div>
+          {visits.visitsByDay.length > 0 && (
+            <div className="mt-4">
+              <p className="text-xs text-[var(--text-muted)] mb-2">Accessi giornalieri (30gg)</p>
+              <div className="flex items-end gap-1 h-24">
+                {visits.visitsByDay.map((d: any, i: number) => {
+                  const max = Math.max(...visits.visitsByDay.map((x: any) => x.count), 1);
+                  const h = Math.max((d.count / max) * 100, d.count > 0 ? 8 : 2);
+                  return (
+                    <div key={d.day} className="flex-1 flex flex-col items-center gap-1 group relative">
+                      <div
+                        className="w-full rounded-t-md bg-gradient-to-t from-green-500 to-emerald-400 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
+                        style={{ height: `${h}%` }}
+                        title={`${d.day}: ${d.count} visite (${d.unique} unici)`}
+                      />
+                      {i % 7 === 0 && (
+                        <span className="text-[8px] text-[var(--text-muted)] truncate w-full text-center">{d.day.slice(5)}</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {visits.topPages.length > 0 && (
+            <div className="mt-4">
+              <p className="text-xs text-[var(--text-muted)] mb-2">Pagine più visitate (30gg)</p>
+              <div className="space-y-1.5">
+                {visits.topPages.map((p: any) => {
+                  const max = visits.topPages[0]?.count || 1;
+                  return (
+                    <div key={p.path} className="flex items-center gap-2">
+                      <span className="text-xs text-[var(--text-secondary)] w-32 truncate font-mono">{p.path}</span>
+                      <div className="flex-1 h-4 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all" style={{ width: `${(p.count / max) * 100}%` }} />
+                      </div>
+                      <span className="text-xs font-medium text-[var(--text-muted)] w-8 text-right">{p.count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {visits.referrers.length > 0 && (
+            <div className="mt-4">
+              <p className="text-xs text-[var(--text-muted)] mb-2">Fonti di traffico (30gg)</p>
+              <div className="space-y-1.5">
+                {visits.referrers.map((r: any) => {
+                  const max = visits.referrers[0]?.count || 1;
+                  const display = r.referrer === "Diretto" ? "Diretto" : (() => { try { return new URL(r.referrer).hostname; } catch { return r.referrer.slice(0, 30); } })();
+                  return (
+                    <div key={r.referrer} className="flex items-center gap-2">
+                      <span className="text-xs text-[var(--text-secondary)] w-32 truncate">{display}</span>
+                      <div className="flex-1 h-4 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all" style={{ width: `${(r.count / max) * 100}%` }} />
+                      </div>
+                      <span className="text-xs font-medium text-[var(--text-muted)] w-8 text-right">{r.count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {stats.eventsByDay.length > 0 && (
         <div className="glass-card rounded-xl p-5">
