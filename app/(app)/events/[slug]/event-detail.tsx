@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, Link as LinkIcon, Sparkles, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, Link as LinkIcon, Sparkles, ArrowRight, Eye } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
@@ -20,9 +20,18 @@ export default function EventDetailClient({ initialEvent, slug }: { initialEvent
   const [related, setRelated] = useState<any[]>([]);
 
   useEffect(() => {
+    function trackView(eventSlug: string) {
+      const key = `viewed_${eventSlug}`;
+      const last = localStorage.getItem(key);
+      const now = Date.now();
+      if (last && now - parseInt(last) < 30 * 60 * 1000) return;
+      localStorage.setItem(key, String(now));
+      fetch(`/api/events/${eventSlug}/view`, { method: "POST" }).catch(() => {});
+    }
+
     if (initialEvent) {
       setLoading(false);
-      fetch(`/api/events/${slug}/view`, { method: "POST" }).catch(() => {});
+      trackView(slug);
       if (initialEvent.category_slug) {
         const today = new Date().toISOString().split('T')[0];
         const to = new Date(initialEvent.date);
@@ -40,7 +49,7 @@ export default function EventDetailClient({ initialEvent, slug }: { initialEvent
         setEvent(data);
         setIsSaved(data.is_saved || false);
         setLoading(false);
-        fetch(`/api/events/${slug}/view`, { method: "POST" }).catch(() => {});
+        trackView(slug);
         if (data.category_slug) {
           const today = new Date().toISOString().split('T')[0];
           const to = new Date(data.date);
@@ -176,6 +185,12 @@ export default function EventDetailClient({ initialEvent, slug }: { initialEvent
             <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-[var(--accent-subtle)] to-transparent">
               <MapPin size={15} className="text-[var(--accent)]" />
               <span className="text-[var(--text-secondary)]">{event.city} {event.province && `(${event.province})`}</span>
+            </div>
+          )}
+          {(event.view_count ?? 0) > 0 && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-[var(--accent-subtle)] to-transparent">
+              <Eye size={15} className="text-[var(--accent)]" />
+              <span className="text-[var(--text-secondary)]">{event.view_count} visualizzazioni</span>
             </div>
           )}
         </div>

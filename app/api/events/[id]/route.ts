@@ -38,6 +38,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       is_published: event.isPublished,
       status: event.status,
       slug: event.slug,
+      view_count: event.viewCount ?? 0,
     });
   } catch (err) {
     console.error("API Error:", err);

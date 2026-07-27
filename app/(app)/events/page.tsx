@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Calendar, MapPin, Clock, Search, X, ChevronLeft, ChevronRight, SlidersHorizontal, Plus } from "lucide-react";
+import { Calendar, MapPin, Clock, Search, X, ChevronLeft, ChevronRight, SlidersHorizontal, Plus, Eye } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
@@ -185,6 +185,7 @@ function EventsContent() {
                     <span className="flex items-center gap-1.5 whitespace-nowrap"><Calendar size={12} />{new Date(e.date).toLocaleDateString("it-IT")}</span>
                     {e.time && <span className="flex items-center gap-1.5 whitespace-nowrap"><Clock size={12} />{e.time}</span>}
                     {e.city && <span className="flex items-center gap-1.5 whitespace-nowrap"><MapPin size={12} />{e.city}</span>}
+                    {(e.view_count ?? 0) > 0 && <span className="flex items-center gap-1.5 whitespace-nowrap"><Eye size={12} />{e.view_count}</span>}
                   </div>
                 </div>
               </Link>
