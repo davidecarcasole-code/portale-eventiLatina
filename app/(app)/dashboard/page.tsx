@@ -111,19 +111,8 @@ export default function DashboardPage() {
       <div className="blur-sphere blur-sphere-2" />
 
       {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-3xl group/banner">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0e1a2e] via-[#111827] to-[#0f172a]" />
+      <div className="relative overflow-hidden rounded-3xl group/banner hero-animated-bg">
         <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-[0.06] mix-blend-overlay" />
-
-        {/* Animated mesh blobs */}
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full blur-[140px] animate-mesh-1" style={{ background: "radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)" }} />
-        <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full blur-[140px] animate-mesh-2" style={{ background: "radial-gradient(circle, rgba(168,85,247,0.25) 0%, transparent 70%)" }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full blur-[120px] animate-mesh-3" style={{ background: "radial-gradient(circle, rgba(14,165,233,0.2) 0%, transparent 70%)" }} />
-        <div className="absolute top-[10%] right-[15%] w-[300px] h-[300px] rounded-full blur-[100px] animate-mesh-4" style={{ background: "radial-gradient(circle, rgba(236,72,153,0.15) 0%, transparent 70%)" }} />
-        <div className="absolute bottom-[10%] left-[25%] w-[250px] h-[250px] rounded-full blur-[100px] animate-mesh-5" style={{ background: "radial-gradient(circle, rgba(34,211,238,0.15) 0%, transparent 70%)" }} />
-
-        {/* Noise texture overlay */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")" }} />
 
         {/* Gradient border */}
         <div className="absolute inset-0 rounded-3xl p-[1px] pointer-events-none">
