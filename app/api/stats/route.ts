@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       prisma.event.aggregate({ _sum: { viewCount: true } }).then(r => r._sum.viewCount ?? 0),
     ]);
 
-    const [eventsByCategory, eventsByCity, eventsBySource, topEvents, eventsByDay, eventsByPublisher] = await Promise.all([
+    const [eventsByCategory, eventsByCity, eventsBySource, topEvents, eventsByDay, eventsByPublisher, viewsByDayRaw] = await Promise.all([
       prisma.$queryRawUnsafe<{ name: string; color: string; count: bigint }[]>(`
         SELECT c.name, c.color, COUNT(e.id)::int as count
         FROM events e
@@ -86,16 +86,28 @@ export async function GET(req: NextRequest) {
         ORDER BY count DESC
         LIMIT 10
       `),
+      prisma.$queryRawUnsafe<{ day: string; count: bigint }[]>(`
+        SELECT TO_CHAR(created_at, 'YYYY-MM-DD') as day, COUNT(*)::int as count
+        FROM event_views
+        WHERE created_at >= $1
+        GROUP BY day ORDER BY day
+      `, thirtyDaysAgo).catch(() => [] as any[]),
     ]);
 
     const eventsByDayMap = new Map<string, number>();
+    const viewsByDayMap = new Map<string, number>();
     const d = new Date(thirtyDaysAgo);
     while (d <= today) {
-      eventsByDayMap.set(d.toISOString().split("T")[0], 0);
+      const key = d.toISOString().split("T")[0];
+      eventsByDayMap.set(key, 0);
+      viewsByDayMap.set(key, 0);
       d.setDate(d.getDate() + 1);
     }
     for (const row of eventsByDay) {
       eventsByDayMap.set(row.day, Number(row.count));
+    }
+    for (const row of viewsByDayRaw) {
+      viewsByDayMap.set(row.day, Number(row.count));
     }
 
     return helpers.jsonResponse({
@@ -118,6 +130,7 @@ export async function GET(req: NextRequest) {
       eventsBySource: eventsBySource.map(r => ({ name: r.source_name, count: Number(r.count) })),
       topEvents: topEvents.map(r => ({ id: r.id, title: r.title, views: r.view_count, city: r.city, date: r.date })),
       eventsByDay: Array.from(eventsByDayMap.entries()).map(([day, count]) => ({ day, count })),
+      viewsByDay: Array.from(viewsByDayMap.entries()).map(([day, count]) => ({ day, count })),
       eventsByPublisher: eventsByPublisher.map(r => ({ name: r.name, role: r.role, count: Number(r.count) })),
     });
   } catch (err: any) {

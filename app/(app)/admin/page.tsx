@@ -1268,6 +1268,40 @@ function StatsTab({ token }: { token: string }) {
         </div>
       )}
 
+      {stats.viewsByDay && stats.viewsByDay.length > 0 && (() => {
+        const maxViews = Math.max(...stats.viewsByDay.map((x: any) => x.count), 1);
+        const totalMonth = stats.viewsByDay.reduce((s: number, x: any) => s + x.count, 0);
+        const avgDay = Math.round(totalMonth / stats.viewsByDay.filter((x: any) => x.count > 0).length) || 0;
+        return (
+          <div className="glass-card rounded-xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold">Visualizzazioni Giornaliere (Ultimi 30gg)</h3>
+              <div className="flex gap-3 text-xs text-[var(--text-muted)]">
+                <span>Totale: <strong className="text-[var(--accent)]">{totalMonth.toLocaleString("it-IT")}</strong></span>
+                <span>Media: <strong className="text-[var(--accent)]">{avgDay.toLocaleString("it-IT")}</strong>/giorno</span>
+              </div>
+            </div>
+            <div className="flex items-end gap-1 h-32">
+              {stats.viewsByDay.map((d: any, i: number) => {
+                const h = Math.max((d.count / maxViews) * 100, d.count > 0 ? 8 : 2);
+                return (
+                  <div key={d.day} className="flex-1 flex flex-col items-center gap-1 group relative">
+                    <div
+                      className="w-full rounded-t-md bg-gradient-to-t from-purple-500 to-pink-400 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
+                      style={{ height: `${h}%` }}
+                      title={`${d.day}: ${d.count} visualizzazioni`}
+                    />
+                    {i % 7 === 0 && (
+                      <span className="text-[8px] text-[var(--text-muted)] truncate w-full text-center">{d.day.slice(5)}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {stats.eventsByCategory.length > 0 && (
           <div className="glass-card rounded-xl p-5">
