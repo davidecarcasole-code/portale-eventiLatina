@@ -112,14 +112,48 @@ export default function DashboardPage() {
 
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-3xl group/banner">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0e2a4a] via-[#1a1050] to-[#2d1050]" />
-        <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-[0.12] mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1628] via-[#0e2040] to-[#0c1830]" />
+        <div className="absolute inset-0 bg-[url('/banner.png')] bg-cover bg-center opacity-[0.08] mix-blend-overlay" />
 
-        {/* Glowing orbs */}
-        <div className="absolute -top-20 -left-20 w-[450px] h-[450px] bg-gradient-to-br from-cyan-400/25 via-blue-500/15 to-transparent rounded-full blur-[160px] animate-blob" />
-        <div className="absolute -bottom-20 -right-20 w-[450px] h-[450px] bg-gradient-to-tl from-fuchsia-400/20 via-purple-500/15 to-transparent rounded-full blur-[160px] animate-blob" style={{ animationDelay: "3s" }} />
-        <div className="absolute top-[30%] right-[25%] w-32 h-32 bg-cyan-300/15 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: "5s" }} />
-        <div className="absolute bottom-[20%] left-[15%] w-28 h-28 bg-amber-300/10 rounded-full blur-[90px] animate-pulse" style={{ animationDuration: "7s", animationDelay: "1s" }} />
+        {/* Underwater caustic light pattern */}
+        <div className="absolute inset-0 animate-caustic" style={{ backgroundImage: "repeating-conic-gradient(rgba(100,220,255,0.06) 0% 25%, transparent 0% 50%)", backgroundSize: "120px 120px" }} />
+
+        {/* Light rays from surface */}
+        <div className="absolute top-0 left-[10%] w-40 h-full bg-gradient-to-b from-cyan-300/10 via-cyan-400/5 to-transparent rotate-[-15deg] origin-top animate-light-ray" style={{ animationDelay: "0s" }} />
+        <div className="absolute top-0 left-[35%] w-32 h-full bg-gradient-to-b from-cyan-200/8 via-blue-300/4 to-transparent rotate-[-12deg] origin-top animate-light-ray" style={{ animationDelay: "1.5s" }} />
+        <div className="absolute top-0 left-[60%] w-48 h-full bg-gradient-to-b from-cyan-300/7 via-blue-200/3 to-transparent rotate-[-18deg] origin-top animate-light-ray" style={{ animationDelay: "3s" }} />
+        <div className="absolute top-0 right-[15%] w-28 h-full bg-gradient-to-b from-white/5 via-cyan-300/3 to-transparent rotate-[-10deg] origin-top animate-light-ray" style={{ animationDelay: "4s" }} />
+
+        {/* Underwater bubbles */}
+        {[
+          { left: "8%", size: 6, dur: "6s", delay: "0s", opacity: 0.4 },
+          { left: "18%", size: 4, dur: "8s", delay: "1s", opacity: 0.3 },
+          { left: "32%", size: 8, dur: "7s", delay: "2s", opacity: 0.35 },
+          { left: "45%", size: 3, dur: "9s", delay: "0.5s", opacity: 0.25 },
+          { left: "58%", size: 5, dur: "6.5s", delay: "3s", opacity: 0.3 },
+          { left: "72%", size: 7, dur: "7.5s", delay: "1.5s", opacity: 0.35 },
+          { left: "85%", size: 4, dur: "8.5s", delay: "2.5s", opacity: 0.25 },
+          { left: "25%", size: 3, dur: "10s", delay: "4s", opacity: 0.2 },
+          { left: "50%", size: 5, dur: "9s", delay: "0.8s", opacity: 0.3 },
+          { left: "68%", size: 4, dur: "7s", delay: "3.5s", opacity: 0.25 },
+          { left: "92%", size: 6, dur: "8s", delay: "1.2s", opacity: 0.3 },
+          { left: "12%", size: 3, dur: "11s", delay: "5s", opacity: 0.2 },
+        ].map((b, i) => (
+          <div
+            key={i}
+            className="absolute bottom-0 rounded-full border border-white/30 bg-white/5 animate-underwater-bubble"
+            style={{ left: b.left, width: b.size, height: b.size, animationDuration: b.dur, animationDelay: b.delay, opacity: b.opacity }}
+          />
+        ))}
+
+        {/* Deep water gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050e1a]/60 via-transparent to-[#0a1830]/30" />
+
+        {/* Glowing orbs - deeper, more oceanic */}
+        <div className="absolute -top-20 -left-20 w-[450px] h-[450px] bg-gradient-to-br from-cyan-500/20 via-blue-600/10 to-transparent rounded-full blur-[160px] animate-underwater-drift" />
+        <div className="absolute -bottom-20 -right-20 w-[450px] h-[450px] bg-gradient-to-tl from-teal-400/15 via-cyan-600/10 to-transparent rounded-full blur-[160px] animate-underwater-drift" style={{ animationDelay: "4s" }} />
+        <div className="absolute top-[40%] right-[20%] w-40 h-40 bg-cyan-300/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: "6s" }} />
+        <div className="absolute bottom-[25%] left-[20%] w-32 h-32 bg-blue-300/8 rounded-full blur-[90px] animate-pulse" style={{ animationDuration: "8s", animationDelay: "2s" }} />
 
         {/* Gradient border */}
         <div className="absolute inset-0 rounded-3xl p-[1px] pointer-events-none">
