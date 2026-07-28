@@ -60,6 +60,7 @@ export function Footer() {
             <h4 className="font-semibold">Legal</h4>
             <nav className="flex flex-col gap-2">
               <Link href="/terms" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Termini di Servizio</Link>
+              <Link href="/privacy" className="text-sm text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">Privacy Policy</Link>
             </nav>
           </div>
         </div>
