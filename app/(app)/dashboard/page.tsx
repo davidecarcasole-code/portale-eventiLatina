@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Wine, Rocket, ArrowRight, Plus, ChevronLeft, ChevronRight, ExternalLink, Mail, Film, Waves, Heart, CloudSun, PartyPopper } from "lucide-react";
+import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Wine, Rocket, ArrowRight, Plus, ChevronLeft, ChevronRight, ExternalLink, Mail, Film, Waves, Heart, CloudSun, PartyPopper, Download } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const categoryIcons: Record<string, any> = {
@@ -164,6 +164,16 @@ export default function DashboardPage() {
               <QuickLink href="/tutti-al-mare" icon={Waves} label="Tutti al Mare" gradient="from-cyan-400 to-teal-500" />
               <QuickLink href="/spazio-kids" icon={Rocket} label="Spazio Kids" gradient="from-yellow-400 to-amber-500" />
               <QuickLink href="/spazio-venere" icon={Heart} label="Spazio Venere" gradient="from-pink-400 to-rose-500" />
+              <Link href="/install-app" className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.08] border border-white/[0.1] hover:bg-white/[0.12] transition-all group">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-md flex-shrink-0">
+                  <Download size={18} className="text-white" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-white/90 truncate">Installa come App</p>
+                  <p className="text-[11px] text-white/40">Android & iOS</p>
+                </div>
+                <ChevronRight size={14} className="text-white/30 ml-auto group-hover:text-white/60 transition-colors flex-shrink-0" />
+              </Link>
             </div>
           </div>
         </div>
