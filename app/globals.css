@@ -463,31 +463,32 @@ body {
 .animate-confetti-fall { animation: confetti-fall 3s ease-in forwards; }
 .animate-wave { animation: wave-float 3s ease-in-out infinite; }
 
-@keyframes caustic {
-  0%, 100% { opacity: 0.03; transform: scale(1) rotate(0deg); }
-  25% { opacity: 0.06; transform: scale(1.05) rotate(1deg); }
-  50% { opacity: 0.04; transform: scale(0.98) rotate(-1deg); }
-  75% { opacity: 0.07; transform: scale(1.02) rotate(0.5deg); }
+@keyframes mesh1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(80px, 40px) scale(1.1); }
+  66% { transform: translate(-40px, 80px) scale(0.95); }
 }
-@keyframes underwater-drift {
-  0% { transform: translateX(0) translateY(0); }
-  25% { transform: translateX(15px) translateY(-8px); }
-  50% { transform: translateX(-10px) translateY(-3px); }
-  75% { transform: translateX(8px) translateY(-12px); }
-  100% { transform: translateX(0) translateY(0); }
+@keyframes mesh2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-60px, -50px) scale(1.05); }
+  66% { transform: translate(50px, -30px) scale(1.1); }
 }
-@keyframes light-ray {
-  0%, 100% { opacity: 0.04; transform: scaleY(1) rotate(-15deg); }
-  50% { opacity: 0.09; transform: scaleY(1.3) rotate(-12deg); }
+@keyframes mesh3 {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  33% { transform: translate(calc(-50% + 60px), calc(-50% - 40px)) scale(1.15); }
+  66% { transform: translate(calc(-50% - 50px), calc(-50% + 50px)) scale(0.9); }
 }
-@keyframes underwater-bubble {
-  0% { transform: translateY(100%) scale(0.4); opacity: 0; }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.3; }
-  100% { transform: translateY(-20px) scale(1); opacity: 0; }
+@keyframes mesh4 {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate(-30px, 40px) scale(1.2) rotate(10deg); }
+}
+@keyframes mesh5 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.15); }
 }
 
-.animate-caustic { animation: caustic 6s ease-in-out infinite; }
-.animate-underwater-drift { animation: underwater-drift 12s ease-in-out infinite; }
-.animate-light-ray { animation: light-ray 5s ease-in-out infinite; }
-.animate-underwater-bubble { animation: underwater-bubble linear infinite; }
+.animate-mesh-1 { animation: mesh1 14s ease-in-out infinite; }
+.animate-mesh-2 { animation: mesh2 16s ease-in-out infinite; }
+.animate-mesh-3 { animation: mesh3 18s ease-in-out infinite; }
+.animate-mesh-4 { animation: mesh4 12s ease-in-out infinite; }
+.animate-mesh-5 { animation: mesh5 15s ease-in-out infinite; }
