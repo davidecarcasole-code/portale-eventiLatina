@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Wine, Rocket, ArrowRight, Plus, ChevronLeft, ChevronRight, ExternalLink, Mail, Film, Waves, Heart, CloudSun, PartyPopper, Download } from "lucide-react";
+import { Calendar, TrendingUp, Sparkles, MapPin, Clock, Music, Theater, Book, Trophy, Leaf, Mountain, Car, Wine, Rocket, ArrowRight, Plus, ChevronLeft, ChevronRight, ExternalLink, Mail, Film, Waves, Heart, CloudSun, PartyPopper } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 
 const categoryIcons: Record<string, any> = {
@@ -156,6 +156,19 @@ export default function DashboardPage() {
                   </Link>
                 )}
               </div>
+              <Link href="/install-app" className="inline-flex items-center gap-2.5 mt-4 px-5 py-2.5 rounded-xl text-xs font-medium text-white/60 bg-white/[0.06] border border-white/[0.08] hover:bg-white/[0.1] hover:text-white/90 transition-all duration-300">
+                <span className="flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M17.523 2.094a.336.336 0 0 0-.046-.005h-.005c-.11.002-.331.034-.633.115a3.8 3.8 0 0 0-.593.221c-.348.158-.77.395-1.104.753-.337.36-.582.832-.661 1.338a2.7 2.7 0 0 0 .105 1.02c.126.403.36.78.69 1.086.33.305.756.538 1.227.672.092.027.187.047.283.062.096.014.187.022.27.024h.024c.082-.002.18-.01.281-.026a2.6 2.6 0 0 0 .294-.068 3.0 3.0 0 0 0 1.254-.694 2.7 2.7 0 0 0 .722-1.123 2.7 2.7 0 0 0-.048-1.683 2.7 2.7 0 0 0-.683-1.048c-.332-.302-.764-.536-1.232-.675a4.0 4.0 0 0 0-.395-.09z"/><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 1.5c4.694 0 8.5 3.806 8.5 8.5s-3.806 8.5-8.5 8.5-8.5-3.806-8.5-8.5S7.306 3.5 12 3.5z"/></svg>
+                  Android
+                </span>
+                <span className="w-px h-3 bg-white/20" />
+                <span className="flex items-center gap-1.5">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                  iOS
+                </span>
+                <span className="text-white/30">·</span>
+                <span>Installa come App</span>
+              </Link>
             </div>
 
             {/* Right: Quick links */}
@@ -164,16 +177,6 @@ export default function DashboardPage() {
               <QuickLink href="/tutti-al-mare" icon={Waves} label="Tutti al Mare" gradient="from-cyan-400 to-teal-500" />
               <QuickLink href="/spazio-kids" icon={Rocket} label="Spazio Kids" gradient="from-yellow-400 to-amber-500" />
               <QuickLink href="/spazio-venere" icon={Heart} label="Spazio Venere" gradient="from-pink-400 to-rose-500" />
-              <Link href="/install-app" className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.08] border border-white/[0.1] hover:bg-white/[0.12] transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-md flex-shrink-0">
-                  <Download size={18} className="text-white" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-white/90 truncate">Installa come App</p>
-                  <p className="text-[11px] text-white/40">Android & iOS</p>
-                </div>
-                <ChevronRight size={14} className="text-white/30 ml-auto group-hover:text-white/60 transition-colors flex-shrink-0" />
-              </Link>
             </div>
           </div>
         </div>
