@@ -367,7 +367,10 @@ function ScraperTab({ token }: { token: string }) {
     setResult("");
     try {
       const res = await fetch("/api/scraper/run", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
-      const data = await res.json();
+      const text = await res.text();
+      if (!res.ok) { setResult(`Errore ${res.status}: ${text.slice(0, 300)}`); return; }
+      let data;
+      try { data = JSON.parse(text); } catch { setResult(`Risposta non JSON: ${text.slice(0, 300)}`); return; }
       setResult(JSON.stringify(data, null, 2));
     } catch (err: any) { setResult(err.message); }
     finally { setLoading(false); }
@@ -377,7 +380,7 @@ function ScraperTab({ token }: { token: string }) {
     <div className="glass-card rounded-xl p-5 space-y-4">
       <div>
         <h3 className="font-semibold flex items-center gap-2"><Sparkles size={16} className="text-[var(--accent)]" /> Motore di Ricerca Eventi</h3>
-        <p className="text-sm text-[var(--text-muted)] mt-1">Esegue lo scraping da tutte le fonti attive. Gestisci le fonti nella tab "Fonti".</p>
+        <p className="text-sm text-[var(--text-muted)] mt-1">Esegue lo scraping da tutte le fonti attive. Se va in timeout, prova a eseguire singole fonti dalla tab "Fonti" qui sotto.</p>
       </div>
       <button onClick={runScraper} disabled={loading}
         className="btn-primary px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 disabled:opacity-50">
