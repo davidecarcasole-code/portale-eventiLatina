@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, Link as LinkIcon, Sparkles, ArrowRight, Eye } from "lucide-react";
+import { Calendar, MapPin, Clock, ArrowLeft, Share2, Bookmark, Trash2, Edit3, Check, X, Globe, Link as LinkIcon, Sparkles, ArrowRight, Eye, Download, ExternalLink, Map } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
@@ -246,6 +246,25 @@ export default function EventDetailClient({ initialEvent, slug }: { initialEvent
             </div>
           </>
         )}
+
+        <div className="divider" />
+        <div className="flex flex-wrap gap-2">
+          <a href={`/api/events/${event.slug || event.id}/ical`} download
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[var(--card-border)] text-xs font-medium hover:bg-[var(--accent-subtle)] hover:border-[var(--accent)] transition-all">
+            <Download size={14} /> Scarica .ics
+          </a>
+          <a href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${encodeURIComponent(new Date(event.date).toISOString().replace(/[-:]/g,"").split(".")[0]+"Z")}/${encodeURIComponent(new Date(new Date(event.date).getTime() + 7200000).toISOString().replace(/[-:]/g,"").split(".")[0]+"Z")}&details=${encodeURIComponent((event.description||"").slice(0,500))}&location=${encodeURIComponent([event.location,event.city].filter(Boolean).join(", "))}&ctz=Europe/Rome`}
+            target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[var(--card-border)] text-xs font-medium hover:bg-[var(--accent-subtle)] hover:border-[var(--accent)] transition-all">
+            <ExternalLink size={14} /> Google Calendar
+          </a>
+          {event.city && (
+            <a href={`/mappa?city=${encodeURIComponent(event.city)}`}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[var(--card-border)] text-xs font-medium hover:bg-[var(--accent-subtle)] hover:border-[var(--accent)] transition-all">
+              <Map size={14} /> Vedi sulla mappa
+            </a>
+          )}
+        </div>
 
         {isAdmin && !editing && (
           <>

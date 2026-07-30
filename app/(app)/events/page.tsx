@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Calendar, MapPin, Clock, Search, X, ChevronLeft, ChevronRight, SlidersHorizontal, Plus, Eye } from "lucide-react";
+import { Calendar, MapPin, Clock, Search, X, ChevronLeft, ChevronRight, SlidersHorizontal, Plus, Eye, LayoutGrid } from "lucide-react";
 import { useAuthStore } from "@/lib/store";
 import { AdBanner } from "@/components/AdBanner";
 
@@ -33,6 +33,8 @@ function EventsContent() {
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
+  const [dateFrom, setDateFrom] = useState(searchParams.get("dateFrom") || "");
+  const [dateTo, setDateTo] = useState(searchParams.get("dateTo") || "");
 
   useEffect(() => {
     fetch("/api/events?limit=100&page=1")
@@ -59,6 +61,8 @@ function EventsContent() {
       if (province) params.set("province", province);
       if (timePeriod) params.set("time_period", timePeriod);
       if (timeFilter !== "upcoming") params.set("timeFilter", timeFilter);
+      if (dateFrom) params.set("dateFrom", dateFrom);
+      if (dateTo) params.set("dateTo", dateTo);
       params.set("page", String(page));
       params.set("limit", "20");
       try {
@@ -73,13 +77,31 @@ function EventsContent() {
   }, [search, category, province, timePeriod, timeFilter, page]);
 
   function clearFilters() {
-    setSearch(""); setCategory(""); setProvince("LT"); setTimePeriod(""); setPage(1);
+    setSearch(""); setCategory(""); setProvince("LT"); setTimePeriod(""); setPage(1); setDateFrom(""); setDateTo("");
   }
 
-  const hasFilters = search || category || province || timePeriod;
+  const hasFilters = search || category || province || timePeriod || dateFrom || dateTo;
 
   return (
     <div className="page-container space-y-5 animate-fade-in">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Eventi</h1>
+        <div className="flex gap-1 bg-[var(--card-bg)] rounded-xl border border-[var(--card-border)] p-1">
+          <a href="/events"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--accent)] text-white transition-all">
+            Lista
+          </a>
+          <a href="/calendario"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all">
+            Calendario
+          </a>
+          <a href="/mappa"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all">
+            Mappa
+          </a>
+        </div>
+      </div>
+
       <div className="flex items-center gap-3">
         <div className="flex-1 relative">
           <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
@@ -99,7 +121,7 @@ function EventsContent() {
       </div>
 
       {showFilters && (
-        <div className="glass-card rounded-xl p-5 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-slide-up">
+        <div className="glass-card rounded-xl p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 animate-slide-up">
           <select value={category} onChange={(e) => { setCategory(e.target.value); setPage(1); }} className="select">
             <option value="">Tutte le categorie</option>
             {categories.map((c: any) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
@@ -108,6 +130,10 @@ function EventsContent() {
             <option value="">Tutti i momenti</option>
             {TIME_PERIODS.map((t) => <option key={t} value={t}>{TIME_LABELS[t]}</option>)}
           </select>
+          <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+            className="input text-sm" title="Dal" />
+          <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+            className="input text-sm" title="Al" />
         </div>
       )}
 
@@ -115,6 +141,8 @@ function EventsContent() {
         <div className="flex items-center gap-2 flex-wrap">
           {category && <span className="badge">{categories.find((c: any) => c.slug === category)?.name || category}</span>}
           {timePeriod && <span className="badge">{TIME_LABELS[timePeriod]}</span>}
+          {dateFrom && <span className="badge">Dal {new Date(dateFrom).toLocaleDateString("it-IT")}</span>}
+          {dateTo && <span className="badge">Al {new Date(dateTo).toLocaleDateString("it-IT")}</span>}
           <button onClick={clearFilters} className="text-xs text-[var(--text-muted)] hover:text-[var(--accent)] flex items-center gap-1 ml-1 font-medium transition-colors">
             <X size={14} /> Cancella filtri
           </button>
