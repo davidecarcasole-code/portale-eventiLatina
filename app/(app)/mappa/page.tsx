@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useState, useRef } from "react";
+import { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { MapPin, Calendar, Clock, Navigation } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
 export default function MappaPage() {
   return (
@@ -15,6 +16,7 @@ export default function MappaPage() {
 
 function MappaContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const cityFilter = searchParams.get("city") || "";
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -22,80 +24,77 @@ function MappaContent() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
-  const [leafletReady, setLeafletReady] = useState(false);
+  const LRef = useRef<any>(null);
 
   useEffect(() => {
     import("leaflet").then((L) => {
-      setLeafletReady(true);
+      LRef.current = L;
+      if (mapRef.current && events.length > 0) initMap(L, events);
     });
   }, []);
 
   useEffect(() => {
     setLoading(true);
-    const params = new URLSearchParams({ timeFilter: "all", limit: "200" });
-    if (cityFilter) params.set("city", cityFilter);
-    fetch(`/api/events?${params}`)
+    fetch(`/api/events?limit=300`)
       .then((r) => r.json())
-      .then((data) => setEvents(data.events || []))
+      .then((data) => {
+        const all = data.events || [];
+        const filtered = cityFilter ? all.filter((e: any) => e.city?.toLowerCase() === cityFilter.toLowerCase()) : all;
+        setEvents(filtered);
+      })
       .catch(() => setEvents([]))
       .finally(() => setLoading(false));
   }, [cityFilter]);
 
-  useEffect(() => {
-    if (!leafletReady || !mapRef.current || events.length === 0) return;
+  const initMap = useCallback((L: any, evts: any[]) => {
+    if (!mapRef.current) return;
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
+    }
 
-    let L: any;
-    import("leaflet").then((mod) => {
-      L = mod;
+    const map = L.map(mapRef.current, { zoomControl: true }).setView([41.4675, 12.9036], 10);
+    mapInstanceRef.current = map;
 
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18,
+    }).addTo(map);
 
-      const map = L.map(mapRef.current, { zoomControl: true }).setView([41.4675, 12.9036], 10);
-      mapInstanceRef.current = map;
+    const mks: any[] = [];
+    evts.forEach((e: any) => {
+      if (!e.city) return;
+      const lat = CITY_COORDS[e.city]?.[0];
+      const lng = CITY_COORDS[e.city]?.[1];
+      if (!lat || !lng) return;
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 18,
-      }).addTo(map);
-
-      markersRef.current = [];
-
-      events.forEach((e) => {
-        if (!e.city) return;
-        const lat = CITY_COORDS[e.city]?.[0];
-        const lng = CITY_COORDS[e.city]?.[1];
-        if (!lat || !lng) return;
-
-        const color = e.category_color || "#6366f1";
-        const icon = L.divIcon({
-          className: "custom-marker",
-          html: `<div style="width:12px;height:12px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer;"></div>`,
-          iconSize: [12, 12],
-          iconAnchor: [6, 6],
-        });
-
-        const marker = L.marker([lat, lng], { icon }).addTo(map);
-        marker.eventData = e;
-        marker.on("click", () => setSelectedEvent(e));
-        markersRef.current.push(marker);
+      const color = e.category_color || "#6366f1";
+      const icon = L.divIcon({
+        className: "custom-marker",
+        html: `<div style="width:12px;height:12px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer;"></div>`,
+        iconSize: [12, 12],
+        iconAnchor: [6, 6],
       });
 
-      if (markersRef.current.length > 0) {
-        const group = L.featureGroup(markersRef.current);
-        map.fitBounds(group.getBounds().pad(0.2));
-      }
+      const marker = L.marker([lat, lng], { icon }).addTo(map);
+      marker.on("click", () => setSelectedEvent(e));
+      mks.push(marker);
     });
+    markersRef.current = mks;
 
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-    };
-  }, [events, leafletReady]);
+    if (mks.length > 0) {
+      const group = L.featureGroup(mks);
+      map.fitBounds(group.getBounds().pad(0.2));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (LRef.current && mapRef.current) {
+      requestAnimationFrame(() => {
+        initMap(LRef.current, events);
+      });
+    }
+  }, [events]);
 
   const cities = [...new Set(events.map((e: any) => e.city).filter(Boolean))].sort();
 
@@ -163,15 +162,12 @@ function MappaContent() {
 
       <div className="flex-shrink-0 overflow-x-auto pb-1">
         <div className="flex gap-2">
-          <button onClick={() => window.history.replaceState(null, "", "/mappa")}
+          <button onClick={() => router.push("/mappa")}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${!cityFilter ? "bg-[var(--accent)] text-white" : "bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)]"}`}>
             Tutte
           </button>
           {cities.slice(0, 15).map((c) => (
-            <button key={c} onClick={() => {
-              window.history.replaceState(null, "", `/mappa?city=${encodeURIComponent(c)}`);
-              setSelectedEvent(null);
-            }}
+            <button key={c} onClick={() => { setSelectedEvent(null); router.push(`/mappa?city=${encodeURIComponent(c)}`); }}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${cityFilter === c ? "bg-[var(--accent)] text-white" : "bg-[var(--card-bg)] border border-[var(--card-border)] text-[var(--text-secondary)] hover:bg-[var(--accent-subtle)]"}`}>
               {c}
             </button>
