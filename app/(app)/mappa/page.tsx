@@ -71,12 +71,17 @@ function MappaContent() {
       const color = e.category_color || "#6366f1";
       const icon = L.divIcon({
         className: "custom-marker",
-        html: `<div style="width:12px;height:12px;border-radius:50%;background:${color};border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);cursor:pointer;"></div>`,
-        iconSize: [12, 12],
-        iconAnchor: [6, 6],
+        html: `<div style="width:16px;height:16px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.4);cursor:pointer;"></div>`,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
       });
 
       const marker = L.marker([lat, lng], { icon }).addTo(map);
+      marker.bindTooltip(e.title.slice(0, 60), {
+        direction: "top",
+        offset: [0, -10],
+        className: "map-tooltip",
+      });
       marker.on("click", () => setSelectedEvent(e));
       mks.push(marker);
     });
