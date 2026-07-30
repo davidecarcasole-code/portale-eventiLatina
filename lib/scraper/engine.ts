@@ -33,6 +33,7 @@ import { runItinerarinelgustoScraper } from './itinerarinelgustoScraper';
 import { runRivieraDiUlisseScraper } from './rivieradiulisseScraper';
 import { runSagritalyScraper } from './sagritalyScraper';
 import { runLuogoArteScraper } from './luogoarteScraper';
+import { runIlCaffeScraper } from './ilcaffeScraper';
 import { getProvinceFromCity } from './city-to-province';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
@@ -98,6 +99,7 @@ const SCRAPER_REGISTRY: Record<string, { name: string; url: string; fn: () => Pr
   rivieradiulisse: { name: 'Parco Riviera di Ulisse', url: 'https://www.parchilazio.it/parcorivieradiulisse-ricerca_news', fn: runRivieraDiUlisseScraper },
   sagritaly: { name: 'Sagritaly', url: 'https://sagritaly.com/province-sagre/latina/', fn: runSagritalyScraper },
   luogoarte: { name: 'LuogoArte - Immersioni Sonore', url: 'https://www.luogoarte.it/immersioni-sonore.html', fn: runLuogoArteScraper },
+  ilcaffe: { name: 'Il Caffè TV', url: 'https://ilcaffe.tv/latina/eventi/', fn: runIlCaffeScraper },
 };
 
 async function getPrisma() {
@@ -360,6 +362,7 @@ export async function previewScraper(): Promise<ScrapedEvent[]> {
   await collect('Itinerari nel Gusto', runItinerarinelgustoScraper);
   await collect('Parco Riviera di Ulisse', runRivieraDiUlisseScraper);
   await collect('Sagritaly', runSagritalyScraper);
+  await collect('Il Caffè TV', runIlCaffeScraper);
 
   console.log(`[Scraper] Preview: ${all.length} unique events total`);
   return all;
