@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     const dateTo = searchParams.get("dateTo");
     const search = searchParams.get("search");
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
+    const limit = Math.min(300, Math.max(1, parseInt(searchParams.get("limit") || "20")));
     const status = searchParams.get("status") || "approved";
     const timeFilter = searchParams.get("timeFilter") || "upcoming";
 

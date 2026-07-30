@@ -35,7 +35,7 @@ function MappaContent() {
 
   useEffect(() => {
     setLoading(true);
-      fetch(`/api/events?timeFilter=all&limit=500`)
+      fetch(`/api/events?timeFilter=all&limit=300`)
       .then((r) => r.json())
       .then((data) => {
         const all = data.events || [];
