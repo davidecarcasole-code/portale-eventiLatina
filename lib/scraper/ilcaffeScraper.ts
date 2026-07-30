@@ -76,7 +76,7 @@ function detectCategory(text: string): string {
   return 'spettacolo';
 }
 
-function parseArticlePage($: cheerio.CheerioAPI): { date: string | null; description: string } {
+function parseArticlePage($: cheerio.Root): { date: string | null; description: string } {
   const articleBody = $('.entry-content').first().text().trim();
   const description = articleBody ? articleBody.slice(0, 800) : '';
 
