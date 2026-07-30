@@ -20,7 +20,9 @@ import { it } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, Calendar as CalIcon, MapPin, Clock, Eye, ArrowRight } from "lucide-react";
 
 export default function CalendarioPage() {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const today = new Date();
+  const initialMonth = today.getDate() > 25 ? new Date(today.getFullYear(), today.getMonth() + 1, 1) : today;
+  const [currentMonth, setCurrentMonth] = useState(initialMonth);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,9 +35,10 @@ export default function CalendarioPage() {
 
   useEffect(() => {
     setLoading(true);
-    const start = format(monthStart, "yyyy-MM-dd");
-    const end = format(monthEnd, "yyyy-MM-dd");
-    fetch(`/api/events?timeFilter=all&dateFrom=${start}&dateTo=${end}&limit=200`)
+    const start = format(calendarStart, "yyyy-MM-dd");
+    const end = format(calendarEnd, "yyyy-MM-dd");
+    const p = new URLSearchParams({ dateFrom: start, dateTo: end, limit: "200" });
+    fetch(`/api/events?${p}`)
       .then((r) => r.json())
       .then((data) => setEvents(data.events || []))
       .catch(() => setEvents([]))
