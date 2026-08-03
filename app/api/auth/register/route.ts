@@ -20,5 +20,5 @@ export async function POST(req: NextRequest) {
     });
     const token = generateToken({ id: user.id, email: user.email, role: user.role });
     return jsonResponse({ user: { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar, publisherStatus: user.publisherStatus }, token }, 201);
-  } catch { return errorResponse ? errorResponse("Errore registrazione", 500) : Response.json({ error: "Errore registrazione" }, { status: 500 }); }
+  } catch (err) { console.error("REGISTER ERROR:", err); return errorResponse ? errorResponse("Errore registrazione", 500) : Response.json({ error: "Errore registrazione" }, { status: 500 }); }
 }

@@ -16,5 +16,5 @@ export async function POST(req: NextRequest) {
     if (!valid) return errorResponse("Credenziali non valide", 401);
     const token = generateToken({ id: user.id, email: user.email, role: user.role });
     return jsonResponse({ user: { id: user.id, email: user.email, name: user.name, role: user.role, avatar: user.avatar, theme: user.theme, accent_color: user.accentColor }, token });
-  } catch { return errorResponse ? errorResponse("Errore login", 500) : Response.json({ error: "Errore login" }, { status: 500 }); }
+  } catch (err) { console.error("LOGIN ERROR:", err); return errorResponse ? errorResponse("Errore login", 500) : Response.json({ error: "Errore login" }, { status: 500 }); }
 }
