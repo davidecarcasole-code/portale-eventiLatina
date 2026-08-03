@@ -53,8 +53,8 @@ export function AdBanner({ placement, className = "", showPlaceholder = false }:
           <p className="text-xs text-[var(--text-muted)] leading-relaxed">
             Contattaci per avere<br />il tuo spazio pubblicitario qui
           </p>
-          <a href="mailto:info@eventinlatina.it" className="text-[10px] text-[var(--accent)] hover:underline font-medium">
-            info@eventinlatina.it
+          <a href="mailto:000eventweb@gmail.com" className="text-[10px] text-[var(--accent)] hover:underline font-medium">
+            000eventweb@gmail.com
           </a>
         </div>
       );

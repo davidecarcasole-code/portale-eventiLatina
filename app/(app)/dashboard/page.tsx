@@ -333,8 +333,8 @@ function VerticalAdColumn() {
         <p className="text-[10px] text-[var(--text-muted)] leading-relaxed">
           Spazio pubblicitario<br />disponibile
         </p>
-        <a href="mailto:info@eventinlatina.it" className="text-[9px] text-[var(--accent)] hover:underline font-medium">
-          info@eventinlatina.it
+        <a href="mailto:000eventweb@gmail.com" className="text-[9px] text-[var(--accent)] hover:underline font-medium">
+          000eventweb@gmail.com
         </a>
       </div>
     );

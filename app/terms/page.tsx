@@ -100,7 +100,7 @@ export default function TermsPage() {
           <h2 className="text-xl font-semibold">9. Contatti</h2>
           <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
             Per domande o richieste relative ai presenti Termini di Servizio, è possibile contattarci
-            all&apos;indirizzo email: <span className="text-[var(--accent)]">info@eventinlatina.it</span>
+            all&apos;indirizzo email: <span className="text-[var(--accent)]">000eventweb@gmail.com</span>
           </p>
         </section>
       </div>

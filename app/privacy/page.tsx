@@ -23,7 +23,7 @@ export default function PrivacyPage() {
           <h2 className="text-xl font-semibold">1. Titolare del Trattamento</h2>
           <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
             EventiNLatina<br />
-            Email: info@eventinlatina.it<br />
+            Email: 000eventweb@gmail.com<br />
             Sito web: eventinlatina.vercel.app
           </p>
         </section>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
             <li>Revoca del consenso in qualsiasi momento.</li>
           </ul>
           <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-            Per esercitare i propri diritti, contattare: <span className="text-[var(--accent)]">info@eventinlatina.it</span>
+            Per esercitare i propri diritti, contattare: <span className="text-[var(--accent)]">000eventweb@gmail.com</span>
           </p>
         </section>
 
