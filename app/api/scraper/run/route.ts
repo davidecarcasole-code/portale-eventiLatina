@@ -9,9 +9,16 @@ export async function POST(req: NextRequest) {
     if (!isCron) await requireAdmin(req);
     const { source } = await req.json().catch(() => ({}));
 
-    const { runScraper } = await import("@/lib/scraper/engine");
+    const { runScraper, backfillKidsCategories } = await import("@/lib/scraper/engine");
     const results = await runScraper(source || undefined);
     const totalInserted = results.reduce((s, r) => s + r.inserted, 0);
+
+    let backfilledKids = 0;
+    try {
+      backfilledKids = await backfillKidsCategories();
+    } catch (err: any) {
+      console.error(`[Scraper] Kids backfill failed: ${err.message?.slice(0, 100)}`);
+    }
 
     let cinemaResult: any = null;
     try {
@@ -53,6 +60,6 @@ export async function POST(req: NextRequest) {
       console.error(`[Scraper] Cinema scrape failed: ${cinemaErr.message?.slice(0, 100)}`);
     }
 
-    return jsonResponse({ message: "Scraper completato", results, totalInserted, cinema: cinemaResult });
+    return jsonResponse({ message: "Scraper completato", results, totalInserted, backfilledKids, cinema: cinemaResult });
   } catch (err) { const { handleApiError } = await import("@/lib/api-helpers"); return handleApiError(err); }
 }

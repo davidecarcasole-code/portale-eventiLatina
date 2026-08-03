@@ -15,20 +15,18 @@ export default function SpazioKidsPage() {
   const [filter, setFilter] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  const slugs = filter || "bambini";
-
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        const res = await fetch(`/api/events?limit=50&page=1&category=${slugs}`);
+        const res = await fetch(`/api/events?limit=50&page=1&category=bambini`);
         const data = await res.json();
         setEvents(data.events || []);
       } catch { /* ignore */ }
       finally { setLoading(false); }
     }
     load();
-  }, [slugs]);
+  }, []);
 
   const activeSub = SUBCATEGORIES.find(s => s.slug === filter);
 
