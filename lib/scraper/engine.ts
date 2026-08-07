@@ -36,6 +36,7 @@ import { runLuogoArteScraper } from './luogoarteScraper';
 import { runIlCaffeScraper } from './ilcaffeScraper';
 import { isKidsEvent } from './kids-detect';
 import { getProvinceFromCity } from './city-to-province';
+import { generateSlug, ensureUniqueSlug } from '../slug';
 
 const OLD_TO_NEW_CATEGORY: Record<string, string> = {
   cat_music: 'musica',
@@ -188,27 +189,29 @@ export async function ensureDefaultSources() {
   }
 }
 
-async function loadExistingEvents(): Promise<{ bySourceUrl: Set<string>; byDedup: Set<string> }> {
+async function loadExistingEvents(): Promise<{ bySourceUrl: Set<string>; byDedup: Set<string>; bySlug: Set<string> }> {
   const prisma = await getPrisma();
   const existing = await prisma.event.findMany({
-    select: { title: true, date: true, city: true, sourceUrl: true },
+    select: { title: true, date: true, city: true, sourceUrl: true, slug: true },
   });
   const bySourceUrl = new Set<string>();
   const byDedup = new Set<string>();
+  const bySlug = new Set<string>();
   for (const e of existing) {
     if (e.sourceUrl) bySourceUrl.add(e.sourceUrl);
+    if (e.slug) bySlug.add(e.slug);
     if (e.title && e.date) {
       const d = e.date instanceof Date ? e.date.toISOString().split('T')[0] : '';
       byDedup.add(e.title.toLowerCase().slice(0, 80) + d + (e.city || ''));
     }
   }
-  return { bySourceUrl, byDedup };
+  return { bySourceUrl, byDedup, bySlug };
 }
 
 async function runSingleSource(
   name: string,
   scraperFn: () => Promise<ScrapedEvent[]>,
-  existingEvents: { bySourceUrl: Set<string>; byDedup: Set<string> },
+  existingEvents: { bySourceUrl: Set<string>; byDedup: Set<string>; bySlug: Set<string> },
   catMap: Map<string, number>,
 ): Promise<ScraperResult> {
   console.log(`[Scraper] Source: ${name}...`);
@@ -226,9 +229,12 @@ async function runSingleSource(
       if (existingEvents.byDedup.has(key)) continue;
 
       const prisma = await getPrisma();
+      const baseSlug = generateSlug(e.title) || `evento-${Date.now()}`;
+      const slug = ensureUniqueSlug(baseSlug, existingEvents.bySlug);
       try {
         await prisma.event.create({
           data: {
+            slug,
             title: e.title.slice(0, 200),
             description: e.description?.slice(0, 2000) || null,
             categoryId: resolveEventCategory(e, catMap),
@@ -250,8 +256,9 @@ async function runSingleSource(
         inserted++;
         existingEvents.bySourceUrl.add(e.source_url || '');
         existingEvents.byDedup.add(key);
+        existingEvents.bySlug.add(slug);
       } catch (err: any) {
-        console.error(`[Scraper] Insert error: ${err.message?.slice(0, 100)} for "${e.title.slice(0, 40)}"`);
+        console.error(`[Scraper] Insert error: ${err.message?.slice(0, 800)} for "${e.title.slice(0, 60)}"`);
       }
     }
 
@@ -349,6 +356,85 @@ export async function runScraper(sourceType?: string): Promise<ScraperResult[]> 
   }
 
   console.log(`[Scraper] Done. Results: ${JSON.stringify(results)}`);
+  return results;
+}
+
+type SourceJob = {
+  name: string;
+  fn: () => Promise<ScrapedEvent[]>;
+  dbId?: number;
+};
+
+async function collectSourceJobs(sourceType?: string): Promise<SourceJob[]> {
+  const prisma = await getPrisma();
+  const where: any = { isActive: true };
+  if (sourceType) where.type = sourceType;
+  const sources = await prisma.scrapedSource.findMany({ where });
+
+  const jobs: SourceJob[] = [];
+  for (const src of sources) {
+    const entry = SCRAPER_REGISTRY[src.type];
+    if (!entry) {
+      console.log(`[Scraper] Unknown type "${src.type}" for source "${src.name}" — skipping`);
+      continue;
+    }
+    jobs.push({ name: src.name, fn: entry.fn, dbId: src.id });
+  }
+
+  if (sourceType && jobs.length === 0) {
+    const entry = SCRAPER_REGISTRY[sourceType];
+    if (entry) {
+      console.log(`[Scraper] Running ${entry.name} directly from registry (no DB source record found)`);
+      jobs.push({ name: entry.name, fn: entry.fn });
+    } else {
+      console.log(`[Scraper] Unknown source type "${sourceType}" — not in registry either`);
+    }
+  }
+
+  if (!sourceType && jobs.length === 0) {
+    console.log('[Scraper] No DB sources found, running all from registry directly');
+    for (const entry of Object.values(SCRAPER_REGISTRY)) {
+      jobs.push({ name: entry.name, fn: entry.fn });
+    }
+  }
+
+  return jobs;
+}
+
+const SCRAPER_BATCH_SIZE = Math.max(1, Number(process.env.SCRAPER_BATCH_SIZE) || 6);
+
+export async function getScraperBatches(sourceType?: string): Promise<{ totalBatches: number; batchSize: number }> {
+  const jobs = await collectSourceJobs(sourceType);
+  return { totalBatches: Math.max(1, Math.ceil(jobs.length / SCRAPER_BATCH_SIZE)), batchSize: SCRAPER_BATCH_SIZE };
+}
+
+export async function runScraperBatch(sourceType?: string, batchIndex = 0): Promise<ScraperResult[]> {
+  const prisma = await getPrisma();
+  const jobs = await collectSourceJobs(sourceType);
+  const slice = jobs.slice(batchIndex * SCRAPER_BATCH_SIZE, (batchIndex + 1) * SCRAPER_BATCH_SIZE);
+  console.log(`[Scraper] Batch ${batchIndex}: ${slice.length} sources to run`);
+  if (slice.length === 0) return [];
+
+  const [catMap, existingEvents] = await Promise.all([
+    buildCategoryMap(),
+    loadExistingEvents(),
+  ]);
+
+  const runJob = (job: SourceJob): Promise<ScraperResult> =>
+    withSourceTimeout(job.name, () => runSingleSource(job.name, job.fn, existingEvents, catMap))
+      .then(async (result) => {
+        if (job.dbId) {
+          try {
+            await prisma.scrapedSource.update({ where: { id: job.dbId }, data: { lastScrapedAt: new Date() } });
+          } catch (e: any) {
+            console.error(`[Scraper] Failed to update lastScrapedAt for ${job.name}: ${e.message?.slice(0, 100)}`);
+          }
+        }
+        return result;
+      });
+
+  const results = await mapLimit(slice, SOURCE_CONCURRENCY, runJob);
+  console.log(`[Scraper] Batch ${batchIndex} done. Results: ${JSON.stringify(results)}`);
   return results;
 }
 
