@@ -69,9 +69,21 @@ export async function POST(req: NextRequest) {
 
     const { runScraperBatch, getScraperBatches, backfillKidsCategories } = await import("@/lib/scraper/engine");
 
-    if (totalBatches === 0) {
+    const isCoordinator = totalBatches === 0;
+    if (isCoordinator) {
       const plan = await getScraperBatches(sourceType);
       totalBatches = plan.totalBatches;
+      if (totalBatches > 1) {
+        const origin = new URL(req.url).origin;
+        console.log(`[Scraper] Coordinator firing batches 1..${totalBatches - 1} in parallel`);
+        for (let i = 1; i < totalBatches; i++) {
+          fireAndForget(origin + "/api/scraper/run", {
+            batchIndex: i,
+            totalBatches,
+            source: body.source || undefined,
+          });
+        }
+      }
     }
 
     let results: any[] = [];
@@ -82,16 +94,11 @@ export async function POST(req: NextRequest) {
     }
     const totalInserted = results.reduce((s, r) => s + r.inserted, 0);
 
-    const isFinal = batchIndex >= totalBatches - 1;
-    if (!isFinal) {
-      fireAndForget(new URL(req.url).origin + "/api/scraper/run", {
-        batchIndex: batchIndex + 1,
-        totalBatches,
-        source: body.source || undefined,
-      });
-      await new Promise((r) => setTimeout(r, 2000));
+    if (isCoordinator && totalBatches > 1) {
+      await new Promise((r) => setTimeout(r, 10000));
     }
 
+    const isFinal = batchIndex >= totalBatches - 1;
     let backfilledKids = 0;
     let cinemaResult: any = null;
     if (isFinal) {

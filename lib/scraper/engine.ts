@@ -311,7 +311,7 @@ export async function runScraper(sourceType?: string): Promise<ScraperResult[]> 
 
   const where: any = { isActive: true };
   if (sourceType) where.type = sourceType;
-  const sources = await prisma.scrapedSource.findMany({ where });
+  const sources = await prisma.scrapedSource.findMany({ where, orderBy: { id: 'asc' } });
 
   const runSource = (src: any): Promise<ScraperResult> => {
     const registryEntry = SCRAPER_REGISTRY[src.type];
@@ -371,7 +371,7 @@ async function collectSourceJobs(sourceType?: string): Promise<SourceJob[]> {
   const prisma = await getPrisma();
   const where: any = { isActive: true };
   if (sourceType) where.type = sourceType;
-  const sources = await prisma.scrapedSource.findMany({ where });
+  const sources = await prisma.scrapedSource.findMany({ where, orderBy: { id: 'asc' } });
 
   const jobs: SourceJob[] = [];
   for (const src of sources) {
@@ -414,7 +414,7 @@ export async function runScraperBatch(sourceType?: string, batchIndex = 0): Prom
   const prisma = await getPrisma();
   const jobs = await collectSourceJobs(sourceType);
   const slice = jobs.slice(batchIndex * SCRAPER_BATCH_SIZE, (batchIndex + 1) * SCRAPER_BATCH_SIZE);
-  console.log(`[Scraper] Batch ${batchIndex}: ${slice.length} sources to run`);
+  console.log(`[Scraper] Batch ${batchIndex}: ${slice.length} sources: ${slice.map(j => j.name).join(', ')}`);
   if (slice.length === 0) return [];
 
   const [catMap, existingEvents] = await Promise.all([
