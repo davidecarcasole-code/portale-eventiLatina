@@ -84,7 +84,9 @@ export async function runFattivivoScraper(): Promise<ScrapedEvent[]> {
           const day = dateMatch[1].padStart(2, '0');
           const monthAbbr = dateMatch[2].toLowerCase().slice(0, 3);
           const month = MONTHS[monthAbbr] || '01';
-          date = `${new Date().getFullYear()}-${month}-${day}`;
+          const candidate = `${new Date().getFullYear()}-${month}-${day}`;
+          const parsed = new Date(`${candidate}T00:00:00Z`);
+          if (!isNaN(parsed.getTime())) date = candidate;
         }
 
         const parts = locationText.split(',').map(s => s.trim());

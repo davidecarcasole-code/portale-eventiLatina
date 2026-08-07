@@ -132,8 +132,10 @@ function resolveEventCategory(e: ScrapedEvent, catMap: Map<string, number>): num
 
 function parseDateStr(dateStr: string): Date | null {
   const m = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (m) return new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00Z`);
-  return null;
+  if (!m) return null;
+  const d = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00Z`);
+  if (isNaN(d.getTime())) return null;
+  return d;
 }
 
 function dedupKey(e: ScrapedEvent): string {
@@ -223,7 +225,7 @@ async function runSingleSource(
     const today = new Date(); today.setHours(0,0,0,0);
     for (const e of events) {
       const eventDate = parseDateStr(e.date);
-      if (!eventDate || eventDate < today) continue;
+      if (!eventDate || isNaN(eventDate.getTime()) || eventDate < today) continue;
       if (e.source_url && existingEvents.bySourceUrl.has(e.source_url)) continue;
       const key = dedupKey(e);
       if (existingEvents.byDedup.has(key)) continue;
