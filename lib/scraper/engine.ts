@@ -263,6 +263,34 @@ async function runSingleSource(
   }
 }
 
+const SOURCE_CONCURRENCY = Math.max(1, Number(process.env.SCRAPER_CONCURRENCY) || 8);
+const SOURCE_TIMEOUT_MS = Math.max(5000, Number(process.env.SCRAPER_SOURCE_TIMEOUT_MS) || 30000);
+
+async function mapLimit<T>(items: T[], limit: number, fn: (item: T) => Promise<ScraperResult>): Promise<ScraperResult[]> {
+  const results = new Array<ScraperResult>(items.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) {
+      const idx = next++;
+      results[idx] = await fn(items[idx]);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, () => worker()));
+  return results;
+}
+
+function withSourceTimeout(name: string, fn: () => Promise<ScraperResult>): Promise<ScraperResult> {
+  return Promise.race([
+    fn(),
+    new Promise<ScraperResult>((resolve) => {
+      setTimeout(() => {
+        console.log(`[Scraper] ${name} timed out after ${SOURCE_TIMEOUT_MS}ms`);
+        resolve({ source: name, found: 0, inserted: 0 });
+      }, SOURCE_TIMEOUT_MS);
+    }),
+  ]);
+}
+
 export async function runScraper(sourceType?: string): Promise<ScraperResult[]> {
   console.log('[Scraper] Starting...');
   const prisma = await getPrisma();
@@ -272,33 +300,37 @@ export async function runScraper(sourceType?: string): Promise<ScraperResult[]> 
     loadExistingEvents(),
   ]);
 
-  const results: ScraperResult[] = [];
-
   const where: any = { isActive: true };
   if (sourceType) where.type = sourceType;
   const sources = await prisma.scrapedSource.findMany({ where });
 
-  for (const src of sources) {
+  const runSource = (src: any): Promise<ScraperResult> => {
     const registryEntry = SCRAPER_REGISTRY[src.type];
     if (!registryEntry) {
       console.log(`[Scraper] Unknown type "${src.type}" for source "${src.name}" — skipping`);
-      continue;
+      return Promise.resolve({ source: src.name, found: 0, inserted: 0 });
     }
-    const result = await runSingleSource(src.name, registryEntry.fn, existingEvents, catMap);
-    results.push(result);
-    try {
-      await prisma.scrapedSource.update({ where: { id: src.id }, data: { lastScrapedAt: new Date() } });
-    } catch (e: any) {
-      console.error(`[Scraper] Failed to update lastScrapedAt for ${src.name}: ${e.message?.slice(0, 100)}`);
-    }
-  }
+    return withSourceTimeout(src.name, () => runSingleSource(src.name, registryEntry.fn, existingEvents, catMap))
+      .then(async (result) => {
+        try {
+          await prisma.scrapedSource.update({ where: { id: src.id }, data: { lastScrapedAt: new Date() } });
+        } catch (e: any) {
+          console.error(`[Scraper] Failed to update lastScrapedAt for ${src.name}: ${e.message?.slice(0, 100)}`);
+        }
+        return result;
+      });
+  };
+
+  const results: ScraperResult[] = sources.length > 0
+    ? await mapLimit(sources, SOURCE_CONCURRENCY, runSource)
+    : [];
 
   // Fallback: if sourceType specified but no DB sources were found, try registry directly
   if (sourceType && sources.length === 0) {
     const entry = SCRAPER_REGISTRY[sourceType];
     if (entry) {
       console.log(`[Scraper] Running ${entry.name} directly from registry (no DB source record found)`);
-      const result = await runSingleSource(entry.name, entry.fn, existingEvents, catMap);
+      const result = await withSourceTimeout(entry.name, () => runSingleSource(entry.name, entry.fn, existingEvents, catMap));
       results.push(result);
     } else {
       console.log(`[Scraper] Unknown source type "${sourceType}" — not in registry either`);
@@ -308,10 +340,12 @@ export async function runScraper(sourceType?: string): Promise<ScraperResult[]> 
   // Fallback: if running all sources and none from DB, run all from registry
   if (!sourceType && sources.length === 0) {
     console.log('[Scraper] No DB sources found, running all from registry directly');
-    for (const [type, entry] of Object.entries(SCRAPER_REGISTRY)) {
-      const result = await runSingleSource(entry.name, entry.fn, existingEvents, catMap);
-      results.push(result);
-    }
+    const registryEntries = Object.values(SCRAPER_REGISTRY).map((entry) => entry.name);
+    const runRegistry = (name: string) => {
+      const entry = SCRAPER_REGISTRY[name as keyof typeof SCRAPER_REGISTRY];
+      return withSourceTimeout(entry.name, () => runSingleSource(entry.name, entry.fn, existingEvents, catMap));
+    };
+    results.push(...await mapLimit(registryEntries, SOURCE_CONCURRENCY, runRegistry));
   }
 
   console.log(`[Scraper] Done. Results: ${JSON.stringify(results)}`);
